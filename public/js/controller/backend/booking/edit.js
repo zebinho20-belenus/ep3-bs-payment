@@ -67,14 +67,19 @@
             enableFormElement(dateEnd);
         }
 
+        var editMode = tagProvider.data("edit-mode-tag");
+
+        if (editMode == "no_subscr") {
+            disableFormElement(repeat);
+            disableFormElement("#bf-date-end"); 
+        }   
+
         /* Lock specific fields in edit mode */
 
         var rid = $("#bf-rid");
 
         if (rid.val()) {
             disableFormElement(repeat);
-
-            var editMode = tagProvider.data("edit-mode-tag");
 
             if (editMode == "booking") {
                 disableFormElement("#bf-time-start");

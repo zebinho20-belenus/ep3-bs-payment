@@ -10,6 +10,10 @@ a.cc-own:link,
 a.cc-own:visited { background-color: #8BB243; }
 a.cc-own:hover { background-color: #5F8024; }
 
+a.cc-try:link,
+a.cc-try:visited { background-color: #e5e68b; }
+a.cc-try:hover { background-color: #e5e68b; }
+
 a.cc-single:link,
 a.cc-single:visited { background-color: #808D96; }
 a.cc-single:hover { background-color: #4C5359; }

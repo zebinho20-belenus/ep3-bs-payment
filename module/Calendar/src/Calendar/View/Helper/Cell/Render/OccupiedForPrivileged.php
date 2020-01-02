@@ -37,9 +37,18 @@ class OccupiedForPrivileged extends AbstractHelper
             $cellLabel = $booking->needExtra('user')->need('alias');
             $cellGroup = ' cc-group-' . $booking->need('bid');
 
+            $style = 'cc-single';
+
+            if ($booking->getMeta('directpay') == 'true' and $booking->get('status_billing')!= 'paid') {
+                if (! $cellLabel) {
+                    $cellLabel = $view->t('temp blocked');
+                }
+                $style = 'cc-try';
+            }
+
             switch ($booking->need('status')) {
                 case 'single':
-                    return $view->calendarCellLink($cellLabel, $view->url('backend/booking/edit', [], $cellLinkParams), 'cc-single' . $cellGroup, null, $cellStyle);
+                    return $view->calendarCellLink($cellLabel, $view->url('backend/booking/edit', [], $cellLinkParams), $style . $cellGroup, null, $cellStyle);
                 case 'subscription':
                     return $view->calendarCellLink($cellLabel, $view->url('backend/booking/edit', [], $cellLinkParams), 'cc-multiple' . $cellGroup, null, $cellStyle);
             }

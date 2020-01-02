@@ -104,6 +104,8 @@ class BookingController extends AbstractActionController
 
         $reservation = $booking = null;
 
+        $editMode = null;      
+
         if (! ($this->getRequest()->isPost() || $this->params()->fromQuery('force') == 'new')) {
             switch (count($params['reservations'])) {
                 case 0:
@@ -112,7 +114,7 @@ class BookingController extends AbstractActionController
                     $reservation = current($params['reservations']);
                     $booking = $reservation->getExtra('booking');
 
-                    if ($booking->get('status') == 'subscription') {
+                    if ($booking->get('status') == 'subscription' && $sessionUser->can(['calendar.create-subscription-bookings', 'calendar.cancel-subscription-bookings', 'calendar.delete-subscription-bookings'])) {
                         if (! $params['editMode']) {
                             return $this->forward()->dispatch('Backend\Controller\Booking', ['action' => 'editMode', 'params' => $params]);
                         }
@@ -127,6 +129,7 @@ class BookingController extends AbstractActionController
         $formElementManager = $serviceManager->get('FormElementManager');
 
         $editForm = $formElementManager->get('Backend\Form\Booking\EditForm');
+
 
         if ($this->getRequest()->isPost()) {
             $editForm->setData($this->params()->fromPost());
@@ -213,6 +216,16 @@ class BookingController extends AbstractActionController
                 $this->url()->fromRoute('backend/booking/players', ['bid' => $booking->need('bid')]),
                 $this->translate('Who?')));
             $editForm->get('bf-quantity')->setLabelOption('disable_html_escape', true);
+        }
+
+        if (! $sessionUser->can(['calendar.create-subscription-bookings'])) {
+            return $this->ajaxViewModel(array_merge($params, array(
+            'editMode' => 'no_subscr',
+            'editForm' => $editForm,
+            'booking' => $booking,
+            'reservation' => $reservation,
+            'sessionUser' => $sessionUser,
+            )));
         }
 
         return $this->ajaxViewModel(array_merge($params, array(

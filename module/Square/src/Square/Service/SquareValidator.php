@@ -320,6 +320,12 @@ class SquareValidator extends AbstractService
      */
     public function isCancellable(Booking $booking)
     {
+        if ($this->user && $booking->getMeta('directpay') == 'true' && $booking->get('status_billing')!= 'paid') {
+            if ($booking->need('status') == 'single') {
+                return true;
+            }
+        }    
+        
         if ($this->user && $this->user->can('calendar.cancel-single-bookings')) {
             if ($booking->need('status') == 'single') {
                 return true;

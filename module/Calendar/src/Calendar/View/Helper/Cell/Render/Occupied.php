@@ -18,8 +18,14 @@ class Occupied extends AbstractHelper
             if ($userBooking) {
                 $cellLabel = $view->t('Your Booking');
                 $cellGroup = ' cc-group-' . $userBooking->need('bid');
+                $style = 'cc-own';
 
-                return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), 'cc-own' . $cellGroup);
+                 if ($userBooking->getMeta('directpay') == 'true' and $userBooking->get('status_billing')!= 'paid') {
+                     $cellLabel = $view->t('Your Booking TRY');
+                     $style = 'cc-try';
+                 }
+
+                return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), $style . $cellGroup);
             } else {
                 return $view->calendarCellRenderOccupiedForVisitors($reservations, $cellLinkParams, $square, $user);
             }

@@ -7,6 +7,20 @@
     "require": {
         "php": ">=5.4",
         "ext-intl": "*",
-        "zendframework/zendframework": "^2.5.3"
+        "zendframework/zendframework": "^2.5.3",
+        "payum/payum-module": "*@stable",
+        "payum/payum": "*@stable",
+        "php-http/guzzle6-adapter": "^2.0",
+        "payum/paypal-express-checkout-nvp": "^1.5",
+        "stripe/stripe-php": "6.9.0",
+        "payum/stripe": "^1.6",
+        "payum/klarna-checkout": "^1.5"
+    },
+    
+    "repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/lolmx/Stripe.git"
     }
+    ]    
 }

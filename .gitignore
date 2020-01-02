@@ -2,8 +2,6 @@
 /.settings/
 /nbproject/
 
-/vendor/
-
 composer.phar
 
 Desktop.ini

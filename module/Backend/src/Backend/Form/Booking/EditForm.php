@@ -39,7 +39,7 @@ class EditForm extends Form
             'type' => 'Text',
             'attributes' => array(
                 'id' => 'bf-user',
-                'style' => 'width: 200px;',
+                'style' => 'width: auto;',
             ),
             'options' => array(
                 'label' => 'Booked to',
@@ -157,7 +157,7 @@ class EditForm extends Form
             'type' => 'Textarea',
             'attributes' => array(
                 'id' => 'bf-notes',
-                'style' => 'width: 250px; height: 48px;',
+                'style' => 'width: autopx; height: 140px;',
             ),
             'options' => array(
                 'label' => 'Notes',

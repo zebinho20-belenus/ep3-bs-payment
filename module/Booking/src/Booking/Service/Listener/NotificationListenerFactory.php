@@ -12,6 +12,7 @@ class NotificationListenerFactory implements FactoryInterface
     {
         return new NotificationListener(
             $sm->get('Base\Manager\OptionManager'),
+            $sm->get('Base\Manager\ConfigManager'),
             $sm->get('Booking\Manager\ReservationManager'),
             $sm->get('Square\Manager\SquareManager'),
             $sm->get('User\Manager\UserManager'),

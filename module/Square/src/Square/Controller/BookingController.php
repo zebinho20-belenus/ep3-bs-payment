@@ -6,6 +6,17 @@ use Booking\Entity\Booking\Bill;
 use RuntimeException;
 use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\ServiceManager\ServiceLocator;
+use Zend\ServiceManager\ServiceManagerAwareInterface;
+use Zend\View\Model\JsonModel;
+use Zend\Http\Response;
+use Payum\Core\Request\GetHumanStatus;
+use Payum\Core\Reply\HttpResponse;
+use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Reply\ReplyInterface;
+use Payum\Stripe\Request\Confirm;
+use GuzzleHttp\Client; 
+
 
 class BookingController extends AbstractActionController
 {
@@ -138,6 +149,17 @@ class BookingController extends AbstractActionController
             $playerNames = null;
         }
 
+        /* display payment checkout */
+        if ($this->config('paypal') != null && $this->config('paypal') == true) {  
+            $byproducts['paypal'] = true;
+        }
+        if ($this->config('stripe') != null && $this->config('stripe') == true) {
+            $byproducts['stripe'] = true;
+        }
+        if ($this->config('klarna') != null && $this->config('klarna') == true) {
+            $byproducts['klarna'] = true;
+        }
+
         /* Check booking form submission */
 
         $acceptRulesDocument = $this->params()->fromPost('bf-accept-rules-document');
@@ -161,33 +183,168 @@ class BookingController extends AbstractActionController
                     '<b>', '</b>');
             }
 
+            $bookable = false;
+
             if (! isset($byproducts['message'])) {
 
-                $bills = array();
+		            $bills = array();
+                    $total = 0;
 
-                foreach ($products as $product) {
-                    $bills[] = new Bill(array(
-                        'description' => $product->need('name'),
-                        'quantity' => $product->needExtra('amount'),
-                        'price' => $product->need('price') * $product->needExtra('amount'),
-                        'rate' => $product->need('rate'),
-                        'gross' => $product->need('gross'),
-                    ));
+                    $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');               
+                    $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam);
+                    if ($finalPricing['price']) {
+                        $total+=$finalPricing['price'];
+                    }    
+
+                    if ($total > 0 ) { 
+                        $bookable = true;
+                    }
+
+		    foreach ($products as $product) {
+                             
+			    $bills[] = new Bill(array(
+						    'description' => $product->need('name'),
+						    'quantity' => $product->needExtra('amount'),
+						    'price' => $product->need('price') * $product->needExtra('amount'),
+						    'rate' => $product->need('rate'),
+						    'gross' => $product->need('gross'),
+						    ));
+
+                            $total+=$product->need('price') * $product->needExtra('amount'); 
+		    }
+
+
+            $bookingService = $serviceManager->get('Booking\Service\BookingService');
+            $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+		    $booking = $bookingService->createSingle($user, $square, $quantityParam, $byproducts['dateStart'], $byproducts['dateEnd'], $bills, array(
+					    'player-names' => serialize($playerNames),
+					    ));
+
+            $payservice = $this->params()->fromPost('paymentservice');
+            
+            if ($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') {
+            # payment checkout
+                if($bookable) {
+                   $project = $this->config('project');
+                   $projectShort = $this->option('client.name.short');
+                   $basepath = $this->config('basepath');
+                   $baseurl = $this->config('baseurl');
+                   $proxyurl = $this->config('proxyurl');
+		           $storage = $this->getServiceLocator()->get('payum')->getStorage('Application\Model\PaymentDetails');
+                   $tokenStorage = $this->getServiceLocator()->get('payum.options')->getTokenStorage(); 
+                   $captureToken = null;
+                   $details = $storage->create();
+                   $booking->setMeta('directpay', 'true');
+                   $bookingManager->save($booking);
+
+                   $locale = $this->config('i18n.locale');
+
+                   $description = $projectShort.' booking-'.$booking->get('bid');
+                   if (isset($locale) && ($locale == 'de-DE' || $locale == 'de_DE')) {
+                        $description = $projectShort.' Buchung-'.$booking->get('bid');
+                   }
+
+                   #paypal checkout            
+                   if ($payservice == 'paypal') {
+    		           $details['PAYMENTREQUEST_0_CURRENCYCODE'] = 'EUR';
+    		           $details['PAYMENTREQUEST_0_AMT'] = $total/100;
+                       $details['PAYMENTREQUEST_0_BID'] = $booking->get('bid');
+                       $details['PAYMENTREQUEST_0_DESC'] = $description;
+                       $details['PAYMENTREQUEST_0_EMAIL'] = $user->get('email');
+                       $storage->update($details);
+     		           $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
+                           'paypal_ec', $details, $proxyurl.'/'.$project.'/public/square/booking/payment/done');
+                   }				    
+                   #paypal checkout
+                   #stripe checkout
+                   if ($payservice == 'stripe') {
+                       $details["amount"] = $total;
+                       $details["currency"] = 'EUR';
+                       $details["description"] = $description;
+                       $details["receipt_email"] = $user->get('email');
+                       $details["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'project' => $project, 'projectShort' => $projectShort);
+                       $storage->update($details);
+                       $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
+                           'stripe', $details, $proxyurl.'/'.$project.'/public/square/booking/payment/confirm');
+                   }
+                   #stripe checkout
+                   #klarna checkout
+                   if ($payservice == 'klarna') {
+                       $details['purchase_country'] = 'DE';
+                       $details['purchase_currency'] = 'EUR';
+                       $details['locale'] = 'de-DE';
+                       $storage->update($details); 
+                       $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createAuthorizeToken('klarna_checkout', $details, $proxyurl.'/'.$project.'/public/square/booking/payment/done');
+                       $notifyToken = $this->getServiceLocator()->get('payum.security.token_factory')->createNotifyToken('klarna_checkout', $details);
+                   }
+                   #klarna checkout
+                   
+                   $targetUrl = str_replace($baseurl, $proxyurl, $captureToken->getTargetUrl());
+                   $captureToken->setTargetUrl($targetUrl);
+                   $tokenStorage->update($captureToken);
+
+                   #klarna checkout update merchant details
+                   if ($payservice == 'klarna') {
+                       $details['merchant'] = array(
+                           'terms_uri' => 'http://example.com/terms',
+                           'checkout_uri' => $captureToken->getTargetUrl(),
+                           'confirmation_uri' => $captureToken->getTargetUrl(),
+                           'push_uri' => $notifyToken->getTargetUrl()
+                       );
+                       $details['cart'] = array(
+                           'items' => array(
+                                array(
+                                   'reference' => $booking->get('bid'),
+                                   'name' => 'TVaS booking',
+                                   'quantity' => 1,
+                                   'unit_price' => $total,
+                                )
+                           )
+                       );
+                       $storage->update($details);
+
+                   }
+                   #klarna checkout
+
+                   return $this->redirect()->toUrl($captureToken->getTargetUrl());
+                   }
+                else {
+                   $bookingService->cancelSingle($booking);
+                   $this->flashMessenger()->addErrorMessage(sprintf($this->t('%sSorry online booking not possible at the moment!%s'),
+                       '<b>', '</b>'));
+                   return $this->redirectBack()->toOrigin();  
+                }    
+                # payment checkout
+            } else {
+                # no paymentservice
+                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
+                    $doorcode = $booking->getMeta('doorcode');
+                    $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
+                    $reservations = $reservationManager->getBy(['bid' => $booking->need('bid')], 'date ASC', 1);
+                    if ($this->sendDoorCode($booking->need('bid'), $reservations, $doorcode, $this->config('doorCodeTimeBuffer'), $this->config('doorCodeRequest')) == true) {
+                        $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
+                            $this->option('subject.square.type'), $doorcode));
+                    } else {
+                        $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s'),
+                            $this->option('subject.square.type'), $this->option('client.contact.phone')));
+                    }
+                }
+                else{
+                    $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
+                        '<b>', '</b>',$this->option('subject.square.type')));
+                }  
+
+                if ($this->config('tmpBookingAt') != null) {    
+                    $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sPayment and admittance temporarily at %s!%s'),
+                        '<b>', $this->config('tmpBookingAt'), '</b>'));
                 }
 
-                $bookingService = $serviceManager->get('Booking\Service\BookingService');
-                $bookingService->createSingle($user, $square, $quantityParam, $byproducts['dateStart'], $byproducts['dateEnd'], $bills, array(
-                    'player-names' => serialize($playerNames),
-                ));
-
-                $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
-                    '<b>', '</b>', $this->option('subject.square.type')));
-
                 return $this->redirectBack()->toOrigin();
-            }
+            }                
+          }               
         }
 
-        return $this->ajaxViewModel($byproducts);
+       return $this->ajaxViewModel($byproducts);
     }
 
     public function cancellationAction()
@@ -221,7 +378,7 @@ class BookingController extends AbstractActionController
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingService->cancelSingle($booking);
 
-            $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your booking has been %scancelled%s.'),
+            $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your booking has been %scancelled%s.'),
                 '<b>', '</b>'));
 
             return $this->redirectBack()->toOrigin();
@@ -233,4 +390,190 @@ class BookingController extends AbstractActionController
         ));
     }
 
+    public function confirmAction()
+    {
+
+        $token = $this->getServiceLocator()->get('payum.security.http_request_verifier')->verify($this);
+        $gateway = $this->getServiceLocator()->get('payum')->getGateway($token->getGatewayName());
+        $tokenStorage = $this->getServiceLocator()->get('payum.options')->getTokenStorage();
+        $gateway->execute($status = new GetHumanStatus($token));
+
+        $payment = $status->getFirstModel();
+        
+        if ($payment['status'] === "requires_action") {
+            
+           $payment['doneAction'] = $token->getTargetUrl();  
+
+           try {
+               $gateway->execute(new Confirm($payment));
+
+           } catch (ReplyInterface $reply) {
+               if ($reply instanceof HttpRedirect) {
+                  return $this->redirect()->toUrl($reply->getUrl());
+               }
+               if ($reply instanceof HttpResponse) {
+                  $this->getResponse()->setContent($reply->getContent());
+                  $response = new Response();
+                  $response->setStatusCode(200);
+                  $response->setContent($reply->getContent());
+                  return $response;
+               }
+            throw new \LogicException('Unsupported reply', null, $reply);
+            }
+
+        }
+   
+        if ($payment['status'] != "requires_action") {
+           $doneAction = str_replace("confirm", "done", $token->getTargetUrl());
+
+           $token->setTargetUrl($doneAction);
+           $tokenStorage->update($token);
+           return $this->redirect()->toUrl($doneAction);
+        }
+
+    }    
+
+    public function doneAction()
+    {
+        $serviceManager = $this->getServiceLocator();
+        $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+        $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
+
+        $token = $serviceManager->get('payum.security.http_request_verifier')->verify($this);
+
+        $gateway = $serviceManager->get('payum')->getGateway($token->getGatewayName());
+
+        $gateway->execute($status = new GetHumanStatus($token));
+
+        $payment = $status->getFirstModel();
+
+        $origin = $this->redirectBack()->getOriginAsUrl();
+        
+        $bid = -1;
+        $notes = '';
+#paypal
+        if ($token->getGatewayName() == 'paypal_ec') {       
+            $bid = $payment['PAYMENTREQUEST_0_BID'];
+            $notes = 'direct pay with paypal - ';
+        }
+#paypal        
+#stripe
+        if ($token->getGatewayName() == 'stripe') {
+            $bid = $payment['metadata']['bid'];
+            $notes = 'direct pay with credit card - ';
+        }    
+#stripe
+#klarna
+        if ($token->getGatewayName() == 'klarna') {
+            $bid = $payment['items']['reference'];
+            $notes = 'direct pay with klarna - ';
+        }
+#klarna
+
+        if (! (is_numeric($bid) && $bid > 0)) {
+            throw new RuntimeException('This booking does not exist');
+        }
+        $bookingService = $serviceManager->get('Booking\Service\BookingService');
+        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
+
+        $booking = $bookingManager->get($bid);
+
+        if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || $status->getValue() === "success" || $payment['status'] === "success") {
+
+            if (!$booking->getMeta('directpay_pending') == 'true') {
+                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
+                   $doorcode = $booking->getMeta('doorcode');  
+                   $reservations = $reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
+                   if ($this->sendDoorCode($bid, $reservations, $doorcode, $this->config('doorCodeTimeBuffer'), $this->config('doorCodeRequest')) == true) {
+                       $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
+                           $this->option('subject.square.type'), $doorcode));
+                   } else {
+                       $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s'),
+                           $this->option('subject.square.type'), $this->option('client.contact.phone')));
+                   }
+                }
+                else{
+                    $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
+                        '<b>', '</b>',$this->option('subject.square.type')));
+                }
+            }
+
+            if($status->isPending()) {
+                $booking->set('status_billing', 'pending');
+                $booking->setMeta('directpay', 'false');
+                $booking->setMeta('directpay_pending', 'true');
+            }
+            else {
+                $booking->set('status_billing', 'paid');
+                $booking->setMeta('directpay', 'true');
+                $booking->setMeta('directpay_pending', 'false');
+            }
+
+            $notes = $notes . "payment_status: " . $status->getValue();
+            $booking->setMeta('notes', $notes);
+            $bookingManager->save($booking);
+
+	    }
+	    else
+        {
+            if (!$booking->getMeta('directpay_pending') == 'true') {
+                if(isset($payment['error']['message'])) {
+                    $this->flashMessenger()->addErrorMessage(sprintf($payment['error']['message'],
+                                            '<b>', '</b>'));
+                }
+                $this->flashMessenger()->addErrorMessage(sprintf($this->t('%sError during payment: Your booking has been cancelled.%s'),
+                    '<b>', '</b>'));
+            }
+            $bookingService->cancelSingle($booking);
+        }  
+
+        return $this->redirectBack()->toOrigin();
+   
+    }
+
+    private function sendDoorCode($bid, $reservations, $doorcode, $timebuffer, $doorCodeRequest) {
+
+        $reservation = current($reservations);
+
+        $reservationTimeStart = explode(':', $reservation->need('time_start'));
+        $reservationTimeEnd = explode(':', $reservation->need('time_end'));
+
+        $reservationStart = new \DateTime($reservation->need('date'));
+        $reservationStart->setTime($reservationTimeStart[0], $reservationTimeStart[1]);
+        $reservationStart->modify('-' . $timebuffer);
+        $reservationStart->setTimezone(new \DateTimeZone("UTC"));
+        $reservationEnd = new \DateTime($reservation->need('date'));
+        $reservationEnd->setTime($reservationTimeEnd[0], $reservationTimeEnd[1]);
+        $reservationEnd->modify('+' . $timebuffer);
+        $reservationEnd->setTimezone(new \DateTimeZone("UTC"));
+
+        $timeFrom = $reservationStart->getTimestamp();
+        $timeTo = $reservationEnd->getTimestamp();
+
+        $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
+        $request = str_replace("%%doorcode%%", $doorcode, $request);
+        $request = str_replace("%%timeFrom%%", $timeFrom, $request);
+        $request = str_replace("%%timeTo%%", $timeTo, $request);        
+
+        # senden mit guzzle
+        try {
+            $client = new \GuzzleHttp\Client();
+            $http_res = $client->get($request);
+            $http_status = $http_res->getStatusCode();
+            if ($http_status == 200) {
+                $result = json_decode($http_res->getBody(), true);
+                
+                if ($result['LL']['Code'] == '200') {
+                    return true;
+                }    
+            }
+        }
+        catch (\Exception $e) {
+            # catch all
+            // var_dump('###############');
+            // var_dump($e->getMessage()); 
+            // var_dump('###############');
+        }
+        return false;   
+    }    
 }

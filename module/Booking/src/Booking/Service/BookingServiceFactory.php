@@ -14,6 +14,7 @@ class BookingServiceFactory implements FactoryInterface
 
         $bookingService = new BookingService(
             $sm->get('Base\Manager\OptionManager'),
+            $sm->get('Base\Manager\ConfigManager'),
             $sm->get('Booking\Manager\BookingManager'),
             $sm->get('Booking\Manager\Booking\BillManager'),
             $sm->get('Booking\Manager\ReservationManager'),

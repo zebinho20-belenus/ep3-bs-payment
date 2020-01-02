@@ -271,6 +271,8 @@
 
             var eventGroupsLength = eventGroups.length;
 
+            var diffy = 0;
+
             for (var i = 0; i <= eventGroupsLength; i++) {
                 var eventGroup = eventGroups[i] + "";
 
@@ -295,6 +297,7 @@
                     var eventGroupOverlay = $("#" + eventGroup + "-overlay-" + dateIndex);
 
                     if (! eventGroupOverlay.length) {
+                        // var diffy = 29;
                         eventGroupOverlay = eventGroupCellFirst.clone();
                         eventGroupOverlay.appendTo( eventGroupCellFirst.closest("td") );
                         eventGroupOverlay.attr("id", eventGroup + "-overlay-" + dateIndex);
@@ -306,8 +309,9 @@
                     eventGroupOverlay.css({
                         "position": "absolute",
                         "z-index": 128,
-                        "left": startX, "top": startY,
-                        "width": eventWidth,
+                        "left": startX+1, 
+                        "top": startY-diffy,
+                        "width": eventWidth-1,
                         "height": eventHeight,
                         "padding": 0
                     });

@@ -1,4 +1,6 @@
 <?php
+namespace Application\Model;
+
 /**
  * Application configuration bootstrap
  */
@@ -13,6 +15,23 @@ if (defined('EP3_BS_DEV_TAG')) {
 } else {
     define('EP3_BS_DEV', true);
 }
+
+/**
+ * Payum integration
+ */
+use Payum\Core\Model\ArrayObject;
+
+class PaymentDetails extends \ArrayObject
+{
+    protected $id;
+}
+
+use Payum\Core\Model\Token;
+
+class PaymentSecurityToken extends Token
+{
+}
+
 
 /**
  * Application configuration array
@@ -35,6 +54,7 @@ return array(
         'Service',
         'Square',
         'User',
+        'Payum\PayumModule',
 
         /**
          * Custom modules

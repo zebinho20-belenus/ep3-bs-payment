@@ -51,6 +51,24 @@ return array(
                                     ),
                                 ),
                             ),
+                            'payment_done' => array(
+                                'type' => 'segment',
+                                'options' => array(
+                                    'route'    => '/payment/done[/:payum_token]',
+                                    'defaults' => array(
+                                        'action' => 'done',
+                                    ),
+                                ),
+                            ),
+                            'payment_confirm' => array(
+                                'type' => 'segment',
+                                'options' => array(
+                                    'route'    => '/payment/confirm[/:payum_token]',
+                                    'defaults' => array(
+                                        'action' => 'confirm',
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),
@@ -100,6 +118,9 @@ return array(
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
         ),
     ),
 );

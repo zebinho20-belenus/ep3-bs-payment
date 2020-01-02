@@ -30,13 +30,22 @@ class OccupiedForVisitors extends AbstractHelper
 
             $cellGroup = ' cc-group-' . $booking->need('bid');
 
+            $style = 'cc-single';
+
+            if ($booking->getMeta('directpay') == 'true' and $booking->get('status_billing')!= 'paid') {
+                if (! $cellLabel) {
+                    $cellLabel = $view->t('temp blocked');
+                }
+                $style = 'cc-try';
+            }
+
             switch ($booking->need('status')) {
                 case 'single':
                     if (! $cellLabel) {
                         $cellLabel = $this->view->t('Occupied');
                     }
 
-                    return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), 'cc-single' . $cellGroup);
+                    return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), $style . $cellGroup);
                 case 'subscription':
                     if (! $cellLabel) {
                         $cellLabel = $this->view->t('Subscription');

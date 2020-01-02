@@ -1,0 +1,25 @@
+{
+    "name": "TVaS court booking",
+    "short_name": "TVaS Booking",
+    "start_url": "./",
+    "display": "fullscreen",
+    "theme_color": "#1e73be",
+    "background_color": "#1e73be",
+    "description": "book indoor Tennis court at TV am Saalebogen Rudolstadt",
+    "icons": [
+        {
+            "src": "imgs-client/layout/logo.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "imgs-client/layout/logo.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "imgs-client/icons/fav.ico",
+            "sizes": "16x16"
+        }
+    ]
+}

@@ -6,7 +6,11 @@
  * and provide the email address the system should use.
  */
 
-return array(
+$detailsClass = 'Application\Model\PaymentDetails';
+
+$project_config = require 'config/autoload/project.php';
+
+return array_merge($project_config, array(
     'db' => array(
         'database' => '?',
         'username' => '?',
@@ -17,7 +21,7 @@ return array(
     ),
     'mail' => array(
         'type' => 'sendmail', // or 'smtp' or 'smtp-tls'
-        'address' => 'info@bookings.example.com',
+        'address' => '?',
 
         'host' => '?', // for 'smtp' type only, otherwise remove or leave as is
         'user' => '?', // for 'smtp' type only, otherwise remove or leave as is
@@ -43,4 +47,35 @@ return array(
         // the following locale will be used as the default "fallback":
         'locale' => 'de-DE',
     ),
-);
+    'payum' => array(
+        'token_storage' => new \Payum\Core\Storage\FilesystemStorage(
+            __DIR__.'/../../data/payum',
+            'Application\Model\PaymentSecurityToken',
+            'hash'
+        ),
+        'gateways' => array(
+            'paypal_ec' => (new \Payum\Paypal\ExpressCheckout\Nvp\PaypalExpressCheckoutGatewayFactory())->create(array(
+                'username' => '?',
+                'password' => '?',
+                'signature' => '?',
+                'sandbox' => true
+            )),
+            'stripe' => (new \Payum\Stripe\StripeCheckoutGatewayFactory())->create(array(
+                'publishable_key' => '?',
+                'secret_key' => '?',
+                'sca_flow' => true,
+                'payum.template.obtain_token' => '@PayumStripe/Action/stripe_js.html.twig',
+                'payum.template.require_confirmation' => '@PayumStripe/Action/stripe_confirm.html.twig'
+            )),
+            'klarna_checkout' => (new \Payum\Stripe\KlarnaCheckoutGatewayFactory())->create(array(
+                'secret' => '?',
+                'merchant_id' => '?',
+                'sandbox' => true
+            )),
+ 
+        ),
+        'storages' => array(
+            $detailsClass => new \Payum\Core\Storage\FilesystemStorage(__DIR__.'/../../data/payum', $detailsClass, 'id'),
+        )
+    ),
+));

@@ -362,9 +362,7 @@ class RegistrationForm extends Form
                         'name' => 'Identical',
                         'options' => array(
                             'token' => 'rf-email1',
-                            'message' => array(
-                                'Both email addresses must be identical',
-                            ),
+                            'message' => 'Both email addresses must be identical',
                         ),
                     ),
                 ),

@@ -18,8 +18,13 @@ class Free extends AbstractHelper
             return $view->calendarCellRenderFreeForPrivileged($reservations, $cellLinkParams, $square);
         } else if ($user) {
             if ($userBooking) {
+
                 $cellLabel = $view->t('Your Booking');
                 $cellGroup = ' cc-group-' . $userBooking->need('bid');
+
+                if ($userBooking->getMeta('directpay') == 'true' and $userBooking->get('status_billing')!= 'paid') {
+                    $cellLabel = $view->t('Your Booking TRY');
+                }
 
                 return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), 'cc-own' . $cellGroup);
             } else {

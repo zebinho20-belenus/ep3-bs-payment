@@ -12,6 +12,7 @@ class HeaderLocaleChoiceFactory implements FactoryInterface
     {
         return new HeaderLocaleChoice(
             $sm->getServiceLocator()->get('Base\Manager\ConfigManager'),
+            $sm->getServiceLocator()->get('Base\Manager\OptionManager'),
             $sm->getServiceLocator()->get('Request')->getUri());
     }
 

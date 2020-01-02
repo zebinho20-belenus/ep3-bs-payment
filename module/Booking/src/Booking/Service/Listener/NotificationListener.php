@@ -4,6 +4,7 @@ namespace Booking\Service\Listener;
 
 use Backend\Service\MailService as BackendMailService;
 use Base\Manager\OptionManager;
+use Base\Manager\ConfigManager;
 use Base\View\Helper\DateRange;
 use Booking\Manager\ReservationManager;
 use Square\Manager\SquareManager;
@@ -19,6 +20,7 @@ class NotificationListener extends AbstractListenerAggregate
 {
 
     protected $optionManager;
+    protected $configManager;
     protected $reservationManager;
     protected $squareManager;
     protected $userManager;
@@ -28,11 +30,12 @@ class NotificationListener extends AbstractListenerAggregate
     protected $dateRangeHelper;
     protected $translator;
 
-    public function __construct(OptionManager $optionManager, ReservationManager $reservationManager, SquareManager $squareManager,
+    public function __construct(OptionManager $optionManager, ConfigManager $configManager, ReservationManager $reservationManager, SquareManager $squareManager,
 	    UserManager $userManager, UserMailService $userMailService, BackendMailService $backendMailService,
 	    DateFormat $dateFormatHelper, DateRange $dateRangeHelper, TranslatorInterface $translator)
     {
         $this->optionManager = $optionManager;
+        $this->configManager = $configManager;
         $this->reservationManager = $reservationManager;
         $this->squareManager = $squareManager;
         $this->userManager = $userManager;
@@ -73,10 +76,26 @@ class NotificationListener extends AbstractListenerAggregate
             $this->optionManager->get('subject.square.type'),
             $dateFormatHelper($reservationStart, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::SHORT));
 
-        $message = sprintf($this->t('we have reserved %s %s, %s for you. Thank you for your booking.'),
-            $this->optionManager->get('subject.square.type'),
-            $square->need('name'),
-            $dateRangerHelper($reservationStart, $reservationEnd));
+        if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true) { 
+            $doorcode = $booking->getMeta('doorcode');
+            $message = sprintf($this->t('we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking. Door code: %s . The booking and the code is only valid after payment is fully completed.'),
+                $this->optionManager->get('subject.square.type'),
+                $square->need('name'),
+                $dateRangerHelper($reservationStart, $reservationEnd),
+                $booking->get('bid'),
+                $doorcode);
+        } else {
+            $message = sprintf($this->t('we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking.'),
+                $this->optionManager->get('subject.square.type'),
+                $square->need('name'),
+                $dateRangerHelper($reservationStart, $reservationEnd),
+                $booking->get('bid'));
+        }
+
+        $message = $message . ' ';
+
+        $message = $message . sprintf($this->t('Should you have any questions and commentaries, please contact us through Email - %s'),
+             $this->optionManager->get('client.contact.email'));
 
         if ($user->getMeta('notification.bookings', 'true') == 'true') {
             $this->userMailService->send($user, $subject, $message);
@@ -117,10 +136,11 @@ class NotificationListener extends AbstractListenerAggregate
         $subject = sprintf($this->t('Your %s-booking has been cancelled'),
             $this->optionManager->get('subject.square.type'));
 
-        $message = sprintf($this->t('we have just cancelled %s %s, %s for you.'),
+        $message = sprintf($this->t('we have just cancelled %s "%s", %s for you (booking id: %s).'),
             $this->optionManager->get('subject.square.type'),
             $square->need('name'),
-            $dateRangerHelper($reservationStart, $reservationEnd));
+            $dateRangerHelper($reservationStart, $reservationEnd),
+            $booking->get('bid'));
 
         if ($user->getMeta('notification.bookings', 'true') == 'true') {
             $this->userMailService->send($user, $subject, $message);

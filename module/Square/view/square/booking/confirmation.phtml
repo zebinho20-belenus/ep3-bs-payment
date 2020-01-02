@@ -17,10 +17,22 @@ $this->setup(array(
 
 ?>
 
+<script type="text/javascript">
+function showHide() {
+   var div = document.getElementById('hidden_div');
+   if (div.style.display == 'none') {
+     div.style = 'position:absolute; top:0; right:0; bottom:0; left:0; background-color: gray; opacity: .5;';
+   }
+   else {
+     div.style.display = 'none';
+   }
+ }
+</script
+
+
 <div class="padded">
 
-    <form method="post" action="<?= $this->url ?>">
-
+    <form id="confirmform" method="post" onSubmit="showHide();" action="<?= $this->url ?>">
         <?php
 
         $pricingSummary = $this->squarePricingSummary($dateStart, $dateEnd, $square, $this->quantityChoosen, $this->products);
@@ -69,7 +81,7 @@ $this->setup(array(
 
         <?php endif; ?>
 
-        <div class="centered-text small-text gray" style="margin-bottom: 12px;">
+        <div class="centered-text big-text gray" style="margin-bottom: 12px;"><b>
 	        <?php
 
 	        $cancelRange = $square->need('range_cancel');
@@ -84,13 +96,48 @@ $this->setup(array(
 	        }
 
 	        ?>
-        </div>
+        </b></div>
 
         <div class="centered-text">
-            <input type="hidden" name="bf-confirm" value="<?= sha1('Quick and dirty' . floor(time() / 1800)) ?>">
-            <input type="submit" name="bf-submit" value="<?= $this->t('Complete booking') ?>" class="default-button">
+            <input type="hidden" name="bf-confirm" value="<?= sha1('Quick and dirty' . floor(time() / 1800)) ?>">   
+            <?php if ($this->paypal): ?>     
+                <label for="paypal" class="payment_radio">
+                    <input type="radio" id="paypal" name="paymentservice" value="paypal" checked>
+                    <img width="100" src="<?= $this->basePath('imgs-client/layout/paypal_100.png') ?>" border="0" alt="PayPal Logo" />
+                </label> 
+            <?php endif; ?>
+            <?php if ($this->stripe && !$this->paypal): ?>
+                <label for="stripe" class="payment_radio">     
+                    <input type="radio" id="stripe" name="paymentservice" value="stripe" checked>
+                    <img width="100" src="<?= $this->basePath('imgs-client/layout/stripe_100.png') ?>" border="0" alt="CreditCard Logo" />
+                </label>
+            <?php endif; ?>
+            <?php if ($this->stripe && $this->paypal): ?>
+                &nbsp;
+                <label for="stripe_paypal" class="payment_radio">
+                    <input type="radio" id="stripe_paypal" name="paymentservice" value="stripe">
+                    <img width="100" src="<?= $this->basePath('imgs-client/layout/stripe_100.png') ?>" border="0" alt="CreditCard Logo" />
+                </label>
+            <?php endif; ?>
+            <?php if ($this->klarna): ?>
+                <label for="klarna" class="payment_radio">
+                    <input type="radio" id="klarna" name="paymentservice" value="klarna">
+                    Klarna
+                </label>
+            <?php endif; ?> 
+
+            <?php if ($this->paypal || $this->stripe || $this->klarna): ?>
+                <br>
+                <br>
+                <input type="submit" name="bf-submit" value="<?= $this->t('go to payment') ?>" class="default-button">
+            <?php else: ?>
+                <input type="submit" name="bf-submit" value="<?= $this->t('Complete booking') ?>" class="default-button">
+            <?php endif; ?>  
         </div>
 
     </form>
 
+</div>
+
+<div id="hidden_div" style="display:none" >
 </div>

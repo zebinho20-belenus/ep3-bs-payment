@@ -33,16 +33,19 @@ function auth() {
     define('EP3_BS_DEV', false);
   }
 
-  $config = require 'config/autoload/global.php';
+  $config = require 'config/autoload/project.php';
+
+  $path = $config['basepath'];
+  set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 
   $sessionName = $config['session_config']['name'];
   $sessionPath = $config['session_config']['save_path'];
 
   if (isset($_COOKIE[$sessionName])) {
 
-    require 'vendor/zendframework/zendframework/library/Zend/Stdlib/Exception/ExceptionInterface.php';
-    require 'vendor/zendframework/zendframework/library/Zend/Stdlib/Exception/InvalidArgumentException.php';
-    require 'vendor/zendframework/zendframework/library/Zend/Stdlib/ArrayObject.php';
+    require 'vendor/zendframework/zend-stdlib/src/Exception/ExceptionInterface.php';
+    require 'vendor/zendframework/zend-stdlib/src/Exception/InvalidArgumentException.php';
+    require 'vendor/zendframework/zend-stdlib/src/ArrayObject.php';
 
     session_name($sessionName);
     session_save_path($sessionPath);

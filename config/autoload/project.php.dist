@@ -1,0 +1,36 @@
+<?php
+/**
+ * project application configuration
+ *
+ */
+
+
+$project = '?';
+
+return array(
+    'project' => $project,
+    'basepath' => '/var/www/html/'.$project,
+    'baseurl' => '?',
+    'proxyurl' => '?',
+    'cookie_config' => array(
+        'cookie_name_prefix' => $project,
+    ),
+    'redirect_config' => array(
+        'cookie_name' => $project.'-origin',
+        'default_origin' => 'frontend',
+    ),
+    'session_config' => array(
+        'name' => $project.'-session',
+        'save_path' => getcwd() . '/data/session/',
+        'use_cookies' => true,
+        'use_only_cookies' => true,
+    ),
+    'genDoorCode' => false,
+    'doorCodeTimeBuffer' => '15 minutes',
+    'doorCodeRequest' => '?',
+    'tmpBookingAt' => '?',
+    'paypal' => true,
+    'stripe' => true,
+    'klarna' => false
+);
+

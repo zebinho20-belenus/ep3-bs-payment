@@ -3,6 +3,7 @@
 namespace Booking\Service;
 
 use Base\Manager\OptionManager;
+use Base\Manager\ConfigManager;
 use Base\Service\AbstractService;
 use Base\View\Helper\DateRange;
 use Booking\Entity\Booking;
@@ -23,6 +24,7 @@ class BookingService extends AbstractService
 {
 
     protected $optionManager;
+    protected $configManager;
     protected $bookingManager;
     protected $billManager;
     protected $reservationManager;
@@ -32,6 +34,7 @@ class BookingService extends AbstractService
 
     public function __construct(
         OptionManager $optionManager,
+        ConfigManager $configManager,
         BookingManager $bookingManager,
         BillManager $billManager,
         ReservationManager $reservationManager,
@@ -40,6 +43,7 @@ class BookingService extends AbstractService
         ConnectionInterface $connection)
     {
         $this->optionManager = $optionManager;
+        $this->configManager = $configManager;
         $this->bookingManager = $bookingManager;
         $this->billManager = $billManager;
         $this->reservationManager = $reservationManager;
@@ -67,6 +71,10 @@ class BookingService extends AbstractService
                 'visibility' => 'public',
                 'quantity' => $quantity,
             ), $meta);
+
+            if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true) {
+               $booking->setMeta('doorcode', rand(100000,999999));
+            }
 
             $this->bookingManager->save($booking);
 
