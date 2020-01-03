@@ -58,3 +58,18 @@ Version 1.4 introduced some requested features and the latest third party librar
 We use the GitHub Issue Tracker for such things:
 
 https://github.com/tkrebs/ep3-bs/issues
+
+# Payment
+
+## paypal
+create an account at paypal.com - first sandbox for developing later live - get the NVP/SOAP credentials (username,password,signature) and put them in your config/autoload/local.php
+
+## stripe
+create an account at stripe.com - get the API keys (publishable and secret key) - first test later live - and put them in your config/autoload/local.php
+
+## apple pay via stripe
+verify your domian for apple pay
+```
+https://stripe.com/docs/stripe-js/elements/payment-request-button#verifying-your-domain-with-apple-pay
+```
+
