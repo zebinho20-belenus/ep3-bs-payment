@@ -34,12 +34,17 @@ return array(
     'This reservation does not exist' => 'Diese Reservierung gibt es nicht',
 
     'Your %s-booking for %s' => 'Ihre %s-Buchung am %s',
-    'we have reserved %s %s, %s for you. Thank you for your booking.'
-        => 'wir haben %s %s am %s für Sie reserviert. Vielen Dank für Ihre Buchung.',
-    'we have just cancelled %s %s, %s for you.'
-        => 'wir haben Ihre Buchung für %s %s, %s storniert.',
+    'we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking.'
+        => 'wir haben den %s "%s" am %s für Sie reserviert (Buchungs-Nr: %s). Vielen Dank für Ihre Buchung.',
+    'we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking. Door code: %s . The booking and the code is only valid after payment is fully completed.'
+        => 'wir haben den %s "%s" am %s für Sie reserviert (Buchungs-Nr: %s). Vielen Dank für Ihre Buchung. Tür code: %s . Die Buchung und der code sind erst nach vollständiger Bezahlung gültig.',
+    'we have just cancelled %s "%s", %s for you (booking id: %s).'
+        => 'wir haben Ihre Buchung für den %s "%s", %s storniert (Buchungs-Nr: %s).',
 
     '%s\'s %s-booking for %s' => '%s\'s %s-Buchung am %s',
     '%s\'s %s-booking has been cancelled' => '%s\'s %s-Buchung wurde storniert',
+    'Should you have any questions and commentaries, please contact us through Email - %s' => 'Sollten Sie noch Fragen bzw. Anregungen haben, informieren sie bitte unser Supportteam unter %s',
+    '%sPayment and admittance temporarily at %s!%s' => '%sBezahlung und Einlass vorübergehend bei %s!%s',
+    '%sSorry online booking not possible at the moment!%s' => '%sEntschuldigung im Augenblick ist keine online Buchung möglich!%s'
 
 );

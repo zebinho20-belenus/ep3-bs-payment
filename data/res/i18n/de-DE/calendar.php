@@ -17,6 +17,7 @@ return array(
     'Occupied' => 'Belegt',
 
     'Your Booking' => 'Ihre Buchung',
+    'Your Booking TRY' => 'Ihr Buchungs VERSUCH',
 
     'Loading' => 'Wird geladen',
     'Please wait' => 'Bitte warten',

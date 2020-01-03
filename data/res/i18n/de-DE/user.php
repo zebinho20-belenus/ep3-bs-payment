@@ -34,7 +34,7 @@ return array(
     'Your registration to the %s %s' => 'Ihre Registrierung beim %s %s',
 
     "welcome to the %s %s!\r\n\r\nThank you for your registration to our service.\r\n\r\nBefore you can completely use your new user account to book spare %s online, you have to activate it by simply clicking the following link. That's all!\r\n\r\n%s"
-        => "herzlich Willkommen zum %s %s!\r\n\r\nVielen Dank für Ihre Registrierung für unser Angebot.\r\n\r\nBevor Sie nun freie %s online buchen können, müssen Sie nur noch folgende Internetseite besuchen um Ihr Benutzerkonto zu aktivieren und schon können Sie loslegen!\r\n\r\n%s",
+        => "herzlich Willkommen zum %s %s!\r\n\r\nVielen Dank für Ihre Registrierung für unser Angebot.\r\n\r\nBevor Sie nun freie %s online buchen können, müssen Sie nur noch folgendem Link folgen um Ihr Benutzerkonto zu aktivieren und schon können Sie loslegen!\r\n\r\n%s",
 
     'Your activation code seems invalid. Please try again.' => 'Ihr Aktivierungs-Code scheint ungültig zu sein. Bitte versuchen Sie es erneut.',
 
@@ -43,7 +43,7 @@ return array(
     'We have just received your request for a new user account activation email.' => 'Sie haben kürzlich um eine neue Aktivierungs E-Mail gebeten.',
     'Unfortunately, your account is considered a placeholder and thus cannot be activated.' => 'Leider wurde Ihr Benutzerkonto als Platzhalter definiert.',
     "Before you can completely use your new user account to book spare %s online, you have to activate it by simply clicking the following link. That's all!\r\n\r\n%s"
-        => "Bevor Sie nun freie %s online buchen können, müssen Sie nur noch folgende Internetseite besuchen um Ihr Benutzerkonto zu aktivieren und schon können Sie loslegen!\r\n\r\n%s",
+        => "Bevor Sie nun freie %s online buchen können, müssen Sie nur noch folgendem Link folgen um Ihr Benutzerkonto zu aktivieren und schon können Sie loslegen!\r\n\r\n%s",
     'However, your account has already been activated. You can login whenever you like!'
         => 'Allerdings ist Ihr Benutzerkonto bereits aktiviert. Sie können sich jederzeit anmelden.',
 
@@ -51,7 +51,7 @@ return array(
     'New email address at %s %s' => 'Neue E-Mail Adresse beim %s %s',
 
     "You have just changed your account's email address to this one.\r\n\r\nBefore you can completely use your new email address to book spare %s online again, you have to activate it by simply clicking the following link. That's all!\r\n\r\n%s"
-        => "Sie haben kürzlich Ihre E-Mail Adresse bei uns geändert. Bevor Sie nun wieder freie %s online buchen können, müssen Sie folgende Internetseite besuchen um Ihr Benutzerkonto zu aktivieren und schon können Sie loslegen!\r\n\r\n%s",
+        => "Sie haben kürzlich Ihre E-Mail Adresse bei uns geändert. Bevor Sie nun wieder freie %s online buchen können, müssen Sie folgendem Link folgen um Ihr Benutzerkonto zu aktivieren und schon können Sie loslegen!\r\n\r\n%s",
 
     'Your %semail address%s has been updated' => 'Ihre %sE-Mail Adresse%s wurde aktualisiert',
     'Your %snotification settings%s have been updated' => 'Ihre %sBenachrichtigungs-Einstellungen%s wurden aktualisiert',
@@ -258,5 +258,7 @@ return array(
 	'Originally sent to %s (%s).' => 'Ursprünglich gesendet an %s (%s).',
     'Sincerely' => 'Viele Grüße',
     'Your' => 'Ihr',
+    'team from' => 'Team vom',
+    
 
 );

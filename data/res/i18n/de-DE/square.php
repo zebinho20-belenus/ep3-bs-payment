@@ -59,7 +59,7 @@ return array(
 	'Your booking will be binding.' => 'Ihre Buchung ist verbindlich.',
     'Your booking will be binding, however, you can cancel it up to %s before it takes place.'
         => 'Ihre Buchung ist verbindlich. Sie können sie jedoch bis zu %s vorher stornieren.',
-    'Complete booking' => 'Buchung abschließen',
+    'Complete booking' => 'Buchung bestätigen',
 
     'Cancel this booking' => 'Buchung stornieren',
     'Cancel booking' => 'Buchung stornieren',
@@ -108,5 +108,10 @@ return array(
     'Player\'s name' => 'Spieler Name',
     'and email address' => 'und E-Mail Adresse',
     'and phone number' => 'und Telefonnummer',
+    
+    '%sError during payment: Your booking has been cancelled.%s' => '%sFehler während Bezahlvorgang: Die Buchung wurde abgebrochen.%s', 
+    'Your %s has been booked! The doorcode is: %s' => 'Ihr %s wurde für Sie gebucht! Der Türcode ist: %s',
+    'Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s' => 'Ihr %s wurde für Sie gebucht! Jedoch konnte der Türcode nicht gesendet werden. Bitte rufen Sie an - %s',   
+    'go to payment' => 'weiter zur Zahlung', 
 
 );
