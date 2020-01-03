@@ -295,7 +295,7 @@ class BookingController extends AbstractActionController
                            'items' => array(
                                 array(
                                    'reference' => $booking->get('bid'),
-                                   'name' => 'TVaS booking',
+                                   'name' => $description,
                                    'quantity' => 1,
                                    'unit_price' => $total,
                                 )
