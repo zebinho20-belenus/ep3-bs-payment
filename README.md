@@ -73,3 +73,14 @@ verify your domian for apple pay
 https://stripe.com/docs/stripe-js/elements/payment-request-button#verifying-your-domain-with-apple-pay
 ```
 
+## removing unpaid booking try's
+cancelling bookings is not allowed in our version - so we remove unpaid user online bookings automatically if they are not completed during the payment process - we remove that bookings after 3 hours (the standard lifetime of a paypal token) in the db with folowing sql
+```
+DROP EVENT remove_unpaid_bookings;
+SET GLOBAL event_scheduler = ON;
+CREATE EVENT remove_unpaid_bookings ON SCHEDULE EVERY 10 MINUTE STARTS '2019-11-14 00:00:00' ON COMPLETION PRESERVE DO delete from bs_bookings where `status` = 'single' and `status_billing` = 'pending' and created < (NOW() - INTERVAL 3 HOUR) and bid in (select bid from bs_bookings_meta where `key` = 'directpay' and `value` = 'true');
+```
+
+
+
+
