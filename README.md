@@ -22,9 +22,7 @@ create an account at stripe.com - get the API keys (publishable and secret key) 
 
 ## apple pay via stripe
 verify your domain for apple pay
-```
 https://stripe.com/docs/stripe-js/elements/payment-request-button#verifying-your-domain-with-apple-pay
-```
 
 ## removing unpaid booking try's
 cancelling bookings is not allowed in our version - so we remove unpaid user online bookings automatically if they are not completed during the payment process - we remove that bookings after 3 hours (the standard lifetime of a paypal token) in the db with following sql
