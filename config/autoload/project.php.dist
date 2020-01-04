@@ -4,12 +4,14 @@
  *
  */
 
-
+// basepath of the instance on your server - i.e. tvas-booking-dev for https://tennis-rudolstadt.de/tvas-booking-dev
 $project = '?';
 
 return array(
     'project' => $project,
+    // origin url of your server - http://yourip
     'baseurl' => '?',
+    // the proxy url - i.e. https://tennis-rudolstadt.de
     'proxyurl' => '?',
     'cookie_config' => array(
         'cookie_name_prefix' => $project,
@@ -26,10 +28,14 @@ return array(
     ),
     'genDoorCode' => false,
     'doorCodeTimeBuffer' => '15 minutes',
+    // API http request for your door system
     'doorCodeRequest' => '?',
+    // show a flash message where you can manually book if you disable all payment methods 
     'tmpBookingAt' => '?',
+    // enable/disable specific payment providers 
     'paypal' => true,
     'stripe' => true,
+    // not yet implemented
     'klarna' => false
 );
 
