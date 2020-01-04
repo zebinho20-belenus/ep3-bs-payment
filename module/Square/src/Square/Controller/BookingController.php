@@ -227,7 +227,6 @@ class BookingController extends AbstractActionController
                 if($bookable) {
                    $project = $this->config('project');
                    $projectShort = $this->option('client.name.short');
-                   $basepath = $this->config('basepath');
                    $baseurl = $this->config('baseurl');
                    $proxyurl = $this->config('proxyurl');
 		           $storage = $this->getServiceLocator()->get('payum')->getStorage('Application\Model\PaymentDetails');

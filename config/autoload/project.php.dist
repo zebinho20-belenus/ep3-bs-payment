@@ -9,7 +9,6 @@ $project = '?';
 
 return array(
     'project' => $project,
-    'basepath' => '/var/www/html/'.$project,
     'baseurl' => '?',
     'proxyurl' => '?',
     'cookie_config' => array(
