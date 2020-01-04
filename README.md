@@ -22,6 +22,7 @@ create an account at stripe.com - get the API keys (publishable and secret key) 
 
 ## apple pay via stripe
 verify your domain for apple pay
+
 https://stripe.com/docs/stripe-js/elements/payment-request-button#verifying-your-domain-with-apple-pay
 
 ## removing unpaid booking try's
@@ -35,6 +36,7 @@ if a user is actively cancelling the payment via paypal or the stripe checkout -
 
 ## stripe payment site
 can be changed via the twig templates of payumStripe
+
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 
 
