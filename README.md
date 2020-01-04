@@ -35,7 +35,7 @@ CREATE EVENT remove_unpaid_bookings ON SCHEDULE EVERY 10 MINUTE STARTS '2019-11-
 if a user is actively cancelling the payment via paypal or the stripe checkout - the booking is automatically cancelled too 
 
 ## stripe payment site
-can be changed via the twig templates of payumStripe
+can be changed via the twig templates of payumStripe - for other language support than German and English you have to extend these templates too
 
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 
