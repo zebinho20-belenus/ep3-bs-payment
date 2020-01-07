@@ -9,7 +9,9 @@ vendor path completely from our instance (tennis-rudolstadt.de) with extended pa
 
 css, images (logo) from our instance (to be changed if somebody want's to use this version of ep3-bs)
 
-in addition to the original config there is a projetc.php in config/autoload and the extended local.php for the payment provider options  
+in addition to the original config there is a projetc.php in config/autoload and the extended local.php for the payment provider options 
+
+in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility and the hammer.js for swiping left/right in the calendar
 
 
 # Payment
