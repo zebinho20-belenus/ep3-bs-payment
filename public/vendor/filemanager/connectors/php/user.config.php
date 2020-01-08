@@ -35,9 +35,6 @@ function auth() {
 
   $config = require 'config/autoload/project.php';
 
-  $path = $config['basepath'];
-  set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-
   $sessionName = $config['session_config']['name'];
   $sessionPath = $config['session_config']['save_path'];
 

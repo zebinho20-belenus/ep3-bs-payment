@@ -113,5 +113,5 @@ return array(
     'Your %s has been booked! The doorcode is: %s' => 'Ihr %s wurde für Sie gebucht! Der Türcode ist: %s',
     'Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s' => 'Ihr %s wurde für Sie gebucht! Jedoch konnte der Türcode nicht gesendet werden. Bitte rufen Sie an - %s',   
     'go to payment' => 'weiter zur Zahlung', 
-
+    'Timeblock choice:' => 'Zeitraum wählen:',
 );

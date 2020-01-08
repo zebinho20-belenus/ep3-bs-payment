@@ -733,6 +733,8 @@ option { padding-right: 16px; }
 .default-form-label-top { padding-left: 8px; padding-bottom: 3px; }
 .default-form-label-row { padding-top: 7px; text-align: right; }
 
+#sb-button { margin: 10px; }
+
 /* Responsive - We haz it :D */
 
 @media screen and (max-width: 1536px)

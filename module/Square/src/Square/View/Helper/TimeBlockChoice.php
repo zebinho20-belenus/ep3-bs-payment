@@ -78,7 +78,7 @@ class TimeBlockChoice extends AbstractHelper
 
         $view = $this->getView();
         $html = '';
-
+        $html .= '<label for="sb-alternate-times" ><span><b>' . $view->t('Timeblock choice:') . '</b></span></label>';
         $html .= '<select id="sb-alternate-times" style="display: none; margin-right: 16px;">';
 
         $walkingTimeStartParts = explode(':', $dateTimeStart->format('H:i'));
