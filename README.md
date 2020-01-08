@@ -9,7 +9,9 @@ vendor path completely from our instance (tennis-rudolstadt.de) with extended pa
 
 css, images (logo) from our instance (to be changed if somebody want's to use this version of ep3-bs)
 
-in addition to the original config there is a projetc.php in config/autoload and the extended local.php for the payment provider options  
+in addition to the original config there is a projetc.php in config/autoload and the extended local.php for the payment provider options 
+
+in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility and the hammer.js for swiping left/right in the calendar
 
 
 # Payment
@@ -35,7 +37,7 @@ CREATE EVENT remove_unpaid_bookings ON SCHEDULE EVERY 10 MINUTE STARTS '2019-11-
 if a user is actively cancelling the payment via paypal or the stripe checkout - the booking is automatically cancelled too 
 
 ## stripe payment site
-can be changed via the twig templates of payumStripe
+can be changed via the twig templates of payumStripe - for other language support than German and English you have to extend these templates too
 
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 
