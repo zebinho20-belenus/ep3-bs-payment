@@ -14,23 +14,15 @@
        <a class="shop abort" href="/{{ model.metadata.project }}/public/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'Abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
     </header>
     <div id="checkout">
-      <div id="payment-request">
-        <div id="payment-request-button"></div>
-      </div>
 
     <form action="{{ model.doneAction|default('') }}" method="POST" id="payment-form">
         <p class="instruction">{{ model.metadata.locale == 'de-DE' ? 'Bezahlung abschließen' : 'Complete your payment details below' }}</p>
         <section>
           <b>{{ model.receipt_email|default("") }}</b>{{ model.description|default("") }}
         </section>
-        <section>
-            <div id="card-errors" class="element-errors"></div>
-        </section>
+        <div id="payment-errors" class="element-errors"></div>
         <section>
           <h2>{{ model.metadata.locale == 'de-DE' ? 'Zahlungsinformation' : 'Payment information' }}</h2>
-          <nav id="payment-methods">
-          </nav>
-
         </section>
         <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Confirm payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung bestätigen' : '' }}</button> 
     </form>
@@ -97,11 +89,12 @@
             
             var stripeResponseHandler = function(response) {
                 var $form = $('#payment-form');
-
+                const paymentErrors = document.getElementById('payment-errors');
                 if (response.error) {
                     // Show the errors on the form
-                    $form.find('#card-errors').text(response.error.message
+                    $form.find('#payment-errors').text(response.error.message
                         + " ");
+                    paymentErrors.classList.add('visible');
                     $form.find('button').prop('disabled', true);
                     $form.find('button').css('background', '#dadadf');
                     window.setTimeout(function(){

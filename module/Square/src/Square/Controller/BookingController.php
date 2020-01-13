@@ -200,9 +200,9 @@ class BookingController extends AbstractActionController
                         $bookable = true;
                     }
 
-		    foreach ($products as $product) {
+		        foreach ($products as $product) {
                              
-			    $bills[] = new Bill(array(
+			        $bills[] = new Bill(array(
 						    'description' => $product->need('name'),
 						    'quantity' => $product->needExtra('amount'),
 						    'price' => $product->need('price') * $product->needExtra('amount'),
@@ -211,14 +211,14 @@ class BookingController extends AbstractActionController
 						    ));
 
                             $total+=$product->need('price') * $product->needExtra('amount'); 
-		    }
+		        }
 
 
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
 		    $booking = $bookingService->createSingle($user, $square, $quantityParam, $byproducts['dateStart'], $byproducts['dateEnd'], $bills, array(
 					    'player-names' => serialize($playerNames),
-					    ));
+                    ));
 
             $payservice = $this->params()->fromPost('paymentservice');
             
@@ -235,6 +235,8 @@ class BookingController extends AbstractActionController
                    $details = $storage->create();
                    $booking->setMeta('directpay', 'true');
                    $bookingManager->save($booking);
+                   $userName = $user->getMeta('firstname') . ' ' . $user->getMeta('lastname');
+                   $companyName = $this->option('client.name.full');
 
                    $locale = $this->config('i18n.locale');
 
@@ -257,11 +259,12 @@ class BookingController extends AbstractActionController
                    #paypal checkout
                    #stripe checkout
                    if ($payservice == 'stripe') {
+                       $details["payment_method_types"] = $this->config('stripePaymentMethods');                       
                        $details["amount"] = $total;
                        $details["currency"] = 'EUR';
                        $details["description"] = $description;
                        $details["receipt_email"] = $user->get('email');
-                       $details["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'project' => $project, 'projectShort' => $projectShort);
+                       $details["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'project' => $project, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName);
                        $storage->update($details);
                        $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
                            'stripe', $details, $proxyurl.'/'.$project.'/public/square/booking/payment/confirm');
@@ -301,7 +304,6 @@ class BookingController extends AbstractActionController
                            )
                        );
                        $storage->update($details);
-
                    }
                    #klarna checkout
 

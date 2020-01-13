@@ -35,6 +35,11 @@ return array(
     // enable/disable specific payment providers 
     'paypal' => true,
     'stripe' => true,
+    // enable/disable addditional stripe payment methods like sepa_debit
+    'stripePaymentMethods' => array(
+        'card',
+        'sepa_debit'
+    ),
     // not yet implemented
     'klarna' => false
 );

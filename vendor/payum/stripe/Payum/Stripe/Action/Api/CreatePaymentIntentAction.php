@@ -73,7 +73,7 @@ class CreatePaymentIntentAction implements ActionInterface, ApiAwareInterface
 
             $charge = PaymentIntent::create(array_merge($model->toUnsafeArrayWithoutLocal(), [
                 'confirmation_method' => 'manual',
-                'confirm' => true,
+                'confirm' => true
             ]));
 
             $model->replace($charge->__toArray(true));

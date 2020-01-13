@@ -14,22 +14,46 @@
       <a class="shop abort" href="/{{ model.metadata.project }}/public/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
     </header>
     <div id="checkout">
+      <div>
+          <b>{{ model.description|default("") }}</b>
+      </div>
       <div id="payment-request">
         <div id="payment-request-button">Pay Button</div>
       </div>
-      <div id="alternative"></div> 
+      <div id="alternative"></div>
 <form action="{{ actionUrl|default('') }}" method="post" id="payment-form">
      
-        <p class="instruction">{{ model.metadata.locale == 'de-DE' ? 'Bezahlung mit Kreditkarte abschließen' : 'Complete your payment with credit card below' }}</p>
-        <section>
-          <b>{{ model.receipt_email|default("") }}</b>{{ model.description|default("") }} 
-        </section>
-        <section>
-            <div id="card-errors" class="element-errors"></div>
-        </section>
+        <p class="instruction">{{ model.metadata.locale == 'de-DE' ? 'Bezahlung mit Kreditkarte / Lastschrift abschließen' : 'Complete your payment with credit card / sepa direct debit below' }}</p>
         <section>
           <h2>{{ model.metadata.locale == 'de-DE' ? 'Zahlungsinformation' : 'Payment information' }}</h2>
-          <nav id="payment-methods">
+          <fieldset class="with-state">
+            <label>
+              <span>Name</span>
+              <input name="name" class="field" placeholder="Jimmy Foo" required value="{{ model.metadata.userName|default("") }}">
+            </label>
+            <label>
+              <span>Email</span>
+              <input name="email" type="email" class="field" placeholder="jimmy@example.com" required value="{{ model.receipt_email|default("") }}">
+            </label>
+          </fieldset>
+        </section>
+        <div id="payment-errors" class="element-errors"></div>
+        <section>
+          <nav id="payment-methods" class="visible">
+             <ul> 
+              {% if 'card' in model.payment_method_types %}
+              <li class="visible">
+                <input type="radio" name="payment" id="payment-card" value="card" checked>
+                <label for="payment-card">{{ model.metadata.locale == 'de-DE' ? 'Kreditkarte' : 'Card' }}</label>
+              </li>
+              {% endif %}
+              {% if 'sepa_debit' in model.payment_method_types %} 
+              <li class="visible">
+                <input type="radio" name="payment" id="payment-sepa_debit" value="sepa_debit">
+                <label for="payment-sepa_debit">{{ model.metadata.locale == 'de-DE' ? 'SEPA Lastschrift' : 'SEPA Direct Debit' }}</label>
+              </li>
+              {% endif %}  
+             </ul> 
           </nav>
         <div class="payment-info card visible">
             <fieldset>
@@ -39,7 +63,17 @@
               </label>
             </fieldset>
         </div>
+        <div class="payment-info sepa_debit">
+            <fieldset>
+              <label>
+                <span>IBAN</span>
+                <div id="iban-element" class="field"></div>
+              </label>
+            </fieldset>
+            <p class="notice">{{ model.metadata.locale != 'de-DE' ? 'By providing your IBAN and confirming this payment, you authorise (A) ' : 'Ich ermächtige/ Wir ermächtigen (A) ' }} {{ model.metadata.companyName }} {{ model.metadata.locale != 'de-DE' ? ' and Stripe Inc., our payment provider, to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from' : ' und Stripe Inc., unseren Zahlungs Dienstleister, Zahlungen von meinem/ unserem Konto mittels Lastschrift einzuziehen. Zugleich (B) weise ich mein/ weisen wir unser Kreditinstitut an, die von ' }} {{ model.metadata.companyName }} {{ model.metadata.locale != 'de-DE' ? ' and Stripe Inc..' : ' und Stripe Inc. auf mein/ unser Konto gezogenen Lastschriften einzulösen.' }}</p>  
+          </div>
         </section>
+
   <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Pay' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'zahlen' : '' }}</button>
 
 </form> 
@@ -85,6 +119,67 @@
 
     <script type="text/javascript">
 
+    // Create references to the main form and its submit button.
+    const form = document.getElementById('payment-form');
+    const submitButton = form.querySelector('button[type=submit]');
+
+    // List of relevant countries for the payment methods supported in this demo.
+    // Read the Stripe guide: https://stripe.com/payments/payment-methods-guide
+    const paymentMethods = {
+      bancontact: {
+        name: 'Bancontact',
+        flow: 'redirect',
+        countries: ['BE'],
+        currencies: ['eur'],
+      },
+      card: {
+        name: 'Card',
+        flow: 'none',
+      },
+      eps: {
+        name: 'EPS',
+        flow: 'redirect',
+        countries: ['AT'],
+        currencies: ['eur'],
+      },
+      ideal: {
+        name: 'iDEAL',
+        flow: 'redirect',
+        countries: ['NL'],
+        currencies: ['eur'],
+      },
+      giropay: {
+        name: 'Giropay',
+        flow: 'redirect',
+        countries: ['DE'],
+        currencies: ['eur'],
+      },
+      sepa_debit: {
+        name: 'SEPA Direct Debit',
+        flow: 'none',
+        countries: [
+          'FR',
+          'DE',
+          'ES',
+          'BE',
+          'NL',
+          'LU',
+          'IT',
+          'PT',
+          'AT',
+          'IE',
+          'FI',
+        ],
+        currencies: ['eur'],
+      },
+      sofort: {
+        name: 'SOFORT',
+        flow: 'redirect',
+        countries: ['DE', 'AT'],
+        currencies: ['eur'],
+      },
+    };
+
     var stripe = Stripe({{ publishable_key|json_encode|raw }});
     var elements = stripe.elements();
 
@@ -108,10 +203,100 @@
     }; 
 
     // Create an instance of the card Element.
-    var cardElement = elements.create('card', {style});
+    var card = elements.create('card', {style});
 
     // Add an instance of the card Element into the `card-element` <div>.
-    cardElement.mount('#card-element');
+    card.mount('#card-element');
+
+    // Monitor change events on the Card Element to display any errors.
+    card.on('change', ({error}) => {
+      const cardErrors = document.getElementById('payment-errors');
+      if (error) {
+        cardErrors.textContent = error.message;
+        cardErrors.classList.add('visible');
+      } else {
+        cardErrors.classList.remove('visible');
+      }
+      // Re-enable the Pay button.
+      submitButton.disabled = false;
+    });
+
+    // Create a IBAN Element and pass the right options for styles and supported countries.
+    const ibanOptions = {
+      style,
+      supportedCountries: ['SEPA'],
+    };
+    const iban = elements.create('iban', ibanOptions);
+  
+    // Mount the IBAN Element on the page.
+    iban.mount('#iban-element'); 
+
+    // Monitor change events on the IBAN Element to display any errors.
+    iban.on('change', ({error, bankName}) => {
+      const ibanErrors = document.getElementById('payment-errors');
+      if (error) {
+        ibanErrors.textContent = error.message;
+        ibanErrors.classList.add('visible');
+      } else {
+        ibanErrors.classList.remove('visible');
+        if (bankName) {
+          updateButtonLabel('sepa_debit', bankName);
+        }
+      }
+      // Re-enable the Pay button.
+      submitButton.disabled = false;
+    });
+
+    // Update the main button to reflect the payment method being selected.
+    const updateButtonLabel = (paymentMethod, bankName) => {
+      let name = paymentMethods[paymentMethod].name;
+      let amount = '€{{ model.amount/100 }}';
+      let l_pay1 = '{{ model.metadata.locale != 'de-DE' ? 'Pay ' : '' }}';
+      let l_pay2 = '{{ model.metadata.locale == 'de-DE' ? ' zahlen' : '' }}';
+      let l_with = '{{ model.metadata.locale != 'de-DE' ? ' with ' : ' mit ' }}';
+      let l_from = '{{ model.metadata.locale != 'de-DE' ? ' from ' : ' von ' }}';
+      let label = l_pay1 + `${amount}` + l_pay2;
+      if (paymentMethod === 'card') {
+        let name = '{{ model.metadata.locale == 'de-DE' ? 'Kreditkarte' : 'Creditcard' }}';
+        label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
+      }
+      if (paymentMethod === 'sepa_debit') {
+        let name = '{{ model.metadata.locale == 'de-DE' ? 'SEPA Lastschrift' : 'SEPA Direct Debit' }}'; 
+        label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
+      }
+      if (paymentMethod === 'sepa_debit' && bankName) {
+        let name = '{{ model.metadata.locale == 'de-DE' ? 'SEPA Lastschrift' : 'SEPA Direct Debit' }}';
+        let l_pay1 = '{{ model.metadata.locale != 'de-DE' ? 'Debit ' : '' }}';
+        let l_pay2 = '{{ model.metadata.locale == 'de-DE' ? ' einziehen' : '' }}';
+        label = l_pay1 + `${amount}` + l_from + `${bankName}` + l_pay2;
+
+      }
+      submitButton.innerText = label;
+    };
+
+    // Listen to changes to the payment method selector.
+    for (let input of document.querySelectorAll('input[name=payment]')) {
+      input.addEventListener('change', event => {
+        event.preventDefault();
+        const payment = form.querySelector('input[name=payment]:checked').value;
+        const flow = paymentMethods[payment].flow;
+        const paymentErrors = document.getElementById('payment-errors'); 
+ 
+        // Update button label.
+        updateButtonLabel(event.target.value);
+  
+        // Show the relevant details, whether it's an extra element or extra information for the user.
+        form
+          .querySelector('.payment-info.card')
+          .classList.toggle('visible', payment === 'card');
+        form
+          .querySelector('.payment-info.sepa_debit')
+          .classList.toggle('visible', payment === 'sepa_debit');
+        paymentErrors.textContent = "";
+        paymentErrors.classList.remove('visible');
+        submitButton.disabled = false;
+      });
+    }
 
     // Create the payment request.
     var paymentRequest = stripe.paymentRequest({
@@ -148,7 +333,7 @@
       if (result) {
         paymentRequestButton.mount('#payment-request-button');
         // Replace the instruction.
-        document.getElementById('alternative').innerHTML += '<b>{{ model.metadata.locale == 'de-DE' ? 'oder ' : 'or ' }}</b><br><br>';
+        document.getElementById('alternative').innerHTML += '<b>{{ model.metadata.locale == 'de-DE' ? 'oder ' : 'or ' }}</b>';
         // Show the payment request section.
         document.getElementById('payment-request').classList.add('visible');
       } else {
@@ -170,6 +355,8 @@
       });
     });    
 
+    // default payment-method card
+    updateButtonLabel('card');
 
 </script>  
 
@@ -184,23 +371,36 @@
         jQuery(function($) {
             $('#payment-form').submit(function(e) {
                 var $form = $(this);
-
+                const form = document.getElementById('payment-form');                
+                const payment = form.querySelector('input[name=payment]:checked').value;
+                const name = form.querySelector('input[name=name]').value;
+                const email = form.querySelector('input[name=email]').value;
+                const billing_details = { name, email };
+                const paymentParams = { billing_details };               
+ 
                 // Disable the submit button to prevent repeated clicks
                 $form.find('button').prop('disabled', true);
                 $form.find('button').css('background', '#dadadf');
-
-                stripe.createPaymentMethod('card', cardElement).then(stripeResponseHandler);
+                // card
+                if (payment === 'card') {
+                    stripe.createPaymentMethod('card', card).then(stripeResponseHandler);
+                }
+                // sepa-debit
+                if (payment === 'sepa_debit') {
+                    stripe.createPaymentMethod('sepa_debit', iban, paymentParams).then(stripeResponseHandler);               
+                }
                 // Prevent the form from submitting with the default action
                 return false;
             });
 
             var stripeResponseHandler = function(response) {
                 var $form = $('#payment-form');
-
+                const paymentErrors = document.getElementById('payment-errors');
                 if (response.error) {
                     // Show the errors on the form
-                    $form.find('#card-errors').text(response.error.message
+                    $form.find('#payment-errors').text(response.error.message
                         + " ");
+                    paymentErrors.classList.add('visible');
                     $form.find('button').prop('disabled', false);
                     $form.find('button').css('background', '#666ee8');
 

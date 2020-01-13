@@ -4,16 +4,22 @@ namespace Backend\View\Helper\Booking;
 
 use Booking\Entity\Reservation;
 use Square\Manager\SquareManager;
+use Square\Manager\SquarePricingManager;
+use Booking\Manager\Booking\BillManager;
 use Zend\View\Helper\AbstractHelper;
 
 class BookingFormat extends AbstractHelper
 {
 
     protected $squareManager;
+    protected $squarePricingManager; 
+    protected $bookingBillManager;
 
-    public function __construct(SquareManager $squareManager)
+    public function __construct(SquareManager $squareManager, SquarePricingManager $squarePricingManager, BillManager $bookingBillManager)
     {
         $this->squareManager = $squareManager;
+        $this->squarePricingManager = $squarePricingManager;
+        $this->bookingBillManager = $bookingBillManager;
     }
 
     public function __invoke(Reservation $reservation, $dateStart = null, $dateEnd = null, $search = null)
@@ -92,6 +98,30 @@ class BookingFormat extends AbstractHelper
 
         $html .= sprintf('<td class="notes-col">%s</td>',
             $notes);
+
+        /* Price col */
+
+        $price = 0;
+
+        $dateTimeStart = new \DateTime($reservation->get('date') . ' ' . $reservation->get('time_start'));
+        $dateTimeEnd = new \DateTime($reservation->get('date') . ' ' . $reservation->get('time_end'));
+
+        $pricing = $this->squarePricingManager->getFinalPricingInRange($dateTimeStart, $dateTimeEnd, $this->squareManager->get($booking->get('sid')), $booking->get('quantity'));
+
+        if ($pricing) {
+           $price += $pricing['price']; 
+        }
+
+        $bills = $this->bookingBillManager->getBy(array('bid' => $booking->need('bid')), 'bbid ASC'); 
+
+        if ($bills) {
+           foreach ($bills as $bill) {
+              $price += $bill->need('price');
+           }
+        }
+
+        $html .= sprintf('<td>%s</td>',
+            $view->priceFormat($price));
 
         /* Actions col */
 
