@@ -4,7 +4,6 @@ namespace Backend\View\Helper\Booking;
 
 use Booking\Entity\Reservation;
 use Square\Manager\SquareManager;
-use Square\Manager\SquarePricingManager;
 use Booking\Manager\Booking\BillManager;
 use Zend\View\Helper\AbstractHelper;
 
@@ -12,13 +11,11 @@ class BookingFormat extends AbstractHelper
 {
 
     protected $squareManager;
-    protected $squarePricingManager; 
     protected $bookingBillManager;
 
-    public function __construct(SquareManager $squareManager, SquarePricingManager $squarePricingManager, BillManager $bookingBillManager)
+    public function __construct(SquareManager $squareManager, BillManager $bookingBillManager)
     {
         $this->squareManager = $squareManager;
-        $this->squarePricingManager = $squarePricingManager;
         $this->bookingBillManager = $bookingBillManager;
     }
 
@@ -103,20 +100,11 @@ class BookingFormat extends AbstractHelper
 
         $price = 0;
 
-        $dateTimeStart = new \DateTime($reservation->get('date') . ' ' . $reservation->get('time_start'));
-        $dateTimeEnd = new \DateTime($reservation->get('date') . ' ' . $reservation->get('time_end'));
-
-        $pricing = $this->squarePricingManager->getFinalPricingInRange($dateTimeStart, $dateTimeEnd, $this->squareManager->get($booking->get('sid')), $booking->get('quantity'));
-
-        if ($pricing) {
-           $price += $pricing['price']; 
-        }
-
         $bills = $this->bookingBillManager->getBy(array('bid' => $booking->need('bid')), 'bbid ASC'); 
 
         if ($bills) {
-           foreach ($bills as $bill) {
-              $price += $bill->need('price');
+            foreach ($bills as $bill) {
+               $price += $bill->need('price');
            }
         }
 

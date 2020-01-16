@@ -187,38 +187,38 @@ class BookingController extends AbstractActionController
 
             if (! isset($byproducts['message'])) {
 
-		            $bills = array();
-                    $total = 0;
+		       $bills = array();
+               $total = 0;
 
-                    $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');               
-                    $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam);
-                    if ($finalPricing['price']) {
-                        $total+=$finalPricing['price'];
-                    }    
+               $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');               
+               $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam);
+               if ($finalPricing['price']) {
+                   $total+=$finalPricing['price'];
+               }    
 
-                    if ($total > 0 ) { 
-                        $bookable = true;
-                    }
+               if ($total > 0 ) { 
+                   $bookable = true;
+               }
 
-		        foreach ($products as $product) {
-                             
-			        $bills[] = new Bill(array(
-						    'description' => $product->need('name'),
-						    'quantity' => $product->needExtra('amount'),
-						    'price' => $product->need('price') * $product->needExtra('amount'),
-						    'rate' => $product->need('rate'),
-						    'gross' => $product->need('gross'),
-						    ));
+		       foreach ($products as $product) {
+                        
+			     $bills[] = new Bill(array(
+			     'description' => $product->need('name'),
+			     'quantity' => $product->needExtra('amount'),
+			     'price' => $product->need('price') * $product->needExtra('amount'),
+			     'rate' => $product->need('rate'),
+			     'gross' => $product->need('gross'),
+			     ));
 
-                            $total+=$product->need('price') * $product->needExtra('amount'); 
-		        }
+                 $total+=$product->need('price') * $product->needExtra('amount'); 
+		       }
 
 
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
 		    $booking = $bookingService->createSingle($user, $square, $quantityParam, $byproducts['dateStart'], $byproducts['dateEnd'], $bills, array(
 					    'player-names' => serialize($playerNames),
-                    ));
+            ));
 
             $payservice = $this->params()->fromPost('paymentservice');
             
@@ -318,7 +318,7 @@ class BookingController extends AbstractActionController
                 # payment checkout
             } else {
                 # no paymentservice
-                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
+                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
                     $doorcode = $booking->getMeta('doorcode');
                     $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
                     $reservations = $reservationManager->getBy(['bid' => $booking->need('bid')], 'date ASC', 1);
