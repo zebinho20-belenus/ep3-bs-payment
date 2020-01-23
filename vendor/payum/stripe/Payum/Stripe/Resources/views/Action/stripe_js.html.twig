@@ -1,7 +1,7 @@
 {% extends layout ?: "@PayumCore/layout.html.twig" %}
 
 {% block payum_stylesheets %}
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link type="text/css" rel="stylesheet" href="/{{ model.metadata.project }}/public/css-client/stripe.min.css">
 {% endblock %}
 
@@ -383,7 +383,7 @@
                 $form.find('button').css('background', '#dadadf');
                 // card
                 if (payment === 'card') {
-                    stripe.createPaymentMethod('card', card).then(stripeResponseHandler);
+                    stripe.createPaymentMethod('card', card, paymentParams).then(stripeResponseHandler);
                 }
                 // sepa-debit
                 if (payment === 'sepa_debit') {

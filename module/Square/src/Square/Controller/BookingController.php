@@ -155,9 +155,14 @@ class BookingController extends AbstractActionController
         }
         if ($this->config('stripe') != null && $this->config('stripe') == true) {
             $byproducts['stripe'] = true;
+            $byproducts['stripePaymentMethods'] = $this->config('stripePaymentMethods');
+
         }
         if ($this->config('klarna') != null && $this->config('klarna') == true) {
             $byproducts['klarna'] = true;
+        }
+        if ($this->config('billing') != null && $this->config('billing') == true) {
+            $byproducts['billing'] = true;
         }
 
         /* Check booking form submission */
@@ -260,6 +265,13 @@ class BookingController extends AbstractActionController
                    #stripe checkout
                    if ($payservice == 'stripe') {
                        $details["payment_method_types"] = $this->config('stripePaymentMethods');                       
+                       $details["mandate_data"] = array( 'customer_acceptance' => array(
+                                                      'type' => 'online',
+                                                      'online' => array(
+                                                          'ip_address' => $_SERVER['REMOTE_ADDR'],
+                                                          'user_agent' => $_SERVER['HTTP_USER_AGENT']
+                                                      )      
+                                                  )); 
                        $details["amount"] = $total;
                        $details["currency"] = 'EUR';
                        $details["description"] = $description;
@@ -461,7 +473,7 @@ class BookingController extends AbstractActionController
 #stripe
         if ($token->getGatewayName() == 'stripe') {
             $bid = $payment['metadata']['bid'];
-            $notes = 'direct pay with credit card - ';
+            $notes = 'direct pay with stripe ' . $payment['charges']['data'][0]['payment_method_details']['type'] . ' - ';
         }    
 #stripe
 #klarna
@@ -479,7 +491,7 @@ class BookingController extends AbstractActionController
 
         $booking = $bookingManager->get($bid);
 
-        if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || $status->getValue() === "success" || $payment['status'] === "success") {
+        if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing') || $status->getValue() === "success" || $payment['status'] === "succeeded" ) {
 
             if (!$booking->getMeta('directpay_pending') == 'true') {
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
@@ -499,7 +511,7 @@ class BookingController extends AbstractActionController
                 }
             }
 
-            if($status->isPending()) {
+            if($status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing')) {
                 $booking->set('status_billing', 'pending');
                 $booking->setMeta('directpay', 'false');
                 $booking->setMeta('directpay_pending', 'true');
@@ -510,7 +522,7 @@ class BookingController extends AbstractActionController
                 $booking->setMeta('directpay_pending', 'false');
             }
 
-            $notes = $notes . "payment_status: " . $status->getValue();
+            $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];
             $booking->setMeta('notes', $notes);
             $bookingManager->save($booking);
 

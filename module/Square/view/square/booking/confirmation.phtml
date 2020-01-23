@@ -26,7 +26,7 @@ function showHide() {
    else {
      div.style.display = 'none';
    }
- }
+}
 </script
 
 
@@ -102,36 +102,49 @@ function showHide() {
             <input type="hidden" name="bf-confirm" value="<?= sha1('Quick and dirty' . floor(time() / 1800)) ?>">   
             <?php if ($this->paypal): ?>     
                 <label for="paypal" class="payment_radio">
-                    <input type="radio" id="paypal" name="paymentservice" value="paypal" checked>
-                    <img width="100" src="<?= $this->basePath('imgs-client/layout/paypal_100.png') ?>" border="0" alt="PayPal Logo" />
+                <input type="radio" id="paypal" name="paymentservice" value="paypal" checked onclick="if(this.checked){document.getElementById('bf-submit').value='<?= $this->t('go to payment') ?>'}">
+                    <img width="80" height="60" src="<?= $this->basePath('imgs-client/layout/paypal.png') ?>" border="0" alt="PayPal Logo" />
                 </label> 
             <?php endif; ?>
             <?php if ($this->stripe && !$this->paypal): ?>
                 <label for="stripe" class="payment_radio">     
-                    <input type="radio" id="stripe" name="paymentservice" value="stripe" checked>
-                    <img width="100" src="<?= $this->basePath('imgs-client/layout/stripe_100.png') ?>" border="0" alt="CreditCard Logo" />
+                <input type="radio" id="stripe" name="paymentservice" value="stripe" checked onclick="if(this.checked){document.getElementById('bf-submit').value='<?= $this->t('go to payment') ?>'}">
+                    <?php if (in_array('sepa_debit',$this->stripePaymentMethods)): ?>
+                        <img width="80" height="60" src="<?= $this->basePath('imgs-client/layout/stripe_sepa_100.png') ?>" border="0" alt="CreditCard Logo" />
+                    <?php else: ?>
+                        <img width="80" height="60" src="<?= $this->basePath('imgs-client/layout/stripe_100.png') ?>" border="0" alt="CreditCard Logo" />
+                    <?php endif; ?>                    
                 </label>
             <?php endif; ?>
             <?php if ($this->stripe && $this->paypal): ?>
-                &nbsp;
-                <label for="stripe_paypal" class="payment_radio">
-                    <input type="radio" id="stripe_paypal" name="paymentservice" value="stripe">
-                    <img width="100" src="<?= $this->basePath('imgs-client/layout/stripe_100.png') ?>" border="0" alt="CreditCard Logo" />
+            <label for="stripe_paypal" class="payment_radio">
+            <input type="radio" id="stripe_paypal" name="paymentservice" value="stripe" onclick="if(this.checked){document.getElementById('bf-submit').value='<?= $this->t('go to payment') ?>'}">
+                    <?php if (in_array('sepa_debit',$this->stripePaymentMethods)): ?>
+                        <img width="80" height="60" src="<?= $this->basePath('imgs-client/layout/stripe_sepa_100.png') ?>" border="0" alt="CreditCard Logo" />
+                    <?php else: ?>
+                        <img width="80" height="60" src="<?= $this->basePath('imgs-client/layout/stripe_100.png') ?>" border="0" alt="CreditCard Logo" />
+                    <?php endif; ?>    
                 </label>
             <?php endif; ?>
             <?php if ($this->klarna): ?>
                 <label for="klarna" class="payment_radio">
-                    <input type="radio" id="klarna" name="paymentservice" value="klarna">
+                <input type="radio" id="klarna" name="paymentservice" value="klarna" onclick="if(this.checked){document.getElementById('bf-submit').value='<?= $this->t('go to payment') ?>'}">
                     Klarna
                 </label>
             <?php endif; ?> 
+            <?php if ($this->billing): ?>
+                <label for="billing" class="payment_radio">
+                <input type="radio" id="billing" name="paymentservice" value="billing" onclick="if(this.checked){document.getElementById('bf-submit').value='<?= $this->t('Complete booking') ?>'}">
+                    <img width="80" height="60" src="<?= $this->basePath('imgs-client/layout/rechnung.svg') ?>" border="0" alt="Bill Logo" />  
+                </label>
+            <?php endif; ?>
 
             <?php if ($this->paypal || $this->stripe || $this->klarna): ?>
                 <br>
                 <br>
-                <input type="submit" name="bf-submit" value="<?= $this->t('go to payment') ?>" class="default-button">
+                <input type="submit" name="bf-submit" id="bf-submit" value="<?= $this->t('go to payment') ?>" class="default-button">
             <?php else: ?>
-                <input type="submit" name="bf-submit" value="<?= $this->t('Complete booking') ?>" class="default-button">
+                <input type="submit" name="bf-submit" id="bf-submit" value="<?= $this->t('Complete booking') ?>" class="default-button">
             <?php endif; ?>  
         </div>
 
