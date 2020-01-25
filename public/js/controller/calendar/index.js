@@ -78,7 +78,7 @@
 
         /* Update calendar events */
 
-        updateCalendarEvents();
+        window.setTimeout(updateCalendarEvents,10);
         $(window).resize(updateCalendarEvents);
         $(document).on("updateLayout", updateCalendarEvents);
 
@@ -253,6 +253,8 @@
 
     function updateCalendarEvents()
     {
+        // alert("updateCalendarEvents");
+        
         $(".calendar-date-col").each(function(dateIndex) {
             var calendarDateCol = $(this);
 

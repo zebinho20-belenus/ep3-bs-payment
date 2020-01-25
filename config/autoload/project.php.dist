@@ -41,6 +41,8 @@ return array(
         'sepa_debit'
     ),
     // not yet implemented
-    'klarna' => false
+    'klarna' => false,
+    // classic behaviour of ep3-bs 
+    'billing' => false,
 );
 
