@@ -79,8 +79,8 @@
         /* Update calendar groups */
         var groups = [".cc-event", ".cc-single", ".cc-own", ".cc-multiple", ".cc-multiple-14", ".cc-conflict"];
         groupCalendarCols(groups);
-        $(window).resize(groupCalendarCols(groups));
-        $(document).on("updateLayout", groupCalendarCols(groups));
+        $(window).resize(function(evt) { groupCalendarCols(groups); });
+        $(document).on("updateLayout", function(evt) { groupCalendarCols(groups); });
 
     });
 
@@ -291,10 +291,10 @@
                        var endX = Math.ceil(posLast.left) + 1;
                        var endY = Math.ceil(posLast.top) + 1;
    
-                       var eventWidth = Math.round((endX + groupColCellLast.outerWidth()) - startX);
-                       var eventHeight = Math.round((endY + groupColCellLast.outerHeight()) - startY);
+                       var groupWidth = Math.round((endX + groupColCellLast.outerWidth()) - startX);
+                       var groupHeight = Math.round((endY + groupColCellLast.outerHeight()) - startY);
    
-                       /* Create event group overlay */
+                       /* Create group overlay */
    
                        var groupColOverlay = $("#" + groupCol + "-overlay-" + dateIndex);
    
@@ -312,9 +312,9 @@
                            "position": "absolute",
                            "z-index": 128,
                            "left": startX+1, 
-                           "top": startY-diffy,
-                           "width": eventWidth-2,
-                           "height": eventHeight-2,
+                           "top": startY+1,
+                           "width": groupWidth-2,
+                           "height": groupHeight-2,
                            "padding": 0
                        });
    
@@ -326,13 +326,13 @@
    
                        groupColOverlayLabel.css({
                            "position": "relative",
-                           "top": Math.round((eventHeight / 2) - (groupColOverlayLabel.height() / 2))
+                           "top": Math.round((groupHeight / 2) - (groupColOverlayLabel.height() / 2)-2)
                        });
                    }
                }
            });
         });
-        }, 1000); 
+        }, 1); 
     }
 
 })();

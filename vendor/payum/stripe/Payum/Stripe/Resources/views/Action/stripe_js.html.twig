@@ -2,7 +2,7 @@
 
 {% block payum_stylesheets %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link type="text/css" rel="stylesheet" href="/{{ model.metadata.project }}/public/css-client/stripe.min.css">
+    <link type="text/css" rel="stylesheet" href="{{ model.metadata.instance }}/public/css-client/stripe.min.css">
 {% endblock %}
 
 {% block payum_body %}
@@ -10,8 +10,8 @@
 
 <main id="main" class="checkout">
     <header class="header">
-      <img src="/{{ model.metadata.project }}/public/imgs-client/layout/logo.png" id="logo"/>
-      <a class="shop abort" href="/{{ model.metadata.project }}/public/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
+      <img src="{{ model.metadata.instance }}/public/imgs-client/layout/logo.png" id="logo"/>
+      <a class="shop abort" href="{{ model.metadata.instance }}/public/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
     </header>
     <div id="checkout">
       <div>
@@ -87,7 +87,7 @@
     </div>
     <div id="order-items">
     <div class="line-item">
-        <img class="image" src="/{{ model.metadata.project }}/public/imgs-client/layout/tennis-court.png" alt="square" id="logo">
+        <img class="image" src="{{ model.metadata.instance }}/public/imgs-client/layout/tennis-court.png" alt="square" id="logo">
         <div class="label">
           <p class="product">{{ model.metadata.productName }}</p>
           <p class="sku"></p>
