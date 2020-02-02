@@ -48,6 +48,7 @@ return array(
         => 'Allerdings ist Ihr Benutzerkonto bereits aktiviert. Sie können sich jederzeit anmelden.',
 
     'Your %sphone number%s has been updated' => 'Ihre %sTelefonnummer%s wurde aktualisiert',
+    'Your %sIBAN%s has been updated' => 'Ihre %sIBAN%s wurde aktualisiert',
     'New email address at %s %s' => 'Neue E-Mail Adresse beim %s %s',
 
     "You have just changed your account's email address to this one.\r\n\r\nBefore you can completely use your new email address to book spare %s online again, you have to activate it by simply clicking the following link. That's all!\r\n\r\n%s"
@@ -127,19 +128,25 @@ return array(
     'We can send you confirmations per email' => 'Wir können Ihnen Buchungen und Stornierungen zusätzlich per E-Mail bestätigen',
 
     'Update phone number' => 'Telefonnummer ändern',
+    'Update IBAN' => 'IBAN ändern',
     'Update email address' => 'E-Mail Adresse ändern',
     'Update settings' => 'Einstellungen ändern',
     'Update password' => 'Passwort ändern',
     'Change password' => 'Passwort ändern',
 
     'Please type your phone number here' => 'Bitte geben Sie Ihre Telefonnummer ein',
+    'Please type your IBAN here' => 'Bitte geben Sie Ihre IBAN ein',
     'This phone number is somewhat short ...' => 'Diese Telefonnummer ist etwas kurz',
+    'This IBAN is somewhat short ...' => 'Diese IBAN ist etwas kurz',
+    'This IBAN is somewhat long ...' => 'Diese IBAN ist etwas lang',
     'This phone number contains invalid characters - sorry' => 'Diese Telefonnummer enthält ungültige Zeichen',
+    'This IBAN contains invalid characters - sorry' => 'Diese IBAN enthält ungültige Zeichen',
 
     'Your password will be safely encrypted' => 'Ihr Passwort wird sicher verschlüsselt',
     'Please type your password again' => 'Bitte geben Sie Ihr Passwort erneut ein',
 
     'We only use this to inform you<br>about changes to your bookings' => 'Wird benötigt, damit wir Sie bei<br>Buchungsänderungen informieren können',
+    'If you like to pay bookings via SEPA mandate,<br>you can store your IBAN here' => 'Falls Sie Ihre Buchungen per SEPA Lastschrift bezahlen möchten,<br>können sie hier Ihre IBAN speichern.',
 
     'Salutation' => 'Anrede',
     'First & Last name' => 'Vor- & Nachname',

@@ -72,6 +72,16 @@ class NotificationListener extends AbstractListenerAggregate
         $reservationEnd = new \DateTime($reservation->need('date'));
         $reservationEnd->setTime($reservationTimeEnd[0], $reservationTimeEnd[1]);
 
+        $vCalendar = new \Eluceo\iCal\Component\Calendar($this->optionManager->get('client.website'));
+        $vEvent = new \Eluceo\iCal\Component\Event();
+        $vEvent
+            ->setDtStart($reservationStart)
+            ->setDtEnd($reservationEnd)
+            ->setNoTime(false)
+            ->setSummary($this->optionManager->get('client.name.full') . ' - ' . $square->need('name'))
+        ;
+        $vCalendar->addComponent($vEvent);
+
         $subject = sprintf($this->t('Your %s-booking for %s'),
             $this->optionManager->get('subject.square.type'),
             $dateFormatHelper($reservationStart, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::SHORT));
@@ -98,7 +108,8 @@ class NotificationListener extends AbstractListenerAggregate
              $this->optionManager->get('client.contact.email'));
 
         if ($user->getMeta('notification.bookings', 'true') == 'true') {
-            $this->userMailService->send($user, $subject, $message);
+            $attachments = ['event.ics' => ['name' => 'event.ics', 'disposition' => true, 'type' => 'text/calendar', 'content' => $vCalendar->render()]];            
+            $this->userMailService->send($user, $subject, $message, $attachments);
         }
 
 	    if ($this->optionManager->get('client.contact.email.user-notifications')) {

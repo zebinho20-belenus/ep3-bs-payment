@@ -171,13 +171,25 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/user/edit
                         <?= $this->formElementErrors($form->get('euf-phone')) ?>
                     </td>
                 </tr>
+                <!--
                 <tr>
                     <td class="default-form-label-row">
-                        <?= $this->formLabel($form->get('euf-birthdate')) ?>
+                        <?= $foo = 1; // $this->formLabel($form->get('euf-birthdate')) ?>
                     </td>
                     <td>
-                        <?= $this->formElement($form->get('euf-birthdate')) ?>
-                        <?= $this->formElementErrors($form->get('euf-birthdate')) ?>
+                        <?= $foo = 1; // $this->formElement($form->get('euf-birthdate')) ?>
+                        <?= $foo = 1; // $this->formElementErrors($form->get('euf-birthdate')) ?>
+                    </td>
+                </tr>
+                -->
+                <tr>
+                    <td class="default-form-label-row">
+                        <?= $this->formLabel($form->get('euf-member')) ?>
+                    </td>
+                    <td>
+                        <?= $this->formElement($form->get('euf-member')) ?>
+                        <?= $this->formElementNotes($form->get('euf-member')) ?>
+                        <?= $this->formElementErrors($form->get('euf-member')) ?>
                     </td>
                 </tr>
                 <tr>

@@ -191,6 +191,7 @@ class EditForm extends Form
             ),
         ));
 
+        /*
         $this->add(array(
             'name' => 'euf-birthdate',
             'type' => 'Text',
@@ -200,6 +201,19 @@ class EditForm extends Form
             ),
             'options' => array(
                 'label' => 'Birthday',
+            ),
+        ));
+        */
+
+        $this->add(array(
+            'name' => 'euf-member',
+            'type' => 'Checkbox',
+            'attributes' => array(
+                'id' => 'euf-member'
+            ),
+            'options' => array(
+                'label' => 'Member',
+                'notes' => 'These are only visible for administration',
             ),
         ));
 
@@ -443,12 +457,14 @@ class EditForm extends Form
                     ),
                 ),
             ),
+            /*
             'euf-birthdate' => array(
                 'required' => false,
                 'filters' => array(
                     array('name' => 'StringTrim'),
                 ),
             ),
+            */
             'euf-notes' => array(
                 'required' => false,
                 'filters' => array(

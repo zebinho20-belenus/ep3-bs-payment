@@ -14,7 +14,8 @@
         "payum/paypal-express-checkout-nvp": "^1.5",
         "stripe/stripe-php": "6.9.0",
         "payum/stripe": "^1.6",
-        "payum/klarna-checkout": "^1.5"
+        "payum/klarna-checkout": "^1.5",
+        "eluceo/ical": "^0.16.0"
     },
     
     "repositories": [

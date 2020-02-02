@@ -1,5 +1,5 @@
 // Use a cacheName for cache versioning
-var cacheName = 'tvas_dev_v1.7:static';
+var cacheName = 'tvas_dev_v1.8:static';
 
 // During the installation phase, you'll usually want to cache static assets.
 self.addEventListener('install', function(e) {

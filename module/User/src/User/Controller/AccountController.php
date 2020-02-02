@@ -451,6 +451,30 @@ class AccountController extends AbstractActionController
             $editPhoneForm->get('epf-phone')->setValue($user->getMeta('phone'));
         }
 
+        /* Iban form */
+
+        $editIbanForm = $formElementManager->get('User\Form\EditIbanForm');
+
+        if ($this->getRequest()->isPost() && $editParam == 'iban') {
+            $editIbanForm->setData($this->params()->fromPost());
+
+            if ($editIbanForm->isValid()) {
+                $data = $editIbanForm->getData();
+
+                $iban = $data['eif-iban'];
+
+                $user->setMeta('iban', $iban);
+                $userManager->save($user);
+
+                $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %sIBAN%s has been updated'),
+                    '<b>', '</b>'));
+
+                return $this->redirect()->toRoute('user/settings');
+            }
+        } else {
+            $editIbanForm->get('eif-iban')->setValue($user->getMeta('iban'));
+        }
+
         /* Email form */
 
         $editEmailForm = $formElementManager->get('User\Form\EditEmailForm');
@@ -596,6 +620,7 @@ class AccountController extends AbstractActionController
         return array(
             'user' => $user,
             'editPhoneForm' => $editPhoneForm,
+            'editIbanForm' => $editIbanForm,
             'editEmailForm' => $editEmailForm,
             'editNotificationsForm' => $editNotificationsForm,
             'editPasswordForm' => $editPasswordForm,

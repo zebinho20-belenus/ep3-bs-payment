@@ -67,6 +67,7 @@ return array(
 
     'No.' => 'Nr.',
     'Notes' => 'Notizen',
+    'Member' => 'Vereinsmitglied',
 
     'Arbitrary name or identifier for this user' => 'Beliebiger Name oder Bezeichnung',
     'Privileges' => 'Berechtigungen',

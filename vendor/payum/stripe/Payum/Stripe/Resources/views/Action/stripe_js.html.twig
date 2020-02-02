@@ -202,8 +202,12 @@
     },
     }; 
 
+    const cardOptions = {
+      style
+    }
+
     // Create an instance of the card Element.
-    var card = elements.create('card', {style});
+    var card = elements.create('card', cardOptions);
 
     // Add an instance of the card Element into the `card-element` <div>.
     card.mount('#card-element');
@@ -224,7 +228,7 @@
     // Create a IBAN Element and pass the right options for styles and supported countries.
     const ibanOptions = {
       style,
-      supportedCountries: ['SEPA'],
+      supportedCountries: ['SEPA']
     };
     const iban = elements.create('iban', ibanOptions);
   

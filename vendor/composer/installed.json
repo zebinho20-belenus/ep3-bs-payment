@@ -146,6 +146,59 @@
         ]
     },
     {
+        "name": "eluceo/ical",
+        "version": "0.16.0",
+        "version_normalized": "0.16.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/markuspoerschke/iCal.git",
+            "reference": "97da0d94c9716e65c141066a2d96aa098379721b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/markuspoerschke/iCal/zipball/97da0d94c9716e65c141066a2d96aa098379721b",
+            "reference": "97da0d94c9716e65c141066a2d96aa098379721b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.1"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^7.0"
+        },
+        "suggest": {
+            "ext-mbstring": "Massive performance enhancement of line folding"
+        },
+        "time": "2019-12-29T22:08:56+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Eluceo\\iCal\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Markus Poerschke",
+                "email": "markus@eluceo.de",
+                "role": "Developer"
+            }
+        ],
+        "description": "The eluceo/iCal package offers a abstraction layer for creating iCalendars. You can easily create iCal files by using PHP object instead of typing your *.ics file by hand. The output will follow RFC 5545 as best as possible.",
+        "homepage": "https://github.com/markuspoerschke/iCal",
+        "keywords": [
+            "calendar",
+            "iCalendar",
+            "ical",
+            "ics",
+            "php calendar"
+        ]
+    },
+    {
         "name": "guzzlehttp/guzzle",
         "version": "6.3.3",
         "version_normalized": "6.3.3.0",
@@ -3897,7 +3950,8 @@
             "Authentication",
             "ZendFramework",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-authentication"
     },
     {
         "name": "zendframework/zend-barcode",
@@ -3952,7 +4006,8 @@
             "ZendFramework",
             "barcode",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-barcode"
     },
     {
         "name": "zendframework/zend-cache",
@@ -4037,7 +4092,8 @@
             "psr-16",
             "psr-6",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-cache"
     },
     {
         "name": "zendframework/zend-captcha",
@@ -4097,7 +4153,8 @@
             "ZendFramework",
             "captcha",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-captcha"
     },
     {
         "name": "zendframework/zend-code",
@@ -4151,7 +4208,8 @@
         "keywords": [
             "code",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-code"
     },
     {
         "name": "zendframework/zend-config",
@@ -4209,7 +4267,8 @@
         "keywords": [
             "config",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-config"
     },
     {
         "name": "zendframework/zend-console",
@@ -4264,7 +4323,8 @@
             "ZendFramework",
             "console",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-console"
     },
     {
         "name": "zendframework/zend-crypt",
@@ -4316,7 +4376,8 @@
         "keywords": [
             "crypt",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-crypt"
     },
     {
         "name": "zendframework/zend-db",
@@ -4376,7 +4437,8 @@
             "ZendFramework",
             "db",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-db"
     },
     {
         "name": "zendframework/zend-debug",
@@ -4477,7 +4539,8 @@
         "keywords": [
             "di",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-di"
     },
     {
         "name": "zendframework/zend-diactoros",
@@ -4543,7 +4606,8 @@
             "http",
             "psr",
             "psr-7"
-        ]
+        ],
+        "abandoned": "laminas/laminas-diactoros"
     },
     {
         "name": "zendframework/zend-dom",
@@ -4590,7 +4654,8 @@
             "ZendFramework",
             "dom",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-dom"
     },
     {
         "name": "zendframework/zend-escaper",
@@ -4637,7 +4702,8 @@
             "ZendFramework",
             "escaper",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-escaper"
     },
     {
         "name": "zendframework/zend-eventmanager",
@@ -4686,7 +4752,8 @@
         "keywords": [
             "eventmanager",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-eventmanager"
     },
     {
         "name": "zendframework/zend-feed",
@@ -4749,7 +4816,8 @@
             "ZendFramework",
             "feed",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-feed"
     },
     {
         "name": "zendframework/zend-file",
@@ -4808,7 +4876,8 @@
             "ZendFramework",
             "file",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-file"
     },
     {
         "name": "zendframework/zend-filter",
@@ -4875,7 +4944,8 @@
             "ZendFramework",
             "filter",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-filter"
     },
     {
         "name": "zendframework/zend-form",
@@ -4955,7 +5025,8 @@
             "ZendFramework",
             "form",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-form"
     },
     {
         "name": "zendframework/zend-http",
@@ -5012,7 +5083,8 @@
             "http client",
             "zend",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-http"
     },
     {
         "name": "zendframework/zend-hydrator",
@@ -5072,7 +5144,8 @@
         "keywords": [
             "hydrator",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-hydrator"
     },
     {
         "name": "zendframework/zend-i18n",
@@ -5142,7 +5215,8 @@
             "ZendFramework",
             "i18n",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-i18n"
     },
     {
         "name": "zendframework/zend-i18n-resources",
@@ -5190,7 +5264,8 @@
             "resources",
             "translations",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-i18n-resources"
     },
     {
         "name": "zendframework/zend-inputfilter",
@@ -5249,7 +5324,8 @@
             "ZendFramework",
             "inputfilter",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-inputfilter"
     },
     {
         "name": "zendframework/zend-json",
@@ -5306,7 +5382,8 @@
         "keywords": [
             "json",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-json"
     },
     {
         "name": "zendframework/zend-loader",
@@ -5353,7 +5430,8 @@
             "ZendFramework",
             "loader",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-loader"
     },
     {
         "name": "zendframework/zend-log",
@@ -5426,7 +5504,8 @@
             "log",
             "logging",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-log"
     },
     {
         "name": "zendframework/zend-mail",
@@ -5490,7 +5569,8 @@
             "ZendFramework",
             "mail",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-mail"
     },
     {
         "name": "zendframework/zend-math",
@@ -5542,7 +5622,8 @@
         "keywords": [
             "math",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-math"
     },
     {
         "name": "zendframework/zend-memory",
@@ -5593,7 +5674,8 @@
             "ZendFramework",
             "memory",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-memory"
     },
     {
         "name": "zendframework/zend-mime",
@@ -5646,7 +5728,8 @@
             "ZendFramework",
             "mime",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-mime"
     },
     {
         "name": "zendframework/zend-modulemanager",
@@ -5708,7 +5791,8 @@
             "ZendFramework",
             "modulemanager",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-modulemanager"
     },
     {
         "name": "zendframework/zend-mvc",
@@ -5805,7 +5889,8 @@
         "keywords": [
             "mvc",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-mvc"
     },
     {
         "name": "zendframework/zend-navigation",
@@ -5875,7 +5960,8 @@
             "ZendFramework",
             "navigation",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-navigation"
     },
     {
         "name": "zendframework/zend-paginator",
@@ -5942,7 +6028,8 @@
         "keywords": [
             "paginator",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-paginator"
     },
     {
         "name": "zendframework/zend-permissions-acl",
@@ -5993,7 +6080,8 @@
             "ZendFramework",
             "acl",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-permissions-acl"
     },
     {
         "name": "zendframework/zend-permissions-rbac",
@@ -6040,7 +6128,8 @@
         "keywords": [
             "rbac",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-permissions-rbac"
     },
     {
         "name": "zendframework/zend-progressbar",
@@ -6094,7 +6183,8 @@
             "ZendFramework",
             "progressbar",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-progressbar"
     },
     {
         "name": "zendframework/zend-psr7bridge",
@@ -6145,7 +6235,8 @@
             "http",
             "psr",
             "psr-7"
-        ]
+        ],
+        "abandoned": "laminas/laminas-psr7bridge"
     },
     {
         "name": "zendframework/zend-serializer",
@@ -6204,7 +6295,8 @@
             "ZendFramework",
             "serializer",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-serializer"
     },
     {
         "name": "zendframework/zend-server",
@@ -6253,7 +6345,8 @@
             "ZendFramework",
             "server",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-server"
     },
     {
         "name": "zendframework/zend-servicemanager",
@@ -6307,7 +6400,8 @@
         "keywords": [
             "servicemanager",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-servicemanager"
     },
     {
         "name": "zendframework/zend-session",
@@ -6376,7 +6470,8 @@
             "ZendFramework",
             "session",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-session"
     },
     {
         "name": "zendframework/zend-soap",
@@ -6431,7 +6526,8 @@
         "keywords": [
             "soap",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-soap"
     },
     {
         "name": "zendframework/zend-stdlib",
@@ -6492,7 +6588,8 @@
         "keywords": [
             "stdlib",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-stdlib"
     },
     {
         "name": "zendframework/zend-tag",
@@ -6545,7 +6642,8 @@
             "ZendFramework",
             "tag",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-tag"
     },
     {
         "name": "zendframework/zend-test",
@@ -6608,7 +6706,8 @@
         "keywords": [
             "test",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-test"
     },
     {
         "name": "zendframework/zend-text",
@@ -6658,7 +6757,8 @@
             "ZendFramework",
             "text",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-text"
     },
     {
         "name": "zendframework/zend-uri",
@@ -6707,7 +6807,8 @@
             "ZendFramework",
             "uri",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-uri"
     },
     {
         "name": "zendframework/zend-validator",
@@ -6782,7 +6883,8 @@
         "keywords": [
             "validator",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-validator"
     },
     {
         "name": "zendframework/zend-version",
@@ -6924,7 +7026,8 @@
         "keywords": [
             "view",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-view"
     },
     {
         "name": "zendframework/zend-xmlrpc",
@@ -6979,7 +7082,8 @@
             "ZendFramework",
             "xmlrpc",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-xmlrpc"
     },
     {
         "name": "zendframework/zendframework",
@@ -7076,7 +7180,8 @@
         "keywords": [
             "framework",
             "zf2"
-        ]
+        ],
+        "abandoned": "laminas/laminas-mvc-skeleton"
     },
     {
         "name": "zendframework/zendxml",
@@ -7124,6 +7229,7 @@
             "security",
             "xml",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-xml"
     }
 ]

@@ -321,7 +321,7 @@
                        groupColOverlayLabel.css({
                            "height": "auto",
                            "font-size": "12px",
-                           "line-height": 1.5
+                           "line-height": 1.2
                        });
    
                        groupColOverlayLabel.css({

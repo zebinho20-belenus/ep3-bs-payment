@@ -143,6 +143,10 @@ class ComposerStaticInit80187b261285ce6ecce57578ecc7afb2
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
+        'E' => 
+        array (
+            'Eluceo\\iCal\\' => 12,
+        ),
         'D' => 
         array (
             'Doctrine\\Instantiator\\' => 22,
@@ -479,6 +483,10 @@ class ComposerStaticInit80187b261285ce6ecce57578ecc7afb2
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'Eluceo\\iCal\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/eluceo/ical/src',
         ),
         'Doctrine\\Instantiator\\' => 
         array (
