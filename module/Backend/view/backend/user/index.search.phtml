@@ -5,7 +5,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/user/inde
 ?>
 
 <div style="padding: 10px 0px 16px 0px;">
-    <form method="get" action="<?= $this->url('backend/user') ?>">
+    <form id="usf" name="usf" method="get" action="<?= $this->url('backend/user') ?>">
         <table class="default-table">
             <tr>
                 <td>
@@ -13,7 +13,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/user/inde
                         <label for="usf-search"><?= $this->t('Name or number') ?>:</label>
                     </div>
 
-                    <input type="text" name="usf-search" id="usf-search" value="<?= $this->search ?>" data-autocomplete-url="<?= $this->url('backend/user/interpret') ?>" style="width: 320px;">
+                    <input type="text" name="usf-search" id="usf-search" value="<?= $this->search ?>" data-autocomplete-url="<?= $this->url('backend/user/interpret') ?>" style="width: 290px;">
                 </td>
 
                 <td style="vertical-align: bottom;">

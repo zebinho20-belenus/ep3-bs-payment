@@ -80,9 +80,9 @@ return array(
 
     'Active' => 'Aktiv',
 
-    'Last activity' => 'Zuletzt aktiv',
-    'Last IP' => 'Letzte IP',
-    'Created' => 'Erstellt',
+    'Last activity: ' => 'Zuletzt aktiv: ',
+    'Last IP: ' => 'Letzte IP: ',
+    'Created: ' => 'Erstellt: ',
     'Created by' => 'Erstellt von',
 
     'Are you sure you want to delete this user?' => 'Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?',
@@ -351,7 +351,7 @@ return array(
     'Displays this product only to this language' => 'Zeigt dieses Produkt nur bei dieser Sprache an',
 
     'Edit business terms and privacy policy' => 'AGB und Datenschutzerklärung bearbeiten',
-    'Edit billing status names and colors' => 'Rechnungsstatus-Bezeichnungen und -Farben bearbeiten',
+    'Edit billing status names and colors' => 'Rechnungs-Status und -Farben bearbeiten',
     'Edit Booking-Bill' => 'Buchungs-Rechnung bearbeiten',
     'Edit bill' => 'Rechnung bearbeiten',
 

@@ -71,7 +71,7 @@ class EventFormat extends AbstractHelper
 
         /* Actions col */
 
-        $html .= sprintf('<td class="actions-col no-print"><a href="%s" class="unlined gray symbolic symbolic-edit">%s</a></td>',
+        $html .= sprintf('<td class="actions-col no-print"><a href="%s" class="unlined gray symbolic symbolic-edit"><span class="symbolic-label">%s</span></a></td>',
             $view->url('backend/event/edit', ['eid' => $event->need('eid')]),
             $view->t('Edit'));
 

@@ -50,8 +50,8 @@ class ProductFormat extends AbstractHelper
         /* Actions col */
 
         $html .= '<td class="actions-col no-print">'
-            . '<a href="' . $view->url('backend/config/square/product/edit', ['spid' => $spid]) . '" class="unlined gray symbolic symbolic-config">' . $view->t('Edit') . '</a> &nbsp; '
-            . '<a href="' . $view->url('backend/config/square/product/delete', ['spid' => $spid]) . '" class="unlined gray symbolic symbolic-cross">' . $view->t('Delete') . '</a></td>';
+            . '<a href="' . $view->url('backend/config/square/product/edit', ['spid' => $spid]) . '" class="unlined gray symbolic symbolic-edit"><span class="symbolic-label">' . $view->t('Edit') . '</span></a> &nbsp; '
+            . '<a href="' . $view->url('backend/config/square/product/delete', ['spid' => $spid]) . '" class="unlined gray symbolic symbolic-cross"><span class="symbolic-label">' . $view->t('Delete') . '</span></a></td>';
 
         $html .= '</tr>';
 

@@ -38,8 +38,8 @@ class SquareFormat extends AbstractHelper
             $view->prettyTime($square->need('time_block_bookable_max')));
 
         $html .= '<td class="actions-col no-print">'
-            . '<a href="' . $view->url('backend/config/square/edit', ['sid' => $square->need('sid')]) . '" class="unlined gray symbolic symbolic-edit">' . $view->t('Edit') . '</a> &nbsp; '
-            . '<a href="' . $view->url('backend/config/square/delete', ['sid' => $square->need('sid')]) . '" class="unlined gray symbolic symbolic-cross">' . $view->t('Delete') . '</a></td>';
+            . '<a href="' . $view->url('backend/config/square/edit', ['sid' => $square->need('sid')]) . '" class="unlined gray symbolic symbolic-edit"><span class="symbolic-label">' . $view->t('Edit') . '</span></a> &nbsp; '
+            . '<a href="' . $view->url('backend/config/square/delete', ['sid' => $square->need('sid')]) . '" class="unlined gray symbolic symbolic-cross"><span class="symbolic-label">' . $view->t('Delete') . '</span></a></td>';
 
         $html .= '</tr>';
 

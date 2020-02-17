@@ -126,8 +126,16 @@ body.tennis-rudolstadt > div.panel:first-child {
   }
 }
 @media (max-width: 870px) {
-  .tennis-rudolstadt #calendar-toolbar-userpanel .symbolic-label {
+  .tennis-rudolstadt .symbolic-label {
     display: none;
+  }
+  .tennis-rudolstadt .first-letter-only {
+    width: 10px;
+    font-size: 0px;
+  }
+  .tennis-rudolstadt .first-letter-only:first-letter {
+    font-size: 12px;
+    font-weight: bold;
   }
   .tennis-rudolstadt #calendar-toolbar-userpanel .symbolic-booking::before,
   .tennis-rudolstadt #calendar-toolbar-userpanel .symbolic-user::before,
@@ -182,7 +190,22 @@ body.tennis-rudolstadt > div.panel:first-child {
     display: table-cell;
   }
   
-}    
+}
+@media (max-width: 410px) {
+  .tennis-rudolstadt form#euf table td
+  {
+    display: block;
+  }
+  .tennis-rudolstadt form#euf table td.default-form-label-row,
+  .tennis-rudolstadt form#euf table td.right-text
+  {
+    text-align: left;
+  }
+  .tennis-rudolstadt form#euf table td input#daf-why
+  {
+    width: 250px !important;
+  }
+} 
 @media (max-width: 480px) {
   .tennis-rudolstadt form#rf table td,
   .tennis-rudolstadt form#lf table td,
@@ -190,7 +213,13 @@ body.tennis-rudolstadt > div.panel:first-child {
   .tennis-rudolstadt form#epf table td,
   .tennis-rudolstadt form#eef table td,
   .tennis-rudolstadt form#enf table td,
-  .tennis-rudolstadt form#daf table td {
+  .tennis-rudolstadt form#daf table td,
+  .tennis-rudolstadt form#usf table td,
+  .tennis-rudolstadt form#bsf table td,
+  .tennis-rudolstadt form#esf table td,
+  .tennis-rudolstadt form#cf table td,
+  .tennis-rudolstadt form#ef table td
+  {
     display: block;
   }
   .tennis-rudolstadt form#rf table td.default-form-label-row,
@@ -199,7 +228,13 @@ body.tennis-rudolstadt > div.panel:first-child {
   .tennis-rudolstadt form#epf table td.default-form-label-row,
   .tennis-rudolstadt form#eef table td.default-form-label-row,
   .tennis-rudolstadt form#enf table td.default-form-label-row,
-  .tennis-rudolstadt form#daf table td.default-form-label-row {
+  .tennis-rudolstadt form#daf table td.default-form-label-row,
+  .tennis-rudolstadt form#usf table td.default-form-label-row,
+  .tennis-rudolstadt form#bsf table td.default-form-label-row,
+  .tennis-rudolstadt form#esf table td.default-form-label-row,
+  .tennis-rudolstadt form#cf table td.default-form-label-row,
+  .tennis-rudolstadt form#ef table td.default-form-label-row
+  {
     text-align: left;
   }
   .tennis-rudolstadt form#rf table td input#daf-why,
@@ -208,7 +243,13 @@ body.tennis-rudolstadt > div.panel:first-child {
   .tennis-rudolstadt form#epf table td input#daf-why,
   .tennis-rudolstadt form#eef table td input#daf-why,
   .tennis-rudolstadt form#enf table td input#daf-why,
-  .tennis-rudolstadt form#daf table td input#daf-why {
+  .tennis-rudolstadt form#daf table td input#daf-why,
+  .tennis-rudolstadt form#usf table td input#daf-why,
+  .tennis-rudolstadt form#bsf table td input#daf-why,
+  .tennis-rudolstadt form#esf table td input#daf-why,
+  .tennis-rudolstadt form#cf table td input#daf-why,
+  .tennis-rudolstadt form#ef table td input#daf-why
+  {
     width: 250px !important;
   }
 }

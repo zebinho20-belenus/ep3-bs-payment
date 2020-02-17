@@ -11,7 +11,7 @@ if (! ($this->dateStart || $this->dateEnd)) {
 ?>
 
 <div style="padding: 10px 0px 16px 0px;">
-    <form method="get" action="<?= $this->url('backend/booking') ?>">
+    <form id="bsf" name="bsf" method="get" action="<?= $this->url('backend/booking') ?>">
         <table class="default-table">
             <tr>
                 <td>
@@ -26,7 +26,7 @@ if (! ($this->dateStart || $this->dateEnd)) {
                     </div>
                 </td>
 
-                <td style="vertical-align: bottom; padding-bottom: 7px;">
+                <td style="vertical-align: bottom; padding: 7px;">
                     <?= $this->t('to') ?>
                 </td>
 

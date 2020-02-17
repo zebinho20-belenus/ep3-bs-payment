@@ -56,7 +56,7 @@ class TextForm extends Form
 	        }
 
 	        if ($type == 'Text') {
-		        $style = 'width: 380px;';
+		        $style = 'width: 325px;';
 	        } else {
 		        $style = null;
 	        }

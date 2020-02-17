@@ -37,7 +37,7 @@ class BookingFormat extends AbstractHelper
 
         $html .= sprintf('<tr %s>', $attr);
 
-        $html .= sprintf('<td class="status-col right-text">%s</td>',
+        $html .= sprintf('<td class="status-col right-text first-letter-only">%s</td>',
             $view->t($booking->getStatus()));
 
         $html .= sprintf('<td>%s</td>',
@@ -115,7 +115,7 @@ class BookingFormat extends AbstractHelper
 
         if ($booking->get('status') == 'cancelled') {
 
-            $html .= sprintf('<td class="actions-col no-print"><a href="%s" class="unlined gray symbolic symbolic-edit">%s</a></td>',
+            $html .= sprintf('<td class="actions-col no-print"><a href="%s" class="unlined gray symbolic symbolic-edit"><span class="symbolic-label">%s</span></a></td>',
                 $view->url('backend/booking/edit', [], ['query' => [
                     'ds' => $date->format('Y-m-d'),
                     'ts' => substr($reservation->get('time_start'), 0, 5),
@@ -126,7 +126,7 @@ class BookingFormat extends AbstractHelper
 
         } else {
 
-            $html .= sprintf('<td class="actions-col no-print"><a href="%s" class="unlined gray symbolic symbolic-edit">%s</a></td>',
+            $html .= sprintf('<td class="actions-col no-print"><a href="%s" class="unlined gray symbolic symbolic-edit"><span class="symbolic-label">%s</span></a></td>',
                 $view->url('backend/booking/edit', [], ['query' => [
                     'ds' => $date->format('Y-m-d'),
                     'ts' => substr($reservation->get('time_start'), 0, 5),

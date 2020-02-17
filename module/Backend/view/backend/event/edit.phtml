@@ -48,31 +48,12 @@ $this->headScript()->appendFile($this->basePath('js/tinymce/tinymce.setup.medium
         <table class="default-table">
             <?= $this->formRowDefault($form, 'ef-name') ?>
             <?= $this->formRowDefault($form, 'ef-description') ?>
-
-            <tr>
-                <td colspan="2">
-                    <table class="default-table" style="margin: 0;">
-                        <tr>
-                            <td>
-                                <table class="default-table">
-                                    <?= $this->formRowDefault($form, 'ef-date-start') ?>
-                                    <?= $this->formRowDefault($form, 'ef-date-end') ?>
-                                    <?= $this->formRowDefault($form, 'ef-sid') ?>
-                                </table>
-                            </td>
-
-                            <td>
-                                <table class="default-table">
-                                    <?= $this->formRowDefault($form, 'ef-time-start') ?>
-                                    <?= $this->formRowDefault($form, 'ef-time-end') ?>
-                                    <?= $this->formRowDefault($form, 'ef-capacity') ?>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-
+            <?= $this->formRowDefault($form, 'ef-date-start') ?>
+            <?= $this->formRowDefault($form, 'ef-time-start') ?>
+            <?= $this->formRowDefault($form, 'ef-date-end') ?>
+            <?= $this->formRowDefault($form, 'ef-time-end') ?>
+            <?= $this->formRowDefault($form, 'ef-sid') ?>
+            <?= $this->formRowDefault($form, 'ef-capacity') ?>
             <?= $this->formRowDefault($form, 'ef-notes') ?>
 
             <tr>
