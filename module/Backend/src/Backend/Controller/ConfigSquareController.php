@@ -13,7 +13,7 @@ class ConfigSquareController extends AbstractActionController
     {
         $this->authorize('admin.config');
 
-        $squareManager = $this->getServiceLocator()->get('Square\Manager\SquareManager');
+        $squareManager = @$this->getServiceLocator()->get('Square\Manager\SquareManager');
         $squares = $squareManager->getAll();
 
         return array(
@@ -25,7 +25,7 @@ class ConfigSquareController extends AbstractActionController
     {
         $this->authorize('admin.config');
 
-        $serviceManager = $this->getServiceLocator();
+        $serviceManager = @$this->getServiceLocator();
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
         $formElementManager = $serviceManager->get('FormElementManager');
 
@@ -66,7 +66,9 @@ class ConfigSquareController extends AbstractActionController
                 $square->set('time_block_bookable', max($editData['cf-time-block-bookable'], 10) * 60);
                 $square->setMeta('pseudo-time-block-bookable', $editData['cf-pseudo-time-block-bookable'] ? 'true' : 'false');
                 $square->set('time_block_bookable_max', max($editData['cf-time-block-bookable-max'], 10) * 60);
+                $square->set('min_range_book', (float) $editData['cf-min-range-book'] * 60);
                 $square->set('range_book', (float) $editData['cf-range-book'] * 60 * 60 * 24);
+                $square->set('max_active_bookings', $editData['cf-max-active-bookings']);
                 $square->set('range_cancel', $editData['cf-range-cancel'] * 60 * 60);
 	            $square->setMeta('label.free', $editData['cf-label-free'], $locale);
 
@@ -104,7 +106,9 @@ class ConfigSquareController extends AbstractActionController
                     'cf-time-block-bookable' => round($square->get('time_block_bookable') / 60),
                     'cf-pseudo-time-block-bookable' => $square->getMeta('pseudo-time-block-bookable', 'false') == 'true',
                     'cf-time-block-bookable-max' => round($square->get('time_block_bookable_max') / 60),
+                    'cf-min-range-book' => round($square->get('min_range_book') / 60),
                     'cf-range-book' => round($square->get('range_book') / 60 / 60 / 24),
+                    'cf-max-active-bookings' => $square->get('max_active_bookings'),
                     'cf-range-cancel' => round($square->get('range_cancel') / 60 / 60, 2),
 	                'cf-label-free' => $square->getMeta('label.free'),
                 ));
@@ -120,7 +124,9 @@ class ConfigSquareController extends AbstractActionController
                     'cf-time-block-bookable' => 30,
                     'cf-pseudo-time-block-bookable' => false,
                     'cf-time-block-bookable-max' => 180,
+                    'cf-min-range-book' => 0,
                     'cf-range-book' => 56,
+                    'cf-max-active-bookings' => 0,
                     'cf-range-cancel' => 24,
                 ));
             }
@@ -136,7 +142,7 @@ class ConfigSquareController extends AbstractActionController
     {
         $this->authorize('admin.config');
 
-        $serviceManager = $this->getServiceLocator();
+        $serviceManager = @$this->getServiceLocator();
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
         $formElementManager = $serviceManager->get('FormElementManager');
 
@@ -208,7 +214,7 @@ class ConfigSquareController extends AbstractActionController
     {
         $this->authorize('admin.config');
 
-        $serviceManager = $this->getServiceLocator();
+        $serviceManager = @$this->getServiceLocator();
         $optionManager = $serviceManager->get('Base\Manager\OptionManager');
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
         $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');
@@ -277,7 +283,7 @@ class ConfigSquareController extends AbstractActionController
     {
         $this->authorize('admin.config');
 
-        $squareProductManager = $this->getServiceLocator()->get('Square\Manager\SquareProductManager');
+        $squareProductManager = @$this->getServiceLocator()->get('Square\Manager\SquareProductManager');
         $squareProducts = $squareProductManager->getAll('priority ASC');
 
         return array(
@@ -289,7 +295,7 @@ class ConfigSquareController extends AbstractActionController
     {
         $this->authorize('admin.config');
 
-        $serviceManager = $this->getServiceLocator();
+        $serviceManager = @$this->getServiceLocator();
         $squareProductManager = $serviceManager->get('Square\Manager\SquareProductManager');
         $formElementManager = $serviceManager->get('FormElementManager');
 
@@ -392,7 +398,7 @@ class ConfigSquareController extends AbstractActionController
 
         $spid = $this->params()->fromRoute('spid');
 
-        $serviceManager = $this->getServiceLocator();
+        $serviceManager = @$this->getServiceLocator();
         $squareProductManager = $serviceManager->get('Square\Manager\SquareProductManager');
 
         $squareProduct = $squareProductManager->get($spid);
@@ -422,7 +428,7 @@ class ConfigSquareController extends AbstractActionController
 
         $sid = $this->params()->fromRoute('sid');
 
-        $serviceManager = $this->getServiceLocator();
+        $serviceManager = @$this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
 

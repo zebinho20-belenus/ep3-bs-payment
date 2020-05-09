@@ -108,6 +108,8 @@ class SquareValidator extends AbstractService
         /* Validate time range */
 
         $dateMin = new DateTime();
+        $dateMin->modify('+' . $square->get('min_range_book', 0) . ' sec');
+
         $dateMax = new DateTime();
         $dateMax->modify('+' . $square->get('range_book', 0) . ' sec');
 
@@ -117,6 +119,14 @@ class SquareValidator extends AbstractService
                 // Allow assist users with calendar.see-data privilege to see the entire day
                 if (! ($this->user && $this->user->can('calendar.see-data') && $dateEnd->format('Y-m-d') == $dateMin->format('Y-m-d'))) {
                     throw new RuntimeException('The passed time is already over');
+                }
+            }
+        }
+
+        if ($square->get('min_range_book')) {
+            if ($timeStart < $dateMin) {
+                if (! ($this->user && $this->user->can('calendar.create-single-bookings, calendar.create-subscription-bookings'))) {
+                    throw new RuntimeException('Dieses Datum ist zu kurzfristig');
                 }
             }
         }
@@ -241,6 +251,8 @@ class SquareValidator extends AbstractService
         $square = $byproducts['square'];
         $user = $byproducts['user'];
 
+        $notBookableReason = null;
+
         /* Check for other reservations */
 
         $possibleReservations = $this->reservationManager->getInRange($dateStart, $dateEnd);
@@ -289,6 +301,37 @@ class SquareValidator extends AbstractService
             $bookable = false;
         }
 
+        /* Check for maximum active bookings limitation */
+
+        if ($user) {
+            $maxActiveBookings = $square->need('max_active_bookings');
+
+            if ($maxActiveBookings != 0) {
+                $activeBookings = $this->bookingManager->getByValidity([
+                    'uid' => $user->need('uid'),
+                ]);
+
+                $this->reservationManager->getByBookings($activeBookings);
+
+                $activeBookingsCount = 0;
+
+                foreach ($activeBookings as $activeBooking) {
+                    foreach ($activeBooking->getExtra('reservations') as $activeReservation) {
+                        $activeReservationDate = new DateTime($activeReservation->get('date') . ' ' . $activeReservation->get('time_start'));
+
+                        if ($activeReservationDate > new DateTime()) {
+                            $activeBookingsCount++;
+                        }
+                    }
+                }
+
+                if ($activeBookingsCount >= $maxActiveBookings) {
+                    $bookable = false;
+                    $notBookableReason = 'Sie können derzeit nur <b>' . $maxActiveBookings . ' aktive Buchung/en</b> gleichzeitig offen haben.';
+                }
+            }
+        }
+
         /* Check for blocking events */
 
         $events = $this->eventManager->getInRange($dateStart, $dateEnd);
@@ -305,6 +348,7 @@ class SquareValidator extends AbstractService
         $byproducts['bookingsFromUser'] = $bookingsFromUser;
         $byproducts['reservations'] = $reservations;
         $byproducts['bookable'] = $bookable;
+        $byproducts['notBookableReason'] = $notBookableReason;
         $byproducts['quantity'] = $quantity;
         $byproducts['events'] = $events;
 

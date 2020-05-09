@@ -36,12 +36,33 @@ class SquareManager extends AbstractManager
         $this->squareTable = $squareTable;
         $this->squareMetaTable = $squareMetaTable;
 
-        $select = $squareTable->getSql()->select();
-        $select->order('priority ASC');
+        $loadSquares = function () {
+            $select = $this->squareTable->getSql()->select();
+            $select->order('priority ASC');
 
-        $resultSet = $squareTable->selectWith($select);
+            $resultSet = $this->squareTable->selectWith($select);
 
-        $this->squares = SquareFactory::fromResultSet($resultSet);
+            $this->squares = SquareFactory::fromResultSet($resultSet);
+        };
+
+        $loadSquares();
+
+        /*
+         * Patch database structure on the fly
+         */
+        if ($this->squares) {
+            $referenceSquare = current($this->squares);
+
+            if ($referenceSquare->get('min_range_book') === null) {
+                $this->squareTable->getAdapter()->query('ALTER TABLE `bs_squares` ADD `min_range_book` INT UNSIGNED NOT NULL DEFAULT \'0\' AFTER `time_block_bookable_max`;', 'execute');
+                $loadSquares();
+            }
+
+            if ($referenceSquare->get('max_active_bookings') === null) {
+                $this->squareTable->getAdapter()->query('ALTER TABLE `bs_squares` ADD `max_active_bookings` INT UNSIGNED NOT NULL DEFAULT \'0\' AFTER `range_book`;', 'execute');
+                $loadSquares();
+            }
+        }
 
         /* Load square meta data */
 
@@ -175,7 +196,9 @@ class SquareManager extends AbstractManager
                     'time_block' => $square->need('time_block'),
                     'time_block_bookable' => $square->need('time_block_bookable'),
                     'time_block_bookable_max' => $square->need('time_block_bookable_max'),
+                    'min_range_book' => $square->get('min_range_book'),
                     'range_book' => $square->need('range_book'),
+                    'max_active_bookings' => $square->get('max_active_bookings'),
                     'range_cancel' => $square->need('range_cancel'),
                 ));
 

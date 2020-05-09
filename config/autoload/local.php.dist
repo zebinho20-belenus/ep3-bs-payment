@@ -22,6 +22,7 @@ return array_merge($project_config, array(
     'mail' => array(
         'type' => 'sendmail', // or 'smtp' or 'smtp-tls'
         'address' => '?',
+            // Make sure 'bookings.example.com' matches the hosting domain when using type 'sendmail'
 
         'host' => '?', // for 'smtp' type only, otherwise remove or leave as is
         'user' => '?', // for 'smtp' type only, otherwise remove or leave as is

@@ -207,6 +207,20 @@ class EditForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'cf-min-range-book',
+            'type' => 'Text',
+            'attributes' => array(
+                'id' => 'cf-min-range-book',
+                'style' => 'width: 80px;',
+            ),
+            'options' => array(
+                'label' => 'Buchungsvorlauf',
+                'notes' => 'Auf 0 setzen, um den nächsten freien Zeitblock buchen zu dürfen',
+                'postfix' => 'Minuten',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'cf-range-book',
             'type' => 'Text',
             'attributes' => array(
@@ -217,6 +231,20 @@ class EditForm extends Form
                 'label' => 'Booking range',
                 'notes' => 'How many days in advance<br>can squares be booked?',
                 'postfix' => 'Days',
+            ),
+        ));
+
+        $this->add(array(
+            'name' => 'cf-max-active-bookings',
+            'type' => 'Text',
+            'attributes' => array(
+                'id' => 'cf-max-active-bookings',
+                'style' => 'width: 80px;',
+            ),
+            'options' => array(
+                'label' => 'Buchungen einschränken',
+                'notes' => 'Auf 0 setzen, um beliebig viele Buchungen zu erlauben',
+                'postfix' => 'gleichzeitige Buchung(en) pro Benutzer',
             ),
         ));
 
@@ -424,7 +452,47 @@ class EditForm extends Form
                     ),
                 ),
             ),
+            'cf-min-range-book' => array(
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'options' => array(
+                            'message' => 'Please type something here',
+                        ),
+                        'break_chain_on_failure' => true,
+                    ),
+                    array(
+                        'name' => 'Digits',
+                        'options' => array(
+                            'message' => 'Please type a number here',
+                        ),
+                    ),
+                ),
+            ),
             'cf-range-book' => array(
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'options' => array(
+                            'message' => 'Please type something here',
+                        ),
+                        'break_chain_on_failure' => true,
+                    ),
+                    array(
+                        'name' => 'Digits',
+                        'options' => array(
+                            'message' => 'Please type a number here',
+                        ),
+                    ),
+                ),
+            ),
+            'cf-max-active-bookings' => array(
                 'filters' => array(
                     array('name' => 'StringTrim'),
                 ),

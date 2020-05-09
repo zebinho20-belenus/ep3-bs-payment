@@ -107,6 +107,15 @@ class NotificationListener extends AbstractListenerAggregate
         $message = $message . sprintf($this->t('Should you have any questions and commentaries, please contact us through Email - %s'),
              $this->optionManager->get('client.contact.email'));
 
+        if ($booking->getMeta('player-names')) {
+            $message .= "\n\nAngegebene Mitspieler:";
+
+            foreach (unserialize($booking->getMeta('player-names')) as $i => $playerName) {
+                $message .= sprintf("\n%s. %s",
+                    $i + 1, $playerName['value']);
+            }
+        }
+
         if ($user->getMeta('notification.bookings', 'true') == 'true') {
             $attachments = ['event.ics' => ['name' => 'event.ics', 'disposition' => true, 'type' => 'text/calendar', 'content' => $vCalendar->render()]];            
             $this->userMailService->send($user, $subject, $message, $attachments);
