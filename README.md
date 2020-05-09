@@ -13,10 +13,6 @@ in addition to the original config there is a projetc.php in config/autoload and
 
 in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility and the hammer.js for swiping left/right in the calendar
 
-The system is based on the well-known LAMP stack (Linux, Apache 2+, MySQL 5+, PHP 5.4+) and the popular and powerful^M
-[Zend Framework 2](http://framework.zend.com/) (2.5).^M
-^M
-It is compatible with PHP version up to and including 7.2 - bot not PHP 7.3+. We are currently working on an upgrade of the underlying Zend Framework to make it compatible with PHP 7.3+.^M
 
 
 # Payment
@@ -44,4 +40,4 @@ if a user is actively cancelling the payment via paypal or the stripe checkout -
 ## stripe payment site
 can be changed via the twig templates of payumStripe - for other language support than German and English you have to extend these templates too
 
-vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig^M
+vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
