@@ -1,5 +1,5 @@
 # ep-3 Bookingsystem with direct payment via payum  
-fork of 1.6.3 from tkrebs/ep3-bs
+fork of 1.6.4 from tkrebs/ep3-bs
 
 modified with payum / payumModule (https://github.com/Payum/PayumModule) for direct payment via paypal and stripe (credit cards, apple pay, google pay, SEPA direct debit) 
 
