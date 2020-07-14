@@ -43,4 +43,4 @@ can be changed via the twig templates of payumStripe - for other language suppor
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 
 ## known issues
-in the options service.website ther emust be the correct webserver path like http://localhost/public mot only http://localhost/ otherwise the language changing will not work 
+in the options service.website there must be the correct webserver path like http://localhost/public not only http://localhost/ otherwise the language changing will not work 
