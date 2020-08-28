@@ -262,7 +262,7 @@ class BookingController extends AbstractActionController
                        $details['PAYMENTREQUEST_0_EMAIL'] = $user->get('email');
                        $storage->update($details);
      		           $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
-                           'paypal_ec', $details, $proxyurl.$basepath.'/public/square/booking/payment/done');
+                           'paypal_ec', $details, $proxyurl.$basepath.'/square/booking/payment/done');
                    }				    
                    #paypal checkout
                    #stripe checkout
@@ -282,7 +282,7 @@ class BookingController extends AbstractActionController
                        $details["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName);
                        $storage->update($details);
                        $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
-                           'stripe', $details, $proxyurl.$basepath.'/public/square/booking/payment/confirm');
+                           'stripe', $details, $proxyurl.$basepath.'/square/booking/payment/confirm');
                    }
                    #stripe checkout
                    #klarna checkout
@@ -291,7 +291,7 @@ class BookingController extends AbstractActionController
                        $details['purchase_currency'] = 'EUR';
                        $details['locale'] = 'de-DE';
                        $storage->update($details); 
-                       $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createAuthorizeToken('klarna_checkout', $details, $proxyurl.$basepath.'/public/square/booking/payment/done');
+                       $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createAuthorizeToken('klarna_checkout', $details, $proxyurl.$basepath.'/square/booking/payment/done');
                        $notifyToken = $this->getServiceLocator()->get('payum.security.token_factory')->createNotifyToken('klarna_checkout', $details);
                    }
                    #klarna checkout

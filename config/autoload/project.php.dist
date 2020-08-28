@@ -8,7 +8,7 @@
 $instance = 'tvas-booking-dev';
 
 return array(
-    // basepath of the instance on your server - i.e. tvas-booking-dev for https://tennis-rudolstadt.de/tvas-booking-dev or '' if you don't have a basepath before public/ 
+    // basepath of the instance on your server - i.e. tvas-booking-dev for https://tennis-rudolstadt.de/tvas-booking-dev or '' if you don't have a basepath square/ i.e. 
     'basepath' => $instance,
     // origin url of your server - http://yourip - if  you don't have a proxy, baseurl and proxyurl should be the same like https://tennis-rudolstadt.de
     'baseurl' => '?',

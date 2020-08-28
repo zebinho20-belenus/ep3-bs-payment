@@ -20,7 +20,6 @@ self.addEventListener('install', function(e) {
                 '../js/controller/calendar/index.min.js',
                 '../js/controller/frontend/hammer.min.js',
                 '../js/jquery-ui/i18n/de-DE.js',
-                '../js/jquery-ui/i18n/en-US.js',
                 '../js-client/tennis-rudolstadt.min.js',
                 '../imgs/icons/locale/en-US.png',
                 '../imgs/icons/locale/de-DE.png',

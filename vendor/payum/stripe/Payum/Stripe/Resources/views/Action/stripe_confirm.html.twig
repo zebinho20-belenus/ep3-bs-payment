@@ -2,7 +2,7 @@
 
 {% block payum_stylesheets %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link type="text/css" rel="stylesheet" href="{{ model.metadata.instance }}/public/css-client/stripe.min.css">
+    <link type="text/css" rel="stylesheet" href="{{ model.metadata.instance }}/css-client/stripe.min.css">
 {% endblock %}
 
 {% block payum_body %}
@@ -10,8 +10,8 @@
 
 <main id="main" class="checkout">
     <header class="header">
-       <img src="{{ model.metadata.instance }}/public/imgs-client/layout/logo.png" id="logo"/>
-       <a class="shop abort" href="{{ model.metadata.instance }}/public/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'Abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
+       <img src="{{ model.metadata.instance }}/imgs-client/layout/logo.png" id="logo"/>
+       <a class="shop abort" href="{{ model.metadata.instance }}/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'Abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
     </header>
     <div id="checkout">
 
@@ -35,7 +35,7 @@
     </div>
     <div id="order-items">
     <div class="line-item">
-        <img src="{{ model.metadata.instance }}/public/imgs-client/layout/tennis-court.png" alt="square" id="logo">
+        <img src="{{ model.metadata.instance }}/imgs-client/layout/tennis-court.png" alt="square" id="logo">
         <div class="label">
           <p class="product">{{ model.metadata.productName }}</p>
           <p class="sku"></p>
@@ -98,9 +98,7 @@
                     $form.find('button').prop('disabled', true);
                     $form.find('button').css('background', '#dadadf');
                     window.setTimeout(function(){
-                        var currentPath = document.location.pathname;
-                        var abortPath = currentPath.replace(RegExp(/public.*/),'');
-                        abortPath += "public/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true";
+                        var abortPath = "{{ model.metadata.instance }}/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true";
                         document.location.href = abortPath;
                     }, 5000);
 
