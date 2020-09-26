@@ -15,6 +15,7 @@ use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Reply\ReplyInterface;
 use Payum\Stripe\Request\Confirm;
+use Stripe;
 use GuzzleHttp\Client; 
 
 
@@ -29,7 +30,7 @@ class BookingController extends AbstractActionController
         $timeEndParam = $this->params()->fromQuery('te');
         $squareParam = $this->params()->fromQuery('s');
 
-        $serviceManager = @$this->getServiceLocator();
+        $serviceManager = $this->getServiceLocator();
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
 
         $byproducts = $squareValidator->isBookable($dateStartParam, $dateEndParam, $timeStartParam, $timeEndParam, $squareParam);
@@ -63,7 +64,7 @@ class BookingController extends AbstractActionController
         $productsParam = $this->params()->fromQuery('p', 0);
         $playerNamesParam = $this->params()->fromQuery('pn', 0);
 
-        $serviceManager = @$this->getServiceLocator();
+        $serviceManager = $this->getServiceLocator();
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
 
         $byproducts = $squareValidator->isBookable($dateStartParam, $dateEndParam, $timeStartParam, $timeEndParam, $squareParam);
@@ -156,6 +157,7 @@ class BookingController extends AbstractActionController
         if ($this->config('stripe') != null && $this->config('stripe') == true) {
             $byproducts['stripe'] = true;
             $byproducts['stripePaymentMethods'] = $this->config('stripePaymentMethods');
+            $byproducts['stripeIcon'] = $this->config('stripeIcon');
 
         }
         if ($this->config('klarna') != null && $this->config('klarna') == true) {
@@ -164,6 +166,10 @@ class BookingController extends AbstractActionController
         if ($this->config('billing') != null && $this->config('billing') == true) {
             $byproducts['billing'] = true;
         }
+        if ($this->config('payment_default') != null) {
+            $byproducts['payment_default'] = $this->config('payment_default');
+        }
+
 
         /* Check booking form submission */
 
@@ -240,7 +246,7 @@ class BookingController extends AbstractActionController
 		           $storage = $this->getServiceLocator()->get('payum')->getStorage('Application\Model\PaymentDetails');
                    $tokenStorage = $this->getServiceLocator()->get('payum.options')->getTokenStorage(); 
                    $captureToken = null;
-                   $details = $storage->create();
+                   $model = $storage->create();
                    $booking->setMeta('directpay', 'true');
                    $bookingManager->save($booking);
                    $userName = $user->getMeta('firstname') . ' ' . $user->getMeta('lastname');
@@ -255,44 +261,37 @@ class BookingController extends AbstractActionController
 
                    #paypal checkout            
                    if ($payservice == 'paypal') {
-    		           $details['PAYMENTREQUEST_0_CURRENCYCODE'] = 'EUR';
-    		           $details['PAYMENTREQUEST_0_AMT'] = $total/100;
-                       $details['PAYMENTREQUEST_0_BID'] = $booking->get('bid');
-                       $details['PAYMENTREQUEST_0_DESC'] = $description;
-                       $details['PAYMENTREQUEST_0_EMAIL'] = $user->get('email');
-                       $storage->update($details);
+    		           $model['PAYMENTREQUEST_0_CURRENCYCODE'] = 'EUR';
+    		           $model['PAYMENTREQUEST_0_AMT'] = $total/100;
+                       $model['PAYMENTREQUEST_0_BID'] = $booking->get('bid');
+                       $model['PAYMENTREQUEST_0_DESC'] = $description;
+                       $model['PAYMENTREQUEST_0_EMAIL'] = $user->get('email');
+                       $storage->update($model);
      		           $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
-                           'paypal_ec', $details, $proxyurl.$basepath.'/square/booking/payment/done');
+                           'paypal_ec', $model, $proxyurl.$basepath.'/square/booking/payment/done');
                    }				    
                    #paypal checkout
                    #stripe checkout
                    if ($payservice == 'stripe') {
-                       $details["payment_method_types"] = $this->config('stripePaymentMethods');                       
-                       $details["mandate_data"] = array( 'customer_acceptance' => array(
-                                                      'type' => 'online',
-                                                      'online' => array(
-                                                          'ip_address' => $_SERVER['REMOTE_ADDR'],
-                                                          'user_agent' => $_SERVER['HTTP_USER_AGENT']
-                                                      )      
-                                                  )); 
-                       $details["amount"] = $total;
-                       $details["currency"] = 'EUR';
-                       $details["description"] = $description;
-                       $details["receipt_email"] = $user->get('email');
-                       $details["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName);
-                       $storage->update($details);
+                       $model["payment_method_types"] = $this->config('stripePaymentMethods');                       
+                       $model["amount"] = $total;
+                       $model["currency"] = 'EUR';
+                       $model["description"] = $description;
+                       $model["receipt_email"] = $user->get('email');
+                       $model["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName, 'stripeDefaultPaymentMethod' => $this->config('stripeDefaultPaymentMethod'), 'stripeAutoConfirm' => $this->config('stripeAutoConfirm'), 'stripePaymentRequest' => $this->config('stripePaymentRequest'));
+                       $storage->update($model);
                        $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
-                           'stripe', $details, $proxyurl.$basepath.'/square/booking/payment/confirm');
+                           'stripe', $model, $proxyurl.$basepath.'/square/booking/payment/confirm');
                    }
                    #stripe checkout
                    #klarna checkout
                    if ($payservice == 'klarna') {
-                       $details['purchase_country'] = 'DE';
-                       $details['purchase_currency'] = 'EUR';
-                       $details['locale'] = 'de-DE';
-                       $storage->update($details); 
-                       $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createAuthorizeToken('klarna_checkout', $details, $proxyurl.$basepath.'/square/booking/payment/done');
-                       $notifyToken = $this->getServiceLocator()->get('payum.security.token_factory')->createNotifyToken('klarna_checkout', $details);
+                       $model['purchase_country'] = 'DE';
+                       $model['purchase_currency'] = 'EUR';
+                       $model['locale'] = 'de-DE';
+                       $storage->update($model); 
+                       $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createAuthorizeToken('klarna_checkout', $model, $proxyurl.$basepath.'/square/booking/payment/done');
+                       $notifyToken = $this->getServiceLocator()->get('payum.security.token_factory')->createNotifyToken('klarna_checkout', $model);
                    }
                    #klarna checkout
                    
@@ -302,13 +301,13 @@ class BookingController extends AbstractActionController
 
                    #klarna checkout update merchant details
                    if ($payservice == 'klarna') {
-                       $details['merchant'] = array(
+                       $model['merchant'] = array(
                            'terms_uri' => 'http://example.com/terms',
                            'checkout_uri' => $captureToken->getTargetUrl(),
                            'confirmation_uri' => $captureToken->getTargetUrl(),
                            'push_uri' => $notifyToken->getTargetUrl()
                        );
-                       $details['cart'] = array(
+                       $model['cart'] = array(
                            'items' => array(
                                 array(
                                    'reference' => $booking->get('bid'),
@@ -318,7 +317,7 @@ class BookingController extends AbstractActionController
                                 )
                            )
                        );
-                       $storage->update($details);
+                       $storage->update($model);
                    }
                    #klarna checkout
 
@@ -371,7 +370,7 @@ class BookingController extends AbstractActionController
             throw new RuntimeException('This booking does not exist');
         }
 
-        $serviceManager = @$this->getServiceLocator();
+        $serviceManager = $this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
 
@@ -415,10 +414,12 @@ class BookingController extends AbstractActionController
         $gateway->execute($status = new GetHumanStatus($token));
 
         $payment = $status->getFirstModel();
-        
-        if ($payment['status'] === "requires_action") {
+
+        // syslog(LOG_EMERG, $payment['status']);
+
+        if ($payment['status'] === "requires_action" && !(array_key_exists('error',$payment))) {
             
-           $payment['doneAction'] = $token->getTargetUrl();  
+           $payment['doneAction'] = $token->getTargetUrl();
 
            try {
                $gateway->execute(new Confirm($payment));
@@ -439,7 +440,7 @@ class BookingController extends AbstractActionController
 
         }
    
-        if ($payment['status'] != "requires_action") {
+        if ($payment['status'] != "requires_action" || array_key_exists('error',$payment)) {
            $doneAction = str_replace("confirm", "done", $token->getTargetUrl());
 
            $token->setTargetUrl($doneAction);
@@ -449,11 +450,70 @@ class BookingController extends AbstractActionController
 
     }    
 
+    public function webhookAction()
+    {
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload, $sig_header, $this->config('stripeWebhookSecret')
+            );
+        } catch(\UnexpectedValueException $e) {
+            // Invalid payload
+            http_response_code(400);
+            return false;
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            http_response_code(400);
+            return false;
+        }
+
+        $serviceManager = $this->getServiceLocator();
+        $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+        $bookingService = $serviceManager->get('Booking\Service\BookingService');
+
+        $bid = -1;
+        $intent = null;
+        $projectShort = $this->option('client.name.short'); 
+        $description_base = $projectShort.' booking-';
+
+        if ($event->type == "payment_intent.succeeded" || $event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
+            $intent = $event->data->object;
+            $bid = str_replace($description_base,'',$intent->description);
+        }
+        else {
+            http_response_code(400);
+            return false; 
+        }
+
+        $booking = $bookingManager->get($bid); 
+        $notes = $booking->getMeta('notes');
+
+        if ($event->type == "payment_intent.succeeded") {
+            syslog(LOG_EMERG, "Succeeded paymentIntent");
+            $notes = $notes . " " . "paymentIntent succeded";
+            $booking->set('status_billing', 'paid');        
+            
+        } elseif ($event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
+            $error_message = $intent->last_payment_error ? $intent->last_payment_error->message : "";
+            $notes = $notes . " " . $error_message;         
+            // maybe if booking is not outdated
+            // $bookingService->cancelSingle($booking); 
+        }
+
+        $booking->setMeta('notes', $notes);
+        $bookingManager->save($booking);
+        http_response_code(200);
+        return false;
+
+    }    
+
     public function doneAction()
     {
         $serviceManager = $this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
-        $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
 
         $token = $serviceManager->get('payum.security.http_request_verifier')->verify($this);
 
@@ -508,7 +568,7 @@ class BookingController extends AbstractActionController
                            $this->option('subject.square.type'), $this->option('client.contact.phone')));
                    }
                 }
-                else{
+                else {
                     $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
                         '<b>', '</b>',$this->option('subject.square.type')));
                 }

@@ -27,11 +27,15 @@ class QuantityChoice extends AbstractHelper
         $view = $this->getView();
         $html = '';
 
-        $html .= '<label for="sb-quantity" style="margin-right: 8px;">';
+        $quantityChoiceSelect = "visible";
+
+        if ($quantityAvailable == 1) { $quantityChoiceSelect = "hidden"; } 
+
+        $html .= '<label for="sb-quantity" style="margin-right: 8px; visibility:' . $quantityChoiceSelect  . '" >';
         $html .= sprintf($view->t('How many %s?'), $this->optionManager->need('subject.square.unit.plural'));
         $html .= '</label>';
 
-        $html .= '<select id="sb-quantity" style="min-width: 64px;">';
+        $html .= '<select id="sb-quantity" style="min-width: 64px;  visibility:' . $quantityChoiceSelect  . '" >';
 
         for ($i = 1; $i <= $quantityAvailable; $i++) {
             $html .= sprintf('<option value="%1$s">%1$s</option>', $i);

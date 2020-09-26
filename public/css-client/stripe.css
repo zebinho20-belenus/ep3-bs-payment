@@ -936,7 +936,8 @@ button:active {
 }
 
 .payment-info.card.visible,
-.payment-info.sepa_debit.visible {
+.payment-info.sepa_debit.visible,
+.payment-info.ideal.visible {
   text-align: center;
 }
 

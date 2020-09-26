@@ -68,9 +68,11 @@ class ConfirmPaymentIntentAction implements ActionInterface, ApiAwareInterface
             Stripe::setApiKey($this->keys->getSecretKey());
 
             $intent = PaymentIntent::retrieve($model['payment_intent']);
+
             $intent->confirm();
 
             $model->replace($intent->__toArray(true));
+
         } catch (Base $e) {
             $model->replace($e->getJsonBody());
         }

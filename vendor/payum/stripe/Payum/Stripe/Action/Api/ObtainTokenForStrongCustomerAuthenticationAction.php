@@ -64,6 +64,8 @@ class ObtainTokenForStrongCustomerAuthenticationAction implements ActionInterfac
      */
     public function execute($request)
     {
+        // syslog(LOG_EMERG,"ObtainTokenForStrongCustomerAuthenticationAction");
+        
         /** @var $request ObtainTokenForStrongCustomerAuthentication */
         RequestNotSupportedException::assertSupports($this, $request);
 
@@ -77,6 +79,23 @@ class ObtainTokenForStrongCustomerAuthenticationAction implements ActionInterfac
         $this->gateway->execute($getHttpRequest);
         if ($getHttpRequest->method == 'POST' && isset($getHttpRequest->request['stripeToken'])) {
             $model['payment_method'] = $getHttpRequest->request['stripeToken'];
+            $stripePaymentMethod = $getHttpRequest->request['stripePaymentMethod'];
+            if ($stripePaymentMethod === 'ideal' || $stripePaymentMethod === 'giropay') {
+               $model["return_url"] = $request->getToken() ? $request->getToken()->getAfterUrl() : null;
+            }
+            if ($stripePaymentMethod === 'sepa_debit') {
+               $model["mandate_data"] = array( 'customer_acceptance' => array(
+                                                      'type' => 'online',
+                                                      'online' => array(
+                                                          'ip_address' => $_SERVER['REMOTE_ADDR'],
+                                                          'user_agent' => $_SERVER['HTTP_USER_AGENT']
+                                                      )
+                                                  ));
+
+            }
+            $metadata = $model['metadata'];
+            $metadata['stripePaymentMethod'] = $stripePaymentMethod;
+            $model['metadata'] = $metadata;
 
             return;
         }

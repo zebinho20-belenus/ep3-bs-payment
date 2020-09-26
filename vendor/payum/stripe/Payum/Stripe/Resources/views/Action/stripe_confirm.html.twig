@@ -16,15 +16,22 @@
     <div id="checkout">
 
     <form action="{{ model.doneAction|default('') }}" method="POST" id="payment-form">
-        <p class="instruction">{{ model.metadata.locale == 'de-DE' ? 'Bezahlung abschließen' : 'Complete your payment details below' }}</p>
+        <p id="payment-header"  class="instruction"><b>{{ model.metadata.locale == 'de-DE' ? 'Bezahlung autorisieren' : 'Authorize your payment' }}</b></p>
+        <section>
+          &nbsp; 
+        </section>
         <section>
           <b>{{ model.receipt_email|default("") }}</b>{{ model.description|default("") }}
         </section>
         <div id="payment-errors" class="element-errors"></div>
+
         <section>
-          <h2>{{ model.metadata.locale == 'de-DE' ? 'Zahlungsinformation' : 'Payment information' }}</h2>
+          {{ model.metadata.locale == 'de-DE' ? 'Zahlungsmethode: ' : 'Payment method: ' }}<b>{{ model.metadata.stripePaymentMethod|default("") }}</b>
+        </section> 
+        <section>
+          &nbsp; 
         </section>
-        <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Confirm payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung bestätigen' : '' }}</button> 
+        <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Authorize payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung autorisieren' : '' }}</button> 
     </form>
 
  </div>
@@ -70,30 +77,47 @@
     {{ parent() }}
 
     <script type="text/javascript">
+         // This identifies your website in the call below
+         var stripe = Stripe({{ publishable_key|json_encode|raw }});
+         var paymentIntent = {};
+
          jQuery(function($) {
-            $('#payment-form').submit(function(e) {
-                var $form = $(this);
+
+            var $form = $('#payment-form'); 
+
+            // Disable the submit button to prevent repeated clicks
+            $form.find('button').prop('disabled', true);
+            $form.find('button').css('background', '#dadadf');
+
+            var retrievePaymentIntentHandler = function(response) {
+                paymentIntent = response.paymentIntent;                
+
+                if (paymentIntent.status == 'requires_action') { 
+                    $form.find('#payment-header').text("{{ model.metadata.locale == 'de-DE' ? 'Bezahlung autorisieren' : 'Authorize your payment' }}");  
+                    $form.find('button').text("{{ model.metadata.locale != 'de-DE' ? 'Authorize payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung autorisieren' : '' }}");
+                }
                 
-                // Disable the submit button to prevent repeated clicks
-                $form.find('button').prop('disabled', true);
-                $form.find('button').css('background', '#dadadf');
+                if (paymentIntent.status == 'requires_confirmation') { 
+                    $form.find('#payment-header').text("{{ model.metadata.locale == 'de-DE' ? 'Bezahlung bestätigen' : 'Confirm your payment' }}");
+                    $form.find('button').text("{{ model.metadata.locale != 'de-DE' ? 'Confirm payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung bestätigen' : '' }}");
+                }
 
-                // This identifies your website in the call below
-                var stripe = Stripe({{ publishable_key|json_encode|raw }});
-
-                stripe.handleCardAction('{{ payment_intent_client_secret }}').then(stripeResponseHandler);
-
-                // Prevent the form from submitting with the default action
-                return false;
-            });
-            
-            var stripeResponseHandler = function(response) {
-                var $form = $('#payment-form');
                 const paymentErrors = document.getElementById('payment-errors');
-                if (response.error) {
+                if (response.error || response.paymentIntent == 'failed' || response.redirect_status == 'failed' || response.paymentIntent.status == 'requires_payment_method' || response.paymentIntent.status == 'canceled') {
+                    $form.find('#payment-header').text("{{ model.metadata.locale == 'de-DE' ? 'Bezahlung abgebrochen!' : 'payment canceled!' }}");
+
+                    var error_text = '';
+
+                    if (typeof response.error == 'object' && response.error) {
+                        error_text = response.error.message;
+                    } 
+
+                    if (typeof response.paymentIntent.last_payment_error == 'object' && response.paymentIntent.last_payment_error) {
+                        error_text = response.paymentIntent.last_payment_error.message;
+                    }
+
                     // Show the errors on the form
-                    $form.find('#payment-errors').text(response.error.message
-                        + " ");
+                    $form.find('#payment-errors').text(error_text + " ");
                     paymentErrors.classList.add('visible');
                     $form.find('button').prop('disabled', true);
                     $form.find('button').css('background', '#dadadf');
@@ -103,20 +127,92 @@
                     }, 5000);
 
                 } else {
+
+                   //enable submit button
+                   $form.find('button').prop('disabled', false);
+                   $form.find('button').css('background', '#666ee8');                   
+                    
+                }
+            };
+            
+            var handleCardActionHandler = function(response) {
+                
+                if (typeof response.paymentIntent == 'object' && response.paymentIntent) {
+                    paymentIntent = response.paymentIntent;
+                } 
+
+                const paymentErrors = document.getElementById('payment-errors');
+                if (response.error || response.redirect_status == 'failed' || (paymentIntent && (paymentIntent == 'failed' || paymentIntent.status == 'requires_payment_method' || paymentIntent.status == 'canceled'))) {
+                    $form.find('#payment-header').text("{{ model.metadata.locale == 'de-DE' ? 'Bezahlung abgebrochen!' : 'payment canceled!' }}");
+
+                    var error_text = '';
+
+                    if (typeof response.error == 'object' && response.error) {
+                        error_text = response.error.message;
+                        error_text += " ";
+                    }
+
+                    if (typeof paymentIntent.last_payment_error == 'object' && paymentIntent.last_payment_error) {
+                        error_text += paymentIntent.last_payment_error.message;
+                    }
+
+                    // Show the errors on the form
+                    $form.find('#payment-errors').text(error_text + " ");
+                    paymentErrors.classList.add('visible');
+                    $form.find('button').prop('disabled', true);
+                    $form.find('button').css('background', '#dadadf');
+                    window.setTimeout(function(){
+                        var abortPath = "{{ model.metadata.instance }}/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true";
+                        document.location.href = abortPath;
+                    }, 5000);
+
+                } else {
+
+                    if (paymentIntent && paymentIntent.status == 'requires_action') {
+                        $form.find('#payment-header').text("{{ model.metadata.locale == 'de-DE' ? 'Bezahlung autorisieren' : 'Authorize your payment' }}");
+                        $form.find('button').text("{{ model.metadata.locale != 'de-DE' ? 'Authorize payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung autorisieren' : '' }}");
+                    }
+
+                    if (paymentIntent && paymentIntent.status == 'requires_confirmation') {
+                        $form.find('#payment-header').text("{{ model.metadata.locale == 'de-DE' ? 'Bezahlung bestätigen' : 'Confirm your payment' }}");
+                        $form.find('button').text("{{ model.metadata.locale != 'de-DE' ? 'Confirm payment' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'Zahlung bestätigen' : '' }}");
+                    }
+
+                    //enable submit button
+                    $form.find('button').prop('disabled', false);
+                    $form.find('button').css('background', '#666ee8');
+                }
+            };
+
+            if ('{{ model.metadata.stripePaymentMethod }}' == 'ideal' || '{{ model.metadata.stripePaymentMethod }}' == 'giropay') {
+                stripe.retrievePaymentIntent('{{ payment_intent_client_secret }}').then(retrievePaymentIntentHandler);
+            }
+            else {
+                stripe.handleCardAction('{{ payment_intent_client_secret }}').then(handleCardActionHandler);
+            }
+
+            $('#payment-form').submit(function(e) {
+
+                if (paymentIntent.status == 'requires_action') {
+                    stripe.handleCardAction('{{ payment_intent_client_secret }}').then(handleCardActionHandler);
+                } else {
                     // token is the confirmed payment intent's id
-                    var token = response.paymentIntent.id;
+                    var token = paymentIntent.id;
                     // Insert the token into the form so it gets submitted to the server
                     $form.append($('<input type="hidden" name="stripeToken" />').val(token));
                     // and re-submit
                     $form.get(0).submit();
                 }
-            };
 
-        var $confform = $('#payment-form');
-        $confform.find('button').click();
+                // Prevent the form from submitting with the default action
+                return false;
+            });
+
+            if ('{{ model.metadata.stripeAutoConfirm }}' == 'true') {
+                $form.find('button').click();
+            }
 
         });
-
 
     </script>
 

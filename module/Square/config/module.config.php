@@ -69,6 +69,15 @@ return array(
                                     ),
                                 ),
                             ),
+                            'payment_webhook' => array(
+                                'type' => 'Literal',
+                                'options' => array(
+                                    'route'    => '/payment/webhook',
+                                    'defaults' => array(
+                                        'action' => 'webhook',
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),

@@ -23,7 +23,7 @@
       <div id="alternative"></div>
 <form action="{{ actionUrl|default('') }}" method="post" id="payment-form">
      
-        <p class="instruction">{{ model.metadata.locale == 'de-DE' ? 'Bezahlung mit Kreditkarte / Lastschrift abschließen' : 'Complete your payment with credit card / sepa direct debit below' }}</p>
+        <p class="instruction">{{ model.metadata.locale == 'de-DE' ? 'Zahlungsinformationen eingeben' : 'Complete your payment details below' }}</p>
         <section>
           <h2>{{ model.metadata.locale == 'de-DE' ? 'Zahlungsinformation' : 'Payment information' }}</h2>
           <fieldset class="with-state">
@@ -50,9 +50,21 @@
               {% if 'sepa_debit' in model.payment_method_types %} 
               <li class="visible">
                 <input type="radio" name="payment" id="payment-sepa_debit" value="sepa_debit">
-                <label for="payment-sepa_debit">{{ model.metadata.locale == 'de-DE' ? 'SEPA Lastschrift' : 'SEPA Direct Debit' }}</label>
+                <label for="payment-sepa_debit">{{ model.metadata.locale == 'de-DE' ? 'Lastschrift' : 'SEPA Direct Debit' }}</label>
               </li>
-              {% endif %}  
+              {% endif %}
+              {% if 'ideal' in model.payment_method_types %}
+              <li class="visible">
+                <input type="radio" name="payment" id="payment-ideal" value="ideal">
+                <label for="payment-ideal">{{ model.metadata.locale == 'de-DE' ? 'iDEAL' : 'iDEAL' }}</label>
+              </li>
+              {% endif %}
+              {% if 'giropay' in model.payment_method_types %}
+              <li class="visible">
+                <input type="radio" name="payment" id="payment-giropay" value="giropay">
+                <label for="payment-giropay">{{ model.metadata.locale == 'de-DE' ? 'GIROPAY' : 'GIROPAY' }}</label>
+              </li>
+              {% endif %}
              </ul> 
           </nav>
         <div class="payment-info card visible">
@@ -71,7 +83,19 @@
               </label>
             </fieldset>
             <p class="notice">{{ model.metadata.locale != 'de-DE' ? 'By providing your IBAN and confirming this payment, you authorise (A) ' : 'Ich ermächtige/ Wir ermächtigen (A) ' }} {{ model.metadata.companyName }} {{ model.metadata.locale != 'de-DE' ? ' and Stripe Inc., our payment provider, to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from' : ' und Stripe Inc., unseren Zahlungs Dienstleister, Zahlungen von meinem/ unserem Konto mittels Lastschrift einzuziehen. Zugleich (B) weise ich mein/ weisen wir unser Kreditinstitut an, die von ' }} {{ model.metadata.companyName }} {{ model.metadata.locale != 'de-DE' ? ' and Stripe Inc..' : ' und Stripe Inc. auf mein/ unser Konto gezogenen Lastschriften einzulösen.' }}</p>  
-          </div>
+        </div>
+        <div class="payment-info ideal">
+           <fieldset>
+             <label>
+               <span>iDEAL</span>
+               <div id="ideal-bank-element" class="field"></div>
+             </label>
+           </fieldset>
+        </div>
+        <div class="payment-info redirect">
+            <p class="notice">{{ model.metadata.locale == 'de-DE' ? 'Sie werden zu ihrem Zahlungsdienstleister weitergeleitet' : 'You’ll be redirected to the banking site to complete your payment.' }}</p>
+        </div>
+ 
         </section>
 
   <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Pay' : '' }} €{{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'zahlen' : '' }}</button>
@@ -251,6 +275,22 @@
       submitButton.disabled = false;
     });
 
+    // Create a iDEAL Bank Element and pass the style options, along with an extra `padding` property.
+    const idealBank = elements.create('idealBank', {
+      style: {base: Object.assign({padding: '10px 15px'}, style.base)},
+    });
+
+    // Mount the iDEAL Bank Element on the page.
+    idealBank.mount('#ideal-bank-element');
+
+    // Monitor change events on the iDEAL Element to display any errors.
+    idealBank.on('change', function(event) {
+       var bankName = event.value;
+       if (bankName) {
+          updateButtonLabel('ideal', bankName);
+       }
+    });
+
     // Update the main button to reflect the payment method being selected.
     const updateButtonLabel = (paymentMethod, bankName) => {
       let name = paymentMethods[paymentMethod].name;
@@ -268,12 +308,23 @@
         let name = '{{ model.metadata.locale == 'de-DE' ? 'SEPA Lastschrift' : 'SEPA Direct Debit' }}'; 
         label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
       }
+      if (paymentMethod === 'ideal') {
+        let name = 'iDEAL';
+        label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
+      }
+      if (paymentMethod === 'giropay') {
+        let name = 'Giropay';
+        label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
+      }
       if (paymentMethod === 'sepa_debit' && bankName) {
         let name = '{{ model.metadata.locale == 'de-DE' ? 'SEPA Lastschrift' : 'SEPA Direct Debit' }}';
         let l_pay1 = '{{ model.metadata.locale != 'de-DE' ? 'Debit ' : '' }}';
         let l_pay2 = '{{ model.metadata.locale == 'de-DE' ? ' einziehen' : '' }}';
         label = l_pay1 + `${amount}` + l_from + `${bankName}` + l_pay2;
-
+      }
+      if (paymentMethod === 'ideal' && bankName) {
+        let name = 'iDEAL';
+        label = l_pay1 + `${amount}` + l_with + `${bankName}` + l_pay2;
       }
       submitButton.innerText = label;
     };
@@ -296,12 +347,19 @@
         form
           .querySelector('.payment-info.sepa_debit')
           .classList.toggle('visible', payment === 'sepa_debit');
+        form
+          .querySelector('.payment-info.ideal')
+          .classList.toggle('visible', payment === 'ideal');
+        form
+          .querySelector('.payment-info.redirect')
+          .classList.toggle('visible', flow === 'redirect');
         paymentErrors.textContent = "";
         paymentErrors.classList.remove('visible');
         submitButton.disabled = false;
       });
     }
 
+    if ('{{ model.metadata.stripePaymentRequest }}' == 'true') {
     // Create the payment request.
     var paymentRequest = stripe.paymentRequest({
           country: 'DE',
@@ -357,10 +415,11 @@
         // and submit
         $form.get(0).submit();
       });
-    });    
+    });
+    }    
 
-    // default payment-method card
-    updateButtonLabel('card');
+    // default payment-method
+    form.querySelector('input[id=payment-{{ model.metadata.stripeDefaultPaymentMethod }}').click();
 
 </script>  
 
@@ -393,6 +452,15 @@
                 if (payment === 'sepa_debit') {
                     stripe.createPaymentMethod('sepa_debit', iban, paymentParams).then(stripeResponseHandler);               
                 }
+                // ideal
+                if (payment === 'ideal') {
+                    stripe.createPaymentMethod('ideal', idealBank, paymentParams).then(stripeResponseHandler);
+                }
+                // giropay
+                if (payment === 'giropay') {
+                    stripe.createPaymentMethod('giropay', paymentParams).then(stripeResponseHandler);
+                }
+
                 // Prevent the form from submitting with the default action
                 return false;
             });
@@ -400,6 +468,7 @@
             var stripeResponseHandler = function(response) {
                 var $form = $('#payment-form');
                 const paymentErrors = document.getElementById('payment-errors');
+                const payment = form.querySelector('input[name=payment]:checked').value;
                 if (response.error) {
                     // Show the errors on the form
                     $form.find('#payment-errors').text(response.error.message
@@ -413,6 +482,7 @@
                     var token = response.paymentMethod.id;
                     // Insert the token into the form so it gets submitted to the server
                     $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+                    $form.append($('<input type="hidden" name="stripePaymentMethod" />').val(payment));
                     // and re-submit
                     $form.get(0).submit();
                 }
