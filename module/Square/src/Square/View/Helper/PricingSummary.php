@@ -61,8 +61,12 @@ class PricingSummary extends AbstractHelper
         $html .= sprintf('<td>%s</td>',
             $view->prettyTime($finalPricing['seconds']));
 
-        $html .= sprintf('<td>%s %s</td>',
-            $view->numberFormat($quantity), $squareUnit);
+        if ($quantity > 1) {
+            $html .= sprintf('<td>%s %s</td>',
+                $view->numberFormat($quantity), $squareUnit);
+        } else {
+            $html .= '<td></td>';
+        }
 
         $html .= sprintf('<td>%s</td>',
             $view->priceFormat($finalPricing['price'], $finalPricing['rate'], $finalPricing['gross']));
