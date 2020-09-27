@@ -1,9 +1,11 @@
 # ep-3 Bookingsystem with direct payment via payum  
 fork of 1.6.4 from tkrebs/ep3-bs
 
-modified with payum / payumModule (https://github.com/Payum/PayumModule) for direct payment via paypal and stripe (credit cards, apple pay, google pay, SEPA direct debit) 
+modified with payum / payumModule (https://github.com/Payum/PayumModule) for direct payment via paypal and stripe (credit cards, ( apple pay, google pay via PaymentRequest API), SEPA direct debit, iDEAL, Giropay) 
 
-runnnig with PHP 7+ 
+you can combine it with classic behaviour book on billing too
+
+runnnig with PHP 7.2 (not 7.3 - see original project tkrebs/ep3-bs for details) 
 
 vendor path completely from our instance (tennis-rudolstadt.de) with extended payumModule and payumStripe
 
@@ -11,7 +13,9 @@ css, images (logo) from our instance (to be changed if somebody want's to use th
 
 in addition to the original config there is a projetc.php in config/autoload and the extended local.php for the payment provider options 
 
-in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility and the hammer.js for swiping left/right in the calendar
+in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility (use like an app on smartphones) and the hammer.js for swiping left/right in the calendar
+
+the layout is a bit modified for better usability on smartphones (even the administration)
 
 
 
@@ -21,7 +25,9 @@ in addition to the original project there is a manifest.json, js/sw.js and modif
 create an account at paypal.com - first sandbox for developing later live - get the NVP/SOAP credentials (username,password,signature) and put them in your config/autoload/local.php
 
 ## stripe
-create an account at stripe.com - get the API keys (publishable and secret key) - first test later live - and put them in your config/autoload/local.php
+create an account at stripe.com - get the API keys (publishable and secret key) - first test later live - and put them in your config/autoload/local.php - enable your preferred payment methods at the stripe dashboard
+
+sepa_debit payments will remain "pending" status in the app - you have to check manually at the stripe dashboard if the payment is fullfilled - this can happens after a few days - then you can update the booking manually in the app as "paid" - a webhook functionality to automate this process is at work
 
 ## apple pay via stripe
 verify your domain for apple pay
@@ -41,6 +47,5 @@ if a user is actively cancelling the payment via paypal or the stripe checkout -
 can be changed via the twig templates of payumStripe - for other language support than German and English you have to extend these templates too
 
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
-
-## known issues
-in the options service.website there must be the correct webserver path like http://localhost/public not only http://localhost/ otherwise the language changing will not work 
+vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_confirm.html.twig
+ 
