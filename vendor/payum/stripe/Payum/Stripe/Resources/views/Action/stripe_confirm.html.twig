@@ -131,7 +131,10 @@
                    //enable submit button
                    $form.find('button').prop('disabled', false);
                    $form.find('button').css('background', '#666ee8');                   
-                    
+                   
+                   if ('{{ model.metadata.stripeAutoConfirm }}' == 'true') {
+                       $form.find('button').click();
+                   } 
                 }
             };
             
@@ -181,6 +184,10 @@
                     //enable submit button
                     $form.find('button').prop('disabled', false);
                     $form.find('button').css('background', '#666ee8');
+
+                    if ('{{ model.metadata.stripeAutoConfirm }}' == 'true') {
+                        $form.find('button').click();
+                    }
                 }
             };
 
@@ -192,6 +199,10 @@
             }
 
             $('#payment-form').submit(function(e) {
+
+                // Disable the submit button to prevent repeated clicks
+                $form.find('button').prop('disabled', true);
+                $form.find('button').css('background', '#dadadf');
 
                 if (paymentIntent.status == 'requires_action') {
                     stripe.handleCardAction('{{ payment_intent_client_secret }}').then(handleCardActionHandler);
@@ -207,10 +218,6 @@
                 // Prevent the form from submitting with the default action
                 return false;
             });
-
-            if ('{{ model.metadata.stripeAutoConfirm }}' == 'true') {
-                $form.find('button').click();
-            }
 
         });
 
