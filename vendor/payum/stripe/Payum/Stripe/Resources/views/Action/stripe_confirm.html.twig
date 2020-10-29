@@ -130,7 +130,7 @@
 
                    //enable submit button
                    $form.find('button').prop('disabled', false);
-                   $form.find('button').css('background', '#666ee8');                   
+                   $form.find('button').css('background', '#54595f');                   
                    
                    if ('{{ model.metadata.stripeAutoConfirm }}' == 'true') {
                        $form.find('button').click();
@@ -183,7 +183,7 @@
 
                     //enable submit button
                     $form.find('button').prop('disabled', false);
-                    $form.find('button').css('background', '#666ee8');
+                    $form.find('button').css('background', '#54595f');
 
                     if ('{{ model.metadata.stripeAutoConfirm }}' == 'true') {
                         $form.find('button').click();
@@ -191,7 +191,7 @@
                 }
             };
 
-            if ('{{ model.metadata.stripePaymentMethod }}' == 'ideal' || '{{ model.metadata.stripePaymentMethod }}' == 'giropay') {
+            if ('{{ model.metadata.stripePaymentMethod }}' == 'ideal' || '{{ model.metadata.stripePaymentMethod }}' == 'giropay' || '{{ model.metadata.stripePaymentMethod }}' == 'sofort') {
                 stripe.retrievePaymentIntent('{{ payment_intent_client_secret }}').then(retrievePaymentIntentHandler);
             }
             else {

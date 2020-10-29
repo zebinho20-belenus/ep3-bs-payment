@@ -68,12 +68,11 @@ return array_merge($project_config, array(
                 'payum.template.obtain_token' => '@PayumStripe/Action/stripe_js.html.twig',
                 'payum.template.require_confirmation' => '@PayumStripe/Action/stripe_confirm.html.twig'
             )),
-            'klarna_checkout' => (new \Payum\Stripe\KlarnaCheckoutGatewayFactory())->create(array(
+            'klarna_checkout' => (new \Payum\Klarna\Checkout\KlarnaCheckoutGatewayFactory())->create(array(
                 'secret' => '?',
                 'merchant_id' => '?',
                 'sandbox' => true
             )),
- 
         ),
         'storages' => array(
             $detailsClass => new \Payum\Core\Storage\FilesystemStorage(__DIR__.'/../../data/payum', $detailsClass, 'id'),

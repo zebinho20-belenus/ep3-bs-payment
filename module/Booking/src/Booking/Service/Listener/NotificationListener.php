@@ -6,7 +6,9 @@ use Backend\Service\MailService as BackendMailService;
 use Base\Manager\OptionManager;
 use Base\Manager\ConfigManager;
 use Base\View\Helper\DateRange;
+use Base\View\Helper\PriceFormatPlain;
 use Booking\Manager\ReservationManager;
+use Booking\Manager\Booking\BillManager;
 use Square\Manager\SquareManager;
 use User\Manager\UserManager;
 use User\Service\MailService as UserMailService;
@@ -22,28 +24,31 @@ class NotificationListener extends AbstractListenerAggregate
     protected $optionManager;
     protected $configManager;
     protected $reservationManager;
+    protected $bookingBillManager;
     protected $squareManager;
     protected $userManager;
     protected $userMailService;
 	protected $backendMailService;
     protected $dateFormatHelper;
     protected $dateRangeHelper;
+    protected $priceFormatHelper;
     protected $translator;
 
-    public function __construct(OptionManager $optionManager, ConfigManager $configManager, ReservationManager $reservationManager, SquareManager $squareManager,
+    public function __construct(OptionManager $optionManager, ConfigManager $configManager, ReservationManager $reservationManager, BillManager $bookingBillManager, SquareManager $squareManager,
 	    UserManager $userManager, UserMailService $userMailService, BackendMailService $backendMailService,
-	    DateFormat $dateFormatHelper, DateRange $dateRangeHelper, TranslatorInterface $translator)
+	    DateFormat $dateFormatHelper, DateRange $dateRangeHelper, PriceFormatPlain $priceFormatHelper, TranslatorInterface $translator)
     {
         $this->optionManager = $optionManager;
         $this->configManager = $configManager;
         $this->reservationManager = $reservationManager;
+        $this->bookingBillManager = $bookingBillManager;
         $this->squareManager = $squareManager;
         $this->userManager = $userManager;
         $this->userMailService = $userMailService;
 	    $this->backendMailService = $backendMailService;
-
         $this->dateFormatHelper = $dateFormatHelper;
         $this->dateRangeHelper = $dateRangeHelper;
+        $this->priceFormatHelper = $priceFormatHelper;
         $this->translator = $translator;
     }
 
@@ -62,6 +67,7 @@ class NotificationListener extends AbstractListenerAggregate
 
         $dateFormatHelper = $this->dateFormatHelper;
         $dateRangerHelper = $this->dateRangeHelper;
+        $priceFormatHelper = $this->priceFormatHelper;
 
 	    $reservationTimeStart = explode(':', $reservation->need('time_start'));
         $reservationTimeEnd = explode(':', $reservation->need('time_end'));
@@ -87,13 +93,13 @@ class NotificationListener extends AbstractListenerAggregate
             $dateFormatHelper($reservationStart, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::SHORT));
 
         if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true) { 
-            $doorcode = $booking->getMeta('doorcode');
+            $doorCode = $booking->getMeta('doorCode');
             $message = sprintf($this->t('we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking. Door code: %s . The booking and the code is only valid after payment is fully completed.'),
                 $this->optionManager->get('subject.square.type'),
                 $square->need('name'),
                 $dateRangerHelper($reservationStart, $reservationEnd),
                 $booking->get('bid'),
-                $doorcode);
+                $doorCode);
         } else {
             $message = sprintf($this->t('we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking.'),
                 $this->optionManager->get('subject.square.type'),
@@ -102,19 +108,51 @@ class NotificationListener extends AbstractListenerAggregate
                 $booking->get('bid'));
         }
 
-        $message = $message . ' ';
-
-        $message = $message . sprintf($this->t('Should you have any questions and commentaries, please contact us through Email - %s'),
-             $this->optionManager->get('client.contact.email'));
-
+        # player names
         if ($booking->getMeta('player-names')) {
-            $message .= "\n\nAngegebene Mitspieler:";
+            $message .= "\n\n" . $this->t('other players') . ":";
 
             foreach (unserialize($booking->getMeta('player-names')) as $i => $playerName) {
                 $message .= sprintf("\n%s. %s",
                     $i + 1, $playerName['value']);
             }
         }
+
+        # price notice
+        $message .= "\n\n" . $this->t('Bill'). ":\n";
+
+        $total = 0;
+        $bills = $this->bookingBillManager->getBy(array('bid' => $booking->get('bid')), 'bbid ASC');
+
+        foreach ($bills as $bill) {
+                $total += $bill->get('price');
+                $items = 'x';
+                $squareUnit = '';
+
+                if ($bill->get('quantity') == 1) {
+                    $squareUnit = $this->optionManager->get('subject.square.unit');
+                } else {
+                    $squareUnit = $this->optionManager->get('subject.square.unit.plural');
+                }
+ 
+                if ($bill->get('time')) {
+                    $items = $squareUnit;   
+                }    
+
+                $message .= "\n"; 
+                $message .= $bill->get('description') . " (" . $bill->get('quantity') . " " . $items . ")";
+                $message .= " -> ";
+                $message .= $priceFormatHelper($bill->get('price'), $bill->get('rate'), $bill->get('gross'));
+        }
+        $message .= "\n\n";
+        $message .= $this->t('Total');
+        $message .= " -> ";
+        $message .= $priceFormatHelper($total);    
+
+        $message .= "\n\n"; 
+
+        $message = $message . sprintf($this->t('Should you have any questions and commentaries, please contact us through Email - %s'),
+             $this->optionManager->get('client.contact.email'));
 
         if ($user->getMeta('notification.bookings', 'true') == 'true') {
             $attachments = ['event.ics' => ['name' => 'event.ics', 'disposition' => true, 'type' => 'text/calendar', 'content' => $vCalendar->render()]];            

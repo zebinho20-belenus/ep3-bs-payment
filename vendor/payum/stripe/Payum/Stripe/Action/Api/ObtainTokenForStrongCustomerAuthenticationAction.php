@@ -80,7 +80,7 @@ class ObtainTokenForStrongCustomerAuthenticationAction implements ActionInterfac
         if ($getHttpRequest->method == 'POST' && isset($getHttpRequest->request['stripeToken'])) {
             $model['payment_method'] = $getHttpRequest->request['stripeToken'];
             $stripePaymentMethod = $getHttpRequest->request['stripePaymentMethod'];
-            if ($stripePaymentMethod === 'ideal' || $stripePaymentMethod === 'giropay') {
+            if ($stripePaymentMethod === 'ideal' || $stripePaymentMethod === 'giropay' || $stripePaymentMethod === 'sofort' ) {
                $model["return_url"] = $request->getToken() ? $request->getToken()->getAfterUrl() : null;
             }
             if ($stripePaymentMethod === 'sepa_debit') {
@@ -91,7 +91,6 @@ class ObtainTokenForStrongCustomerAuthenticationAction implements ActionInterfac
                                                           'user_agent' => $_SERVER['HTTP_USER_AGENT']
                                                       )
                                                   ));
-
             }
             $metadata = $model['metadata'];
             $metadata['stripePaymentMethod'] = $stripePaymentMethod;

@@ -10,7 +10,7 @@
 
 <main id="main" class="checkout">
     <header class="header">
-      <img src="{{ model.metadata.instance }}/imgs-client/layout/logo.png" id="logo"/>
+      <img src="{{ model.metadata.instance }}/imgs-client/layout/logo.png" id="logo" />
       <a class="shop abort" href="{{ model.metadata.instance }}/square/booking/cancellation?bid={{ model.metadata.bid }}&confirmed=true">{{ model.metadata.locale == 'de-DE' ? 'Abbruch und zurück zu' : 'abort and back to' }} {{ model.metadata.projectShort }} Bookingsystem</a>
     </header>
     <div id="checkout">
@@ -56,13 +56,19 @@
               {% if 'ideal' in model.payment_method_types %}
               <li class="visible">
                 <input type="radio" name="payment" id="payment-ideal" value="ideal">
-                <label for="payment-ideal">{{ model.metadata.locale == 'de-DE' ? 'iDEAL' : 'iDEAL' }}</label>
+                <label for="payment-ideal">iDEAL</label>
               </li>
               {% endif %}
               {% if 'giropay' in model.payment_method_types %}
               <li class="visible">
                 <input type="radio" name="payment" id="payment-giropay" value="giropay">
-                <label for="payment-giropay">{{ model.metadata.locale == 'de-DE' ? 'GIROPAY' : 'GIROPAY' }}</label>
+                <label for="payment-giropay">GIROPAY</label>
+              </li>
+              {% endif %}
+              {% if 'sofort' in model.payment_method_types %}
+              <li class="visible">
+                <input type="radio" name="payment" id="payment-sofort" value="sofort">
+                <label for="payment-sofort">SOFORT</label>
               </li>
               {% endif %}
              </ul> 
@@ -199,29 +205,29 @@
       sofort: {
         name: 'SOFORT',
         flow: 'redirect',
-        countries: ['DE', 'AT'],
+        countries: ['DE', 'AT', 'NL'],
         currencies: ['eur'],
       },
     };
 
-    var stripe = Stripe({{ publishable_key|json_encode|raw }});
+    var stripe = Stripe({{ publishable_key|json_encode|raw }}, {betas: ['sofort_pm_beta_1']});
     var elements = stripe.elements();
 
     // Prepare the styles for Elements.
     var style = {
     base: {
-      iconColor: '#666ee8',
-      color: '#31325f',
+      iconColor: '#54595f',
+      color: '#404054',
       fontWeight: 400,
       fontFamily:
         '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
       fontSmoothing: 'antialiased',
       fontSize: '15px',
       '::placeholder': {
-        color: '#aab7c4',
+        color: '#adadad',
       },
       ':-webkit-autofill': {
-        color: '#666ee8',
+        color: '#54595f',
       },
     },
     }; 
@@ -314,6 +320,10 @@
       }
       if (paymentMethod === 'giropay') {
         let name = 'Giropay';
+        label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
+      }
+      if (paymentMethod === 'sofort') {
+        let name = 'Sofort';
         label = l_pay1 + `${amount}` + l_with + `${name}` + l_pay2;
       }
       if (paymentMethod === 'sepa_debit' && bankName) {
@@ -439,7 +449,9 @@
                 const name = form.querySelector('input[name=name]').value;
                 const email = form.querySelector('input[name=email]').value;
                 const billing_details = { name, email };
-                const paymentParams = { billing_details };               
+                const paymentParams = { billing_details };
+                const sofort = { country: "DE" };
+                const sofortParams = { sofort };               
  
                 // Disable the submit button to prevent repeated clicks
                 $form.find('button').prop('disabled', true);
@@ -460,6 +472,10 @@
                 if (payment === 'giropay') {
                     stripe.createPaymentMethod('giropay', paymentParams).then(stripeResponseHandler);
                 }
+                // sofort
+                if (payment === 'sofort') {
+                    stripe.createPaymentMethod('sofort', sofortParams, paymentParams).then(stripeResponseHandler);
+                }
 
                 // Prevent the form from submitting with the default action
                 return false;
@@ -475,7 +491,7 @@
                         + " ");
                     paymentErrors.classList.add('visible');
                     $form.find('button').prop('disabled', false);
-                    $form.find('button').css('background', '#666ee8');
+                    $form.find('button').css('background', '#54595f');
 
                 } else {
                     // token is the created payment method's id

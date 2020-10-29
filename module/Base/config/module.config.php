@@ -87,6 +87,7 @@ return array(
             'NumberFormat' => 'Base\View\Helper\NumberFormatFactory',
 
             'PriceFormat' => 'Base\View\Helper\PriceFormatFactory',
+            'PriceFormatPlain' => 'Base\View\Helper\PriceFormatPlainFactory',
 
             'Messages' => 'Base\View\Helper\MessagesFactory',
 

@@ -3,8 +3,8 @@
     "short_name": "TVaS Booking",
     "start_url": "./",
     "display": "fullscreen",
-    "theme_color": "#1e73be",
-    "background_color": "#1e73be",
+    "theme_color": "#4a3827",
+    "background_color": "#4a3827",
     "description": "book indoor Tennis court at TV am Saalebogen Rudolstadt",
     "icons": [
         {

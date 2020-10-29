@@ -73,7 +73,7 @@ class BookingService extends AbstractService
             ), $meta);
 
             if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true) {
-               $booking->setMeta('doorcode', rand(100000,999999));
+               $booking->setMeta('doorCode', rand(100000,999999));
             }
 
             $this->bookingManager->save($booking);

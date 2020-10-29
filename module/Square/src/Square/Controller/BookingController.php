@@ -248,6 +248,7 @@ class BookingController extends AbstractActionController
                    $captureToken = null;
                    $model = $storage->create();
                    $booking->setMeta('directpay', 'true');
+                   $booking->setMeta('paymentMethod', $payservice);
                    $bookingManager->save($booking);
                    $userName = $user->getMeta('firstname') . ' ' . $user->getMeta('lastname');
                    $companyName = $this->option('client.name.full');
@@ -278,7 +279,7 @@ class BookingController extends AbstractActionController
                        $model["currency"] = 'EUR';
                        $model["description"] = $description;
                        $model["receipt_email"] = $user->get('email');
-                       $model["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName, 'stripeDefaultPaymentMethod' => $this->config('stripeDefaultPaymentMethod'), 'stripeAutoConfirm' => $this->config('stripeAutoConfirm'), 'stripePaymentRequest' => $this->config('stripePaymentRequest'));
+                       $model["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $this->option('subject.type'), 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName, 'stripeDefaultPaymentMethod' => $this->config('stripeDefaultPaymentMethod'), 'stripeAutoConfirm' => var_export($this->config('stripeAutoConfirm'), true), 'stripePaymentRequest' => var_export($this->config('stripePaymentRequest'), true));
                        $storage->update($model);
                        $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
                            'stripe', $model, $proxyurl.$basepath.'/square/booking/payment/confirm');
@@ -333,12 +334,10 @@ class BookingController extends AbstractActionController
             } else {
                 # no paymentservice
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
-                    $doorcode = $booking->getMeta('doorcode');
-                    $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
-                    $reservations = $reservationManager->getBy(['bid' => $booking->need('bid')], 'date ASC', 1);
-                    if ($this->sendDoorCode($booking->need('bid'), $reservations, $doorcode, $this->config('doorCodeTimeBuffer'), $this->config('doorCodeRequest')) == true) {
+                    $doorCode = $booking->getMeta('doorCode');
+                    if ($this->sendDoorCode($booking->need('bid'), $doorCode) == true) {
                         $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
-                            $this->option('subject.square.type'), $doorcode));
+                            $this->option('subject.square.type'), $doorCode));
                     } else {
                         $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s'),
                             $this->option('subject.square.type'), $this->option('client.contact.phone')));
@@ -450,66 +449,6 @@ class BookingController extends AbstractActionController
 
     }    
 
-    public function webhookAction()
-    {
-        $payload = @file_get_contents('php://input');
-        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-        $event = null;
-
-        try {
-            $event = \Stripe\Webhook::constructEvent(
-                $payload, $sig_header, $this->config('stripeWebhookSecret')
-            );
-        } catch(\UnexpectedValueException $e) {
-            // Invalid payload
-            http_response_code(400);
-            return false;
-        } catch(\Stripe\Exception\SignatureVerificationException $e) {
-            // Invalid signature
-            http_response_code(400);
-            return false;
-        }
-
-        $serviceManager = $this->getServiceLocator();
-        $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
-        $bookingService = $serviceManager->get('Booking\Service\BookingService');
-
-        $bid = -1;
-        $intent = null;
-        $projectShort = $this->option('client.name.short'); 
-        $description_base = $projectShort.' booking-';
-
-        if ($event->type == "payment_intent.succeeded" || $event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
-            $intent = $event->data->object;
-            $bid = str_replace($description_base,'',$intent->description);
-        }
-        else {
-            http_response_code(400);
-            return false; 
-        }
-
-        $booking = $bookingManager->get($bid); 
-        $notes = $booking->getMeta('notes');
-
-        if ($event->type == "payment_intent.succeeded") {
-            syslog(LOG_EMERG, "Succeeded paymentIntent");
-            $notes = $notes . " " . "paymentIntent succeded";
-            $booking->set('status_billing', 'paid');        
-            
-        } elseif ($event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
-            $error_message = $intent->last_payment_error ? $intent->last_payment_error->message : "";
-            $notes = $notes . " " . $error_message;         
-            // maybe if booking is not outdated
-            // $bookingService->cancelSingle($booking); 
-        }
-
-        $booking->setMeta('notes', $notes);
-        $bookingManager->save($booking);
-        http_response_code(200);
-        return false;
-
-    }    
-
     public function doneAction()
     {
         $serviceManager = $this->getServiceLocator();
@@ -550,7 +489,6 @@ class BookingController extends AbstractActionController
             throw new RuntimeException('This booking does not exist');
         }
         $bookingService = $serviceManager->get('Booking\Service\BookingService');
-        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
 
         $booking = $bookingManager->get($bid);
 
@@ -558,28 +496,30 @@ class BookingController extends AbstractActionController
 
             if (!$booking->getMeta('directpay_pending') == 'true') {
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
-                   $doorcode = $booking->getMeta('doorcode');  
-                   $reservations = $reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
-                   if ($this->sendDoorCode($bid, $reservations, $doorcode, $this->config('doorCodeTimeBuffer'), $this->config('doorCodeRequest')) == true) {
+                   $doorCode = $booking->getMeta('doorCode');  
+                   if ($this->sendDoorCode($bid, $doorCode) == true) {
                        $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
-                           $this->option('subject.square.type'), $doorcode));
+                           $this->option('subject.square.type'), $doorCode));
                    } else {
                        $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s'),
                            $this->option('subject.square.type'), $this->option('client.contact.phone')));
                    }
                 }
                 else {
+                    # syslog(LOG_EMERG, 'success not pending');
                     $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
                         '<b>', '</b>',$this->option('subject.square.type')));
                 }
             }
 
             if($status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing')) {
+                # syslog(LOG_EMERG, 'success pending/processing');
                 $booking->set('status_billing', 'pending');
                 $booking->setMeta('directpay', 'false');
                 $booking->setMeta('directpay_pending', 'true');
             }
             else {
+                # syslog(LOG_EMERG, 'success paid');
                 $booking->set('status_billing', 'paid');
                 $booking->setMeta('directpay', 'true');
                 $booking->setMeta('directpay_pending', 'false');
@@ -607,7 +547,14 @@ class BookingController extends AbstractActionController
    
     }
 
-    private function sendDoorCode($bid, $reservations, $doorcode, $timebuffer, $doorCodeRequest) {
+    private function sendDoorCode($bid, $doorCode) {
+
+        $serviceManager = @$this->getServiceLocator();
+        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
+        $reservations = $reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
+         
+        $timebuffer = $this->config('doorCodeTimeBuffer');
+        $doorCodeRequest = $this->config('createDoorCodeRequest');
 
         $reservation = current($reservations);
 
@@ -627,7 +574,7 @@ class BookingController extends AbstractActionController
         $timeTo = $reservationEnd->getTimestamp();
 
         $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
-        $request = str_replace("%%doorcode%%", $doorcode, $request);
+        $request = str_replace("%%doorCode%%", $doorCode, $request);
         $request = str_replace("%%timeFrom%%", $timeFrom, $request);
         $request = str_replace("%%timeTo%%", $timeTo, $request);        
 
@@ -646,9 +593,7 @@ class BookingController extends AbstractActionController
         }
         catch (\Exception $e) {
             # catch all
-            // var_dump('###############');
-            // var_dump($e->getMessage()); 
-            // var_dump('###############');
+            // syslog(LOG_EMERG, $e->getMessage()); 
         }
         return false;   
     }    

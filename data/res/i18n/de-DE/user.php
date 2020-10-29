@@ -266,6 +266,7 @@ return array(
     'Sincerely' => 'Viele Grüße',
     'Your' => 'Ihr',
     'team from' => 'Team vom',
-    
+    'other players' => 'angegebene Mitspieler',
+    'Kosten' => 'costs',
 
 );
