@@ -38,7 +38,6 @@ return array(
             'CalendarCellLink' => 'Calendar\View\Helper\Cell\CellLink',
             'CalendarCellLogic' => 'Calendar\View\Helper\Cell\CellLogic',
 
-            'CalendarCellRenderCell' => 'Calendar\View\Helper\Cell\Render\Cell',
             'CalendarCellRenderEvent' => 'Calendar\View\Helper\Cell\Render\Event',
             'CalendarCellRenderEventConflict' => 'Calendar\View\Helper\Cell\Render\EventConflict',
             'CalendarCellRenderEventForPrivileged' => 'Calendar\View\Helper\Cell\Render\EventForPrivileged',
@@ -46,6 +45,8 @@ return array(
             'CalendarCellRenderFreeForPrivileged' => 'Calendar\View\Helper\Cell\Render\FreeForPrivileged',
             'CalendarCellRenderOccupied' => 'Calendar\View\Helper\Cell\Render\Occupied',
             'CalendarCellRenderOccupiedForVisitors' => 'Calendar\View\Helper\Cell\Render\OccupiedForVisitors',
+            'CalendarCellRenderReserved' => 'Calendar\View\Helper\Cell\Render\Reserved',
+            'CalendarCellRenderReservedForPrivileged' => 'Calendar\View\Helper\Cell\Render\ReservedForPrivileged',
 
             'CalendarDateRow' => 'Calendar\View\Helper\DateRow',
             'CalendarSquareRow' => 'Calendar\View\Helper\SquareRow',
@@ -63,6 +64,7 @@ return array(
         ),
 
         'factories' => array(
+            'CalendarCellRenderCell' => 'Calendar\View\Helper\Cell\Render\CellFactory',
             'CalendarCellRenderOccupiedForPrivileged' => 'Calendar\View\Helper\Cell\Render\OccupiedForPrivilegedFactory',
         ),
     ),

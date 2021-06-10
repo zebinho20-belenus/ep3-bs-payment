@@ -33,7 +33,12 @@ class PricingSummary extends AbstractHelper
             return null;
         }
 
-        $finalPricing = $this->squarePricingManager->getFinalPricingInRange($dateStart, $dateEnd, $square, $quantity);
+        $member = 0;
+        if ($this->user != null && $this->user->getMeta('member') != null) {
+           $member = $this->user->getMeta('member');
+        }
+
+        $finalPricing = $this->squarePricingManager->getFinalPricingInRange($dateStart, $dateEnd, $square, $quantity, $member);
 
         if (! $finalPricing) {
             return null;

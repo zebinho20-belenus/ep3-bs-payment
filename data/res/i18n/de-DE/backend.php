@@ -201,6 +201,8 @@ return array(
     'Date (End)' => 'Datum (Ende)',
     'Time (Start)' => 'Uhrzeit (Start)',
     'Time (End)' => 'Uhrzeit (Ende)',
+    'Club Reserved Time (Start)' => 'Vereins-reservierte Uhrzeit (Start)',
+    'Club Reserved Time (End)' => 'Vereins-reservierte Uhrzeit (Ende)',
     'Clock' => 'Uhr',
     'Repeat' => 'Wiederholung',
 
@@ -232,8 +234,11 @@ return array(
     'Sets how many days are displayed in the calendar' => 'Legt fest, wieviele Tage im Kalender<br>gleichzeitig angezeigt werden sollen',
 
     'Hide these days' => 'Folgende Tage verstecken',
+    'Reserve these days for the club' => 'Folgende Tage für den Verein reservieren',
     'Day names (like Sunday) or concrete dates (like 2016-08-16);<br>Separated by line breaks or commas;<br>Force concrete dates to be shown by adding a plus (like +2016-08-30)'
-        => 'Name des Tages (z.B. Sonntag) oder konkrete Datumangaben (z.B. 16.08.2016);<br>Getrennt durch Zeilenumbrüche oder Kommata;<br>Ein versteckter Tag kann mit einem Plus wieder angezeigt werden (z.B. +30.08.2016)',
+    => 'Name des Tages (z.B. Sunday - nicht lokalisiert als Sonntag!) oder konkrete Datumangaben (z.B. 2016-08-30);<br>Getrennt durch Zeilenumbrüche oder Kommata;<br>Ein versteckter Tag kann mit einem Plus wieder angezeigt werden (z.B. +2016-08-30)',
+    'Day names (like Sunday) or concrete dates (like 2016-08-16);<br>Separated by line breaks or commas;<br>Force concrete dates to be free for everyone by adding a plus (like +2016-08-30)<br>The time can be additionally limited in the court config (i.e. 14:00 to 20:00)'
+    => 'Name des Tages (z.B. Sunday - nicht lokalisiert als Sonntag!) oder konkrete Datumangaben (z.B. 2016-08-30);<br>Getrennt durch Zeilenumbrüche oder Kommata;<br>Ein reservierter Tag kann mit einem Plus wieder für alle freigegeben werden (z.B. +2016-08-30)<br>Die Zeit kann noch über die Platz-Konfiguration weiter eingeschränkt werden (z.Bspl. 14:00 bis 20:00 Uhr)',    
 
     'Your name' => 'Ihr Name',
     'Will be shown as the operator of this site.<br>Displayed next to the logo, for example.'
@@ -298,6 +303,7 @@ return array(
     'Time block' => 'Zeitblock',
     'Time block (min. bookable)' => 'Zeitblock (min. buchbar)',
     'Allow min. bookable time block for admins only' => 'Erlaube min. buchbaren Zeitblock nur für die Verwaltung',
+    'Limits the reservation of club days from the `Behaviour` section to this time block.' => 'Schränkt die Reservierung von Tagen für den Verein aus dem Bereich `Verhalten` auf diesen Zeitblock ein.',
     'Users still can only book the normal time blocks then' => 'Benutzer können dann trotzdem nur den normalen Zeitblock buchen',
     'Time block (max. bookable)' => 'Zeitblock (max. buchbar)',
     'Booking range' => 'Buchung im Voraus',
@@ -306,7 +312,9 @@ return array(
     'Until when may bookings be cancelled?<br>Set to 0 to never allow.<br>Set to 0.01 for some seconds (practically always).'
         => 'Bis wann darf spätestens storniert werden?<br>Auf 0 setzen, um Stornierungen generell zu verbieten.<br>Auf 0.01 setzen, um praktisch immer stornieren zu können.',
 	'Label for free squares' => 'Bezeichnung freier Plätze',
-	'Custom label for free squares in the calendar; default is <b>Free</b>' => 'Individuelle Bezeichnung freier Plätze im Kalender; Standard ist <b>Frei</b>',
+    'Custom label for free squares in the calendar; default is <b>Free</b>' => 'Individuelle Bezeichnung freier Plätze im Kalender; Standard ist <b>Frei</b>',
+    'Square control' => 'Platz Steuerung', 
+    'Does a square control system exists for this aquare?' => 'Existiert eine Steuerungsanlage für diesen Platz?',
 
     'Info (top)' => 'Info (oben)',
     'Optional info text, that will be displayed <b>above</b> square details'
@@ -333,6 +341,7 @@ return array(
     'New time' => 'Neue Zeit',
     'New day' => 'Neuer Wochentag',
     'New period' => 'Neuer Zeitraum',
+    'New rule' => 'Neue Regel', 
 
     'Display pricing:' => 'Preise anzeigen:',
     'For no one' => 'Für niemanden',

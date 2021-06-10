@@ -19,6 +19,7 @@ class CalendarController extends AbstractActionController
 
         $daysToRender = $this->option('service.calendar.days', false);
         $dayExceptions = $this->option('service.calendar.day-exceptions');
+        $clubExceptions = $this->option('service.calendar.club-exceptions');
 
         if ($dayExceptions) {
             $dayExceptions = preg_split('~(\\n|,)~', $dayExceptions);
@@ -44,16 +45,40 @@ class CalendarController extends AbstractActionController
             $dayExceptionsExceptions = [];
         }
 
+        if ($clubExceptions) {
+            $clubExceptions = preg_split('~(\\n|,)~', $clubExceptions);
+            $clubExceptionsExceptions = [];
+
+            $clubExceptionsCleaned = [];
+
+            foreach ($clubExceptions as $clubException) {
+                $clubException = trim($clubException);
+
+                if ($clubException) {
+                    if ($clubException[0] === '+') {
+                        $clubExceptionsExceptions[] = trim($clubException, '+');
+                    } else {
+                        $clubExceptionsCleaned[] = $clubException;
+                    }
+                }
+            }
+
+            $clubExceptions = $clubExceptionsCleaned;
+        } else {
+            $clubExceptions = [];
+            $clubExceptionsExceptions = [];
+        }
+
         $dateStart = $this->calendarDetermineDate();
         $dateEnd = clone $dateStart;
 
         for ($i = 1; $i < $daysToRender; $i++) {
             $dateEnd->modify('+1 day');
 
-            if (in_array($dateEnd->format($this->t('Y-m-d')), $dayExceptions) ||
-                in_array($this->t($dateEnd->format('l')), $dayExceptions)) {
+            if (in_array($dateEnd->format('Y-m-d'), $dayExceptions) ||
+                in_array($dateEnd->format('l'), $dayExceptions)) {
 
-                if (in_array($dateEnd->format($this->t('Y-m-d')), $dayExceptionsExceptions)) {
+                if (in_array($dateEnd->format('Y-m-d'), $dayExceptionsExceptions)) {
                     continue;
                 }
 
@@ -120,6 +145,8 @@ class CalendarController extends AbstractActionController
             'daysToRender' => $daysToRender,
             'dayExceptions' => $dayExceptions,
             'dayExceptionsExceptions' => $dayExceptionsExceptions,
+            'clubExceptions' => $clubExceptions,
+            'clubExceptionsExceptions' => $clubExceptionsExceptions,
             'squares' => $squares,
             'squaresCount' => $squaresCount,
             'squaresFilter' => $squaresFilter,

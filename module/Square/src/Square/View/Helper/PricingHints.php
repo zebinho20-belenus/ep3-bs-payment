@@ -30,7 +30,13 @@ class PricingHints extends AbstractHelper
         $pricingVisibility = $this->optionManager->get('service.pricing.visibility', 'private');
 
         if ($pricingVisibility == 'public' || ($this->user && $pricingVisibility == 'private')) {
-            $pricing = $this->squarePricingManager->getFinalPricingInRange($dateStart, $dateEnd, $square, 1);
+
+            $member = 0;
+            if ($this->user != null && $this->user->getMeta('member') != null) {
+                   $member = $this->user->getMeta('member');
+            }
+            
+            $pricing = $this->squarePricingManager->getFinalPricingInRange($dateStart, $dateEnd, $square, 1, $member);
 
             if ($pricing) {
                 return $this->getView()->priceFormat($pricing['price'], $pricing['rate'], $pricing['gross'], $pricing['seconds'], $pricing['per_quantity']);

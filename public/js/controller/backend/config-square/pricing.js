@@ -82,10 +82,11 @@
                 var price = pricing.find("input.pricepicker").val();
                 var gross = pricing.find("select.pricing-rate-gross").val();
                 var rate = pricing.find("input.pricing-rate").val();
+                var member = pricing.find("select.pricing-member").val();
 
                 var priority = index;
 
-                var sid = pricing.find("select:last").val();
+                var sid = pricing.find("select.pricing-sid").val();
 
                 var timeBlock = pricing.find("input.timeblockpicker").val();
 
@@ -144,7 +145,7 @@
                     return;
                 }
 
-                var data = JSON.stringify( [sid, priority, dateStart, dateEnd, dayStart, dayEnd, timeStart, timeEnd, price, rate, gross, timeBlock] );
+                var data = JSON.stringify( [sid, priority, dateStart, dateEnd, dayStart, dayEnd, timeStart, timeEnd, price, rate, gross, timeBlock, member] );
 
                 $("#pricing-form-rules").append('<input type="hidden" name="pricing-rule-' + index + '" value="' + encodeURI(data) + '">');
 
@@ -174,6 +175,8 @@
             var rate = element[10];
             var gross = element[11];
             var timeBlock = element[12];
+            var perQuantity = element[13];
+            var member = element[14];
 
             if (! sid) {
                 sid = "null";
@@ -220,6 +223,7 @@
             $("#pricing-table .pricing-rate:last").val(rate);
             $("#pricing-table .pricing-sid:last").val(sid);
             $("#pricing-table .pricing-timeBlock:last").val(Math.round(timeBlock / 60));
+            $("#pricing-table .pricing-member:last").val(member);
 
             latestStartEndDate = thisStartEndDate;
             latestStartEndDay = thisStartEndDay;

@@ -170,6 +170,38 @@ class BookingController extends AbstractActionController
             $byproducts['payment_default'] = $this->config('payment_default');
         }
 
+        $payable = false;
+        $total = 0;
+
+        $member = 0;
+        if ($user != null && $user->getMeta('member') != null) {
+           $member = $user->getMeta('member');
+        }
+
+        $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');
+        $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam, $member);
+        if ($finalPricing != null && $finalPricing['price']) {
+            $total+=$finalPricing['price'];
+        }
+
+        foreach ($products as $product) {
+
+            $bills[] = new Bill(array(
+               'description' => $product->need('name'),
+               'quantity' => $product->needExtra('amount'),
+               'price' => $product->need('price') * $product->needExtra('amount'),
+               'rate' => $product->need('rate'),
+               'gross' => $product->need('gross'),
+            ));
+
+            $total+=$product->need('price') * $product->needExtra('amount');
+        }
+
+        if ($total > 0 ) {
+            $payable = true;
+        }
+
+        $byproducts['payable'] = $payable;
 
         /* Check booking form submission */
 
@@ -179,6 +211,7 @@ class BookingController extends AbstractActionController
         $confirmationHashOriginal = sha1('Quick and dirty' . floor(time() / 1800));
 
         if ($confirmationHash) {
+
             if ($square->getMeta('rules.document.file') && $acceptRulesDocument != 'on') {
                 $byproducts['message'] = sprintf($this->t('%sNote:%s Please read and accept the "%s".'),
                     '<b>', '</b>', $square->getMeta('rules.document.name', 'Rules-document'));
@@ -194,22 +227,22 @@ class BookingController extends AbstractActionController
                     '<b>', '</b>');
             }
 
-            $bookable = false;
-
             if (! isset($byproducts['message'])) {
 
 		       $bills = array();
+/*
                $total = 0;
 
+               $member = 0;
+               if ($user != null && $user->getMeta('member') != null) {
+                  $member = $user->getMeta('member'); 
+               } 
+
                $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');               
-               $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam);
+               $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam, $member);
                if ($finalPricing['price']) {
                    $total+=$finalPricing['price'];
                }    
-
-               if ($total > 0 ) { 
-                   $bookable = true;
-               }
 
 		       foreach ($products as $product) {
                         
@@ -224,18 +257,26 @@ class BookingController extends AbstractActionController
                  $total+=$product->need('price') * $product->needExtra('amount'); 
 		       }
 
+               if ($total > 0 ) {
+                  $payable = true;
+               }
+*/
 
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
-		    $booking = $bookingService->createSingle($user, $square, $quantityParam, $byproducts['dateStart'], $byproducts['dateEnd'], $bills, array(
-					    'player-names' => serialize($playerNames),
-            ));
 
             $payservice = $this->params()->fromPost('paymentservice');
+            $meta = array('player-names' => serialize($playerNames)); 
             
-            if ($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') {
+            if (($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') && $payable) {
+                   $meta['directpay'] = 'true';
+            }
+
+            $booking = $bookingService->createSingle($user, $square, $quantityParam, $byproducts['dateStart'], $byproducts['dateEnd'], $bills, $meta);
+            
+            if (($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') && $payable) {
             # payment checkout
-                if($bookable) {
+                if($payable) {
                    $basepath = $this->config('basepath');
                    if (isset($basepath) && $basepath != '' && $basepath != ' ') {
                        $basepath = '/'.$basepath;  
@@ -247,7 +288,6 @@ class BookingController extends AbstractActionController
                    $tokenStorage = $this->getServiceLocator()->get('payum.options')->getTokenStorage(); 
                    $captureToken = null;
                    $model = $storage->create();
-                   $booking->setMeta('directpay', 'true');
                    $booking->setMeta('paymentMethod', $payservice);
                    $bookingManager->save($booking);
                    $userName = $user->getMeta('firstname') . ' ' . $user->getMeta('lastname');
@@ -333,9 +373,10 @@ class BookingController extends AbstractActionController
                 # payment checkout
             } else {
                 # no paymentservice
-                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
+                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
                     $doorCode = $booking->getMeta('doorCode');
-                    if ($this->sendDoorCode($booking->need('bid'), $doorCode) == true) {
+                    $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
+                    if ($squareControlService->activateDoorCode($booking->need('bid'), $doorCode) == true) {
                         $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
                             $this->option('subject.square.type'), $doorCode));
                     } else {
@@ -451,8 +492,11 @@ class BookingController extends AbstractActionController
 
     public function doneAction()
     {
+        // syslog(LOG_EMERG, 'doneAction');
+        
         $serviceManager = $this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+        $squareManager = $serviceManager->get('Square\Manager\SquareManager');
 
         $token = $serviceManager->get('payum.security.http_request_verifier')->verify($this);
 
@@ -491,13 +535,15 @@ class BookingController extends AbstractActionController
         $bookingService = $serviceManager->get('Booking\Service\BookingService');
 
         $booking = $bookingManager->get($bid);
+        $square = $squareManager->get($booking->need('sid'));
 
         if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing') || $status->getValue() === "success" || $payment['status'] === "succeeded" ) {
 
             if (!$booking->getMeta('directpay_pending') == 'true') {
-                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
+                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
                    $doorCode = $booking->getMeta('doorCode');  
-                   if ($this->sendDoorCode($bid, $doorCode) == true) {
+                   $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService'); 
+                   if ($squareControlService->activateDoorCode($bid, $doorCode) == true) {
                        $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
                            $this->option('subject.square.type'), $doorCode));
                    } else {
@@ -506,29 +552,28 @@ class BookingController extends AbstractActionController
                    }
                 }
                 else {
-                    # syslog(LOG_EMERG, 'success not pending');
+                    // syslog(LOG_EMERG, 'success not pending');
                     $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
                         '<b>', '</b>',$this->option('subject.square.type')));
                 }
             }
 
             if($status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing')) {
-                # syslog(LOG_EMERG, 'success pending/processing');
+                // syslog(LOG_EMERG, 'success pending/processing');
                 $booking->set('status_billing', 'pending');
                 $booking->setMeta('directpay', 'false');
                 $booking->setMeta('directpay_pending', 'true');
             }
             else {
-                # syslog(LOG_EMERG, 'success paid');
+                // syslog(LOG_EMERG, 'success paid');
                 $booking->set('status_billing', 'paid');
                 $booking->setMeta('directpay', 'true');
                 $booking->setMeta('directpay_pending', 'false');
             }
 
-            $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];
-            $booking->setMeta('notes', $notes);
-            $bookingManager->save($booking);
-
+            // $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];
+            // $booking->setMeta('notes', $notes);
+            $bookingService->updatePaymentSingle($booking);
 	    }
 	    else
         {
@@ -547,54 +592,4 @@ class BookingController extends AbstractActionController
    
     }
 
-    private function sendDoorCode($bid, $doorCode) {
-
-        $serviceManager = @$this->getServiceLocator();
-        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
-        $reservations = $reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
-         
-        $timebuffer = $this->config('doorCodeTimeBuffer');
-        $doorCodeRequest = $this->config('createDoorCodeRequest');
-
-        $reservation = current($reservations);
-
-        $reservationTimeStart = explode(':', $reservation->need('time_start'));
-        $reservationTimeEnd = explode(':', $reservation->need('time_end'));
-
-        $reservationStart = new \DateTime($reservation->need('date'));
-        $reservationStart->setTime($reservationTimeStart[0], $reservationTimeStart[1]);
-        $reservationStart->modify('-' . $timebuffer);
-        $reservationStart->setTimezone(new \DateTimeZone("UTC"));
-        $reservationEnd = new \DateTime($reservation->need('date'));
-        $reservationEnd->setTime($reservationTimeEnd[0], $reservationTimeEnd[1]);
-        $reservationEnd->modify('+' . $timebuffer);
-        $reservationEnd->setTimezone(new \DateTimeZone("UTC"));
-
-        $timeFrom = $reservationStart->getTimestamp();
-        $timeTo = $reservationEnd->getTimestamp();
-
-        $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
-        $request = str_replace("%%doorCode%%", $doorCode, $request);
-        $request = str_replace("%%timeFrom%%", $timeFrom, $request);
-        $request = str_replace("%%timeTo%%", $timeTo, $request);        
-
-        # senden mit guzzle
-        try {
-            $client = new \GuzzleHttp\Client();
-            $http_res = $client->get($request);
-            $http_status = $http_res->getStatusCode();
-            if ($http_status == 200) {
-                $result = json_decode($http_res->getBody(), true);
-                
-                if ($result['LL']['Code'] == '200') {
-                    return true;
-                }    
-            }
-        }
-        catch (\Exception $e) {
-            # catch all
-            // syslog(LOG_EMERG, $e->getMessage()); 
-        }
-        return false;   
-    }    
 }

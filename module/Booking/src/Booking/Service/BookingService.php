@@ -54,6 +54,8 @@ class BookingService extends AbstractService
 
     public function createSingle(User $user, Square $square, $quantity, DateTime $dateTimeStart, DateTime $dateTimeEnd, array $bills = array(), array $meta = array())
     {
+        // syslog(LOG_EMERG, 'createSingle');
+        
         if (! $this->connection->inTransaction()) {
             $this->connection->beginTransaction();
             $transaction = true;
@@ -72,7 +74,7 @@ class BookingService extends AbstractService
                 'quantity' => $quantity,
             ), $meta);
 
-            if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true) {
+            if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true && $square->getMeta('square_control') == true) {
                $booking->setMeta('doorCode', rand(100000,999999));
             }
 
@@ -82,7 +84,12 @@ class BookingService extends AbstractService
 
             $booking->setExtra('reservations', $reservations);
 
-            $pricing = $this->squarePricingManager->getFinalPricingInRange($dateTimeStart, $dateTimeEnd, $square, $quantity);
+            $member = 0;
+            if ($user != null && $user->getMeta('member') != null) {
+               $member = $user->getMeta('member');
+            }
+
+            $pricing = $this->squarePricingManager->getFinalPricingInRange($dateTimeStart, $dateTimeEnd, $square, $quantity, $member);
 
             if ($pricing) {
                 $squareType = $this->optionManager->need('subject.square.type');
@@ -129,7 +136,9 @@ class BookingService extends AbstractService
                 $this->connection->commit();
             }
 
-            $this->getEventManager()->trigger('create.single', $booking);
+            if (!$booking->getMeta('directpay') == true) { 
+                $this->getEventManager()->trigger('create.single', $booking);
+            }
 
             return $booking;
 
@@ -140,6 +149,17 @@ class BookingService extends AbstractService
 
             throw $e;
         }
+    }
+
+    public function updatePaymentSingle(Booking $booking)
+    {
+        // syslog(LOG_EMERG, 'updatePaymentSingle');        
+        
+        $this->bookingManager->save($booking);
+
+        $this->getEventManager()->trigger('create.single', $booking);
+
+        return $booking;
     }
 
     public function cancelSingle(Booking $booking)

@@ -12,9 +12,11 @@ return array(
     'Too far' => 'Zu fern',
     'Closed' => 'Geschlossen',
     'Free' => 'Frei',
+    'Reserved' => 'Verein',
     'Still free' => 'Noch frei',
     'Conflict' => 'Konflikt',
     'Occupied' => 'Belegt',
+    'temp blocked' => 'temporär belegt',
 
     'Your Booking' => 'Ihre Buchung',
     'Your Booking TRY' => 'Ihr Buchungs VERSUCH',

@@ -126,6 +126,19 @@ class BehaviourForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'cf-calendar-club-exceptions',
+            'type' => 'Textarea',
+            'attributes' => array(
+                'id' => 'cf-calendar-club-exceptions',
+                'style' => 'width: 320px; min-height: 80px',
+            ),
+            'options' => array(
+                'label' => 'Reserve these days for the club',
+                'notes' => 'Day names (like Sunday) or concrete dates (like 2016-08-16);<br>Separated by line breaks or commas;<br>Force concrete dates to be free for everyone by adding a plus (like +2016-08-30)<br>The time can be additionally limited in the court config (i.e. 14:00 to 20:00)',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'cf-submit',
             'type' => 'Submit',
             'attributes' => array(

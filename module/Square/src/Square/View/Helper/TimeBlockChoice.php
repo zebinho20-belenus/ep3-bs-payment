@@ -2,23 +2,29 @@
 
 namespace Square\View\Helper;
 
+use Base\Manager\OptionManager;
 use Booking\Manager\BookingManager;
 use Booking\Manager\ReservationManager;
 use DateTime;
 use IntlDateFormatter;
 use Square\Entity\Square;
 use Zend\View\Helper\AbstractHelper;
+use User\Manager\UserSessionManager;
 
 class TimeBlockChoice extends AbstractHelper
 {
 
+    protected $optionManager;
     protected $bookingManager;
     protected $reservationManager;
+    protected $user;
 
-    public function __construct(BookingManager $bookingManager, ReservationManager $reservationManager)
+    public function __construct(OptionManager $optionManager, BookingManager $bookingManager, ReservationManager $reservationManager, UserSessionManager $userSessionManager)
     {
+        $this->optionManager = $optionManager;
         $this->bookingManager = $bookingManager;
         $this->reservationManager = $reservationManager;
+        $this->user = $userSessionManager->getSessionUser();
     }
 
     public function __invoke(DateTime $dateTimeStart, DateTime $dateTimeEnd, Square $square)
@@ -100,6 +106,7 @@ class TimeBlockChoice extends AbstractHelper
 
             $quantity = 0;
 
+            # check for existing reservations
             foreach ($reservations as $reservation) {
                 $booking = $reservation->needExtra('booking');
 
@@ -120,6 +127,64 @@ class TimeBlockChoice extends AbstractHelper
             } else {
                 break;
             }
+
+            # ckeck for reserved timeblock
+            $clubExceptions = $this->optionManager->get('service.calendar.club-exceptions');
+
+            if ($clubExceptions) {
+                if ($this->user && !$this->user->getMeta('member')) {
+                $clubExceptions = preg_split('~(\\n|,)~', $clubExceptions);
+                $clubExceptionsExceptions = [];
+
+                $clubExceptionsCleaned = [];
+
+                foreach ($clubExceptions as $clubException) {
+                    $clubException = trim($clubException);
+
+                    if ($clubException) {
+                        if ($clubException[0] === '+') {
+                            $clubExceptionsExceptions[] = trim($clubException, '+');
+                        } else {
+                            $clubExceptionsCleaned[] = $clubException;
+                        }
+                    }
+                }
+
+                $clubExceptions = $clubExceptionsCleaned;
+
+                // syslog(LOG_EMERG,"clubException");
+                // syslog(LOG_EMERG,$dateTimeStart->format('Y-m-d H:i'));
+                // syslog(LOG_EMERG,$walkingDateTime->format('Y-m-d H:i'));
+
+                if (in_array($walkingDateTime->format('Y-m-d'), $clubExceptions) ||
+                in_array($walkingDateTime->format('l'), $clubExceptions)) {
+
+                    // syslog(LOG_EMERG, '|'.$walkingDate->format($view->t('Y-m-d')).'|');
+
+                    if (!in_array($walkingDateTime->format('Y-m-d'), $clubExceptionsExceptions)) {
+                        // clone is important to  not modify the origin walkingDateTime
+                        $resTimeStart = clone $walkingDateTime;
+                        $resTimeEnd = clone $walkingDateTime;
+                        $timeEnd = clone $walkingDateTime;
+
+                        $resTimeStartParam = $square->getMeta('club_reserved_time_start');
+                        $resTimeEndParam = $square->getMeta('club_reserved_time_end');
+                        $resTimeStartParts = explode(':', $resTimeStartParam);
+                        $resTimeEndParts = explode(':', $resTimeEndParam);
+
+                        $resTimeStart->setTime($resTimeStartParts[0], $resTimeStartParts[1]);
+                        $resTimeEnd->setTime($resTimeEndParts[0], $resTimeEndParts[1]);
+
+                        // syslog(LOG_EMERG,$resTimeStart->format('Y-m-d H:i'));
+                        // syslog(LOG_EMERG,$resTimeEnd->format('Y-m-d H:i'));  
+
+                        if ( ($timeEnd > $resTimeStart) && ($timeEnd < $resTimeEnd) ) {
+                                  break;
+                        }
+                    }
+                }
+                }
+            } 
 
             if ($walkingDateTime == $dateTimeEnd) {
                 $attr = 'selected="selected"';

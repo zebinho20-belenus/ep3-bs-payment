@@ -487,7 +487,12 @@ class BookingController extends AbstractActionController
                     $dateTimeStart = new \DateTime($reservation->get('date') . ' ' . $reservation->get('time_start'));
                     $dateTimeEnd = new \DateTime($reservation->get('date') . ' ' . $reservation->get('time_end'));
 
-                    $pricing = $squarePricingManager->getFinalPricingInRange($dateTimeStart, $dateTimeEnd, $square, $booking->get('quantity'));
+                    $member = 0;
+                    if ($user != null && $user->getMeta('member') != null) {
+                       $member = $user->getMeta('member');
+                    }
+
+                    $pricing = $squarePricingManager->getFinalPricingInRange($dateTimeStart, $dateTimeEnd, $square, $booking->get('quantity'), $member);
 
                     if ($pricing) {
 
@@ -680,7 +685,7 @@ class BookingController extends AbstractActionController
 
         $serviceManager = @$this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
-        $bookingService = $serviceManager->get('Booking\Service\BookingService');
+        // $bookingService = $serviceManager->get('Booking\Service\BookingService');
 
         /*
         $payload = @file_get_contents('php://input');
@@ -733,6 +738,7 @@ class BookingController extends AbstractActionController
 
         try {
             $booking = $bookingManager->get($bid);
+            $square = $squareManager->get($booking->get('sid'));
             $notes = $booking->getMeta('notes');
 
             if ($booking->getMeta('directpay_pending') == true && $booking->getMeta('paymentMethod') == 'stripe') {
@@ -764,8 +770,9 @@ class BookingController extends AbstractActionController
                     $booking->setMeta('cancelled', date('Y-m-d H:i:s'));
 
                 //  TODO!
-                //  if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true) {
-                //      deactivateDoorCode($bid);
+                //  if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                //      $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
+                //      $squareControlService->deactivateDoorCode($bid);
                 //  }   
                 }
             }
@@ -786,60 +793,5 @@ class BookingController extends AbstractActionController
         return false;
     }
 
-    private function deactivateDoorCode($bid) {
-
-        $serviceManager = @$this->getServiceLocator();        
-        $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
-        $booking = $bookingManager->get($bid);
-
-        $doorCodeUuid = $booking->getMeta('doorCodeUuid');
-
-        $doorCodeRequest = $this->config('deactivateDoorCodeRequest');
-
-        $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
-        $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
-
-        if ($this->sendDoorCodeRequest($request) != false) {
-            return true; 
-        }        
-        
-        return false;
-    } 
-
-    private function getDoorCode($bid) {
-
-        $request = $this->config('getDoorCodeRequest');        
-        $result = $this->sendDoorCodeRequest($request);
-
-        // search for bid in result
-        
-        
-
-
-    }    
-
-    private function sendDoorCodeRequest($request) {
-
-        # senden mit guzzle
-        try {
-            $client = new \GuzzleHttp\Client();
-            $http_res = $client->get($request);
-            $http_status = $http_res->getStatusCode();
-            if ($http_status == 200) {
-                $result = json_decode($http_res->getBody(), true);
-                
-                if ($result['LL']['Code'] == '200') {
-                    return $result;
-                }
-            }
-        }
-        catch (\Exception $e) {
-            # catch all
-            // syslog(LOG_EMERG, $e->getMessage());
-        }
- 
-        return false;
-
-    }    
 
 }

@@ -41,6 +41,9 @@ return array(
     'including' => 'inkl.',
     'plus' => 'zzgl.',
     'VAT' => 'USt',
+  
+    'no member' => 'kein Mitglied',
+    'member' => 'Mitglied', 
 
     'Summary of your booking:' => 'Übersicht über Ihre Buchung:',
     '%s items' => '%s Stück',
@@ -103,6 +106,9 @@ return array(
     'Change period:' => 'Zeitraum anpassen:',
     'Check new period' => 'Neuen Zeitraum prüfen',
 
+    'Change rule:' => 'Regel anpassen:',
+    'Check new rule' => 'Neue Regel prüfen',
+
     'The names of the other players are <b>optional</b>' => 'Die Namen der anderen Spieler sind <b>optional</b>',
     'The names of the other players are <b>required</b>' => 'Die Namen der anderen Spieler sind <b>erforderlich</b>',
     'Player\'s name' => 'Spieler Name',
@@ -114,4 +120,6 @@ return array(
     'Your %s has been booked! But the doorcode could not be send. Please contact admin by phone - %s' => 'Ihr %s wurde für Sie gebucht! Jedoch konnte der Türcode nicht gesendet werden. Bitte rufen Sie an - %s',   
     'go to payment' => 'weiter zur Zahlung', 
     'Timeblock choice:' => 'Zeitraum wählen:',
+    'These booking times are reserved for the club.' => 'Diese Buchungszeiten sind für Vereinsmitglieder reserviert.',
+    'You can only have <b>%s active bookings</b> at the same time at the moment.' => 'Sie können derzeit nur <b>%s aktive Buchung/en</b> gleichzeitig offen haben.',
 );

@@ -62,6 +62,8 @@ class ConfigSquareController extends AbstractActionController
                 $square->setMeta('public_names', $editData['cf-name-visibility'] == 'public' ? 'true' : 'false');
                 $square->set('time_start', $editData['cf-time-start']);
                 $square->set('time_end', $editData['cf-time-end']);
+                $square->setMeta('club_reserved_time_start', $editData['cf-club-reserved-time-start']);
+                $square->setMeta('club_reserved_time_end', $editData['cf-club-reserved-time-end']);
                 $square->set('time_block', max($editData['cf-time-block'], 10) * 60);
                 $square->set('time_block_bookable', max($editData['cf-time-block-bookable'], 10) * 60);
                 $square->setMeta('pseudo-time-block-bookable', $editData['cf-pseudo-time-block-bookable'] ? 'true' : 'false');
@@ -70,7 +72,8 @@ class ConfigSquareController extends AbstractActionController
                 $square->set('range_book', (float) $editData['cf-range-book'] * 60 * 60 * 24);
                 $square->set('max_active_bookings', $editData['cf-max-active-bookings']);
                 $square->set('range_cancel', $editData['cf-range-cancel'] * 60 * 60);
-	            $square->setMeta('label.free', $editData['cf-label-free'], $locale);
+                $square->setMeta('label.free', $editData['cf-label-free'], $locale);
+                $square->setMeta('square_control', $editData['cf-square-control']);
 
                 $squareManager->save($square);
 
@@ -102,6 +105,8 @@ class ConfigSquareController extends AbstractActionController
                     'cf-name-visibility' => $nameVisibility,
                     'cf-time-start' => substr($square->get('time_start'), 0, 5),
                     'cf-time-end' => substr($square->get('time_end'), 0, 5),
+                    'cf-club-reserved-time-start' => substr($square->getMeta('club_reserved_time_start'), 0, 5),
+                    'cf-club-reserved-time-end' => substr($square->getMeta('club_reserved_time_end'), 0, 5),
                     'cf-time-block' => round($square->get('time_block') / 60),
                     'cf-time-block-bookable' => round($square->get('time_block_bookable') / 60),
                     'cf-pseudo-time-block-bookable' => $square->getMeta('pseudo-time-block-bookable', 'false') == 'true',
@@ -110,7 +115,8 @@ class ConfigSquareController extends AbstractActionController
                     'cf-range-book' => round($square->get('range_book') / 60 / 60 / 24),
                     'cf-max-active-bookings' => $square->get('max_active_bookings'),
                     'cf-range-cancel' => round($square->get('range_cancel') / 60 / 60, 2),
-	                'cf-label-free' => $square->getMeta('label.free'),
+                    'cf-label-free' => $square->getMeta('label.free'),
+                    'cf-square-control' => $square->getMeta('square_control'),
                 ));
             } else {
                 $editForm->setData(array(
@@ -120,6 +126,8 @@ class ConfigSquareController extends AbstractActionController
                     'cf-capacity-heterogenic' => false,
                     'cf-time-start' => '08:00',
                     'cf-time-end' => '23:00',
+                    'cf-club-reserved-time-start' => '00:00',
+                    'cf-club-reserved-time-end' => '24:00',
                     'cf-time-block' => 60,
                     'cf-time-block-bookable' => 30,
                     'cf-pseudo-time-block-bookable' => false,

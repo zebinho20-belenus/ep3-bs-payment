@@ -50,6 +50,8 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
             <?= $this->formRowDefault($form, 'cf-name-visibility') ?>
             <?= $this->formRowDefault($form, 'cf-time-start') ?>
             <?= $this->formRowDefault($form, 'cf-time-end') ?>
+            <?= $this->formRowDefault($form, 'cf-club-reserved-time-start') ?>
+            <?= $this->formRowDefault($form, 'cf-club-reserved-time-end') ?>
             <?= $this->formRowDefault($form, 'cf-time-block') ?>
             <?= $this->formRowDefault($form, 'cf-time-block-bookable') ?>
             <?= $this->formRowCheckbox($form, 'cf-pseudo-time-block-bookable') ?>
@@ -59,6 +61,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
             <?= $this->formRowDefault($form, 'cf-max-active-bookings') ?>
             <?= $this->formRowDefault($form, 'cf-range-cancel') ?>
 	        <?= $this->formRowDefault($form, 'cf-label-free') ?>
+            <?= $this->formRowDefault($form, 'cf-square-control') ?>
 
             <?php if ($this->square): ?>
                 <tr>

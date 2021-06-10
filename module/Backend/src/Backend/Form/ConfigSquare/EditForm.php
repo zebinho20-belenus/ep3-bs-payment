@@ -156,6 +156,33 @@ class EditForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'cf-club-reserved-time-start',
+            'type' => 'Text',
+            'attributes' => array(
+                'id' => 'cf-club-reserved-time-start',
+                'style' => 'width: 80px;',
+            ),
+            'options' => array(
+                'label' => 'Club Reserved Time (Start)',
+                'postfix' => 'Clock',
+            ),
+        ));
+
+        $this->add(array(
+            'name' => 'cf-club-reserved-time-end',
+            'type' => 'Text',
+            'attributes' => array(
+                'id' => 'cf-club-reserved-time-end',
+                'style' => 'width: 80px;',
+            ),
+            'options' => array(
+                'label' => 'Club Reserved Time (End)',
+                'postfix' => 'Clock',
+                'notes' => 'Limits the reservation of club days from the `Behaviour` section to this time block.',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'cf-time-block',
             'type' => 'Text',
             'attributes' => array(
@@ -276,6 +303,18 @@ class EditForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'cf-square-control',
+            'type' => 'Checkbox',
+            'attributes' => array(
+                'id' => 'cf-square-control',
+            ),
+            'options' => array(
+                'label' => 'Square control',
+                'notes' => 'Does a square control system exists for this aquare?',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'cf-submit',
             'type' => 'Submit',
             'attributes' => array(
@@ -372,6 +411,48 @@ class EditForm extends Form
                 ),
             ),
             'cf-time-end' => array(
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'options' => array(
+                            'message' => 'Please type something here',
+                        ),
+                        'break_chain_on_failure' => true,
+                    ),
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9][0-9]:[0-9][0-9]$/',
+                            'message' => 'Please provide the time in format HH:MM',
+                        ),
+                    ),
+                ),
+            ),
+            'cf-club-reserved-time-start' => array(
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'options' => array(
+                            'message' => 'Please type something here',
+                        ),
+                        'break_chain_on_failure' => true,
+                    ),
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9][0-9]:[0-9][0-9]$/',
+                            'message' => 'Please provide the time in format HH:MM',
+                        ),
+                    ),
+                ),
+            ),
+            'cf-club-reserved-time-end' => array(
                 'filters' => array(
                     array('name' => 'StringTrim'),
                 ),

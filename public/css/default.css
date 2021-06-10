@@ -288,6 +288,10 @@ a.cc-free:hover { background-color: #CCC; }
 
 a.cc-free-partially { text-decoration: underline; }
 
+a.cc-reserved:link,
+a.cc-reserved:visited { opacity: 1.0; color: #FFF; background-color: #95afbd; }
+a.cc-reserved:hover { background-color: #768891; }
+
 a.cc-own:link,
 a.cc-own:visited { opacity: 1.0; color: #FFF; background-color: #8BB243; }
 a.cc-own:hover { background-color: #5F8024; }

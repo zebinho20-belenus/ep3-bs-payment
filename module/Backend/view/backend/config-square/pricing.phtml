@@ -60,9 +60,13 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
         ?>
 
         var pricingRules = [ <?= implode(', ', $jsRules) ?> ];
+         
     </script>
 
-    <div id="pricing-table-template">
+        <div id="pricing-table-template">
+
+        <?php // echo 'pricingRules: ' . implode(', ', $jsRules) ?>
+     
         <table><tbody>
             <tr>
                 <td class="pricing-date-range">
@@ -125,6 +129,11 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
                                                                                 }
                                                                                 echo '</select>';
 
+                                                                                echo '<select class="pricing-member" style="width: 110px;">';
+                                                                                echo '<option value="0" selected="selected">' . $this->t('no member') . '</option>';
+                                                                                echo '<option value="1" >' . $this->t('member') . '</option>';
+                                                                                echo '</select>';
+                                                                                 
                                                                                 echo '<span class="pricing-grammar">' . $this->t('and') . '</span>';
                                                                                 echo '<input type="text" value="' . round($this->squaresTimeBlock / 60) . '" maxlength="3" class="pricing-timeBlock timeblockpicker">';
                                                                                 echo '<span class="pricing-grammar">Min.</span>';
@@ -171,7 +180,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
         <table class="default-table">
             <tr>
                 <td>
-                    <a href="#" class="pricing-date-range-new unlined gray"><em><?= $this->t('New period') ?></em></a>
+                    <a href="#" class="pricing-date-range-new unlined gray"><em><?= $this->t('New rule') ?></em></a>
                 </td>
             </tr>
         </table>

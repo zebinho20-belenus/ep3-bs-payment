@@ -60,8 +60,14 @@ class NotificationListener extends AbstractListenerAggregate
 
     public function onCreateSingle(Event $event)
     {
+        // syslog(LOG_EMERG, '|trigger onCreateSingle|'); 
+        
         $booking = $event->getTarget();
-        $reservation = current($booking->getExtra('reservations'));
+        $reservations = $this->reservationManager->getBy(['bid' => $booking->need('bid')], 'date ASC', 1);
+        $reservation = current($reservations);
+
+        // $reservation = current($booking->getExtra('reservations'));
+        
         $square = $this->squareManager->get($booking->need('sid'));
         $user = $this->userManager->get($booking->need('uid'));
 
@@ -92,7 +98,7 @@ class NotificationListener extends AbstractListenerAggregate
             $this->optionManager->get('subject.square.type'),
             $dateFormatHelper($reservationStart, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::SHORT));
 
-        if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true) { 
+        if ($this->configManager->get('genDoorCode') != null && $this->configManager->get('genDoorCode') == true && $square->getMeta('square_control') == true) { 
             $doorCode = $booking->getMeta('doorCode');
             $message = sprintf($this->t('we have reserved %s "%s", %s for you (booking id: %s). Thank you for your booking. Door code: %s . The booking and the code is only valid after payment is fully completed.'),
                 $this->optionManager->get('subject.square.type'),
@@ -174,6 +180,8 @@ class NotificationListener extends AbstractListenerAggregate
 
     public function onCancelSingle(Event $event)
     {
+        
+
         $booking = $event->getTarget();
         $reservations = $this->reservationManager->getBy(['bid' => $booking->need('bid')], 'date ASC', 1);
         $reservation = current($reservations);

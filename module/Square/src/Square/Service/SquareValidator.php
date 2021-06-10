@@ -212,10 +212,10 @@ class SquareValidator extends AbstractService
 
             $dayExceptions = $dayExceptionsCleaned;
 
-            if (in_array($dateStart->format($this->t('Y-m-d')), $dayExceptions) ||
-                in_array($this->t($dateStart->format('l')), $dayExceptions)) {
+            if (in_array($dateStart->format('Y-m-d'), $dayExceptions) ||
+                in_array($dateStart->format('l'), $dayExceptions)) {
 
-                if (! in_array($dateStart->format($this->t('Y-m-d')), $dayExceptionsExceptions)) {
+                if (! in_array($dateStart->format('Y-m-d'), $dayExceptionsExceptions)) {
                     throw new \RuntimeException('The passed date has been hidden from the calendar');
                 }
             }
@@ -327,10 +327,76 @@ class SquareValidator extends AbstractService
 
                 if ($activeBookingsCount >= $maxActiveBookings) {
                     $bookable = false;
-                    $notBookableReason = 'Sie können derzeit nur <b>' . $maxActiveBookings . ' aktive Buchung/en</b> gleichzeitig offen haben.';
+                    $notBookableReason = sprintf($this->t('You can only have <b>%s active bookings</b> at the same time at the moment.'), $maxActiveBookings);
                 }
             }
         }
+
+        /* Check for club reserved time blocks in club-exception days*/
+
+        $clubExceptions = $this->optionManager->get('service.calendar.club-exceptions');
+
+        if ($clubExceptions) {
+            if ($this->user && !$this->user->getMeta('member')) {
+            $clubExceptions = preg_split('~(\\n|,)~', $clubExceptions);
+            $clubExceptionsExceptions = [];
+
+            $clubExceptionsCleaned = [];
+
+            foreach ($clubExceptions as $clubException) {
+                $clubException = trim($clubException);
+
+                if ($clubException) {
+                    if ($clubException[0] === '+') {
+                        $clubExceptionsExceptions[] = trim($clubException, '+');
+                    } else {
+                        $clubExceptionsCleaned[] = $clubException;
+                    }
+                }
+            }
+
+            $clubExceptions = $clubExceptionsCleaned;
+
+            // syslog(LOG_EMERG,"clubException");
+            // syslog(LOG_EMERG,$dateStart->format('Y-m-d'));
+            // syslog(LOG_EMERG,$dateStart->format('l'));
+
+            if (in_array($dateStart->format('Y-m-d'), $clubExceptions) ||
+                in_array($dateStart->format('l'), $clubExceptions)) {
+
+                if (! in_array($dateStart->format('Y-m-d'), $clubExceptionsExceptions)) {
+                        // syslog(LOG_EMERG,"no member");
+                        
+                        $resTimeStart = $square->getMeta('club_reserved_time_start');
+                        $resTimeEnd = $square->getMeta('club_reserved_time_end');
+                        $resTimeStartParts = explode(':', $resTimeStart);
+                        $resTimeEndParts = explode(':', $resTimeEnd);
+
+                        $resTimeStart = clone $dateStart;
+                        $resTimeEnd = clone $dateEnd;
+
+                        $resTimeStart->setTime($resTimeStartParts[0], $resTimeStartParts[1]);
+                        $resTimeEnd->setTime($resTimeEndParts[0], $resTimeEndParts[1]);
+
+                        $timeStartParts = explode(':', $timeStart);
+                        $timeStart = clone $dateStart;
+                        $timeStart->setTime($timeStartParts[0], $timeStartParts[1]);
+                        $timeEndParts = explode(':', $timeEnd);
+                        $timeEnd = clone $dateEnd;
+                        $timeEnd->setTime($timeEndParts[0], $timeEndParts[1]);
+
+                        if ( (($timeStart >= $resTimeStart) && ($timeStart < $resTimeEnd))
+                                || (($timeEnd > $resTimeStart) && ($timeEnd <= $resTimeEnd)) ) {
+                             // syslog(LOG_EMERG,"not bookable");       
+                             $bookable = false;
+                             $notBookableReason = $this->t('These booking times are reserved for the club.');
+                        }
+                }
+                
+            }
+            }
+        }
+
 
         /* Check for blocking events */
 
