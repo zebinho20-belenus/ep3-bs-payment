@@ -377,3 +377,10 @@ ALTER TABLE `bs_squares_products`
 --
 ALTER TABLE `bs_users_meta`
   ADD CONSTRAINT `bs_users_meta_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--- changes for hschiebold/ep3bs
+
+ALTER TABLE bs_squares_pricing ADD COLUMN member INTEGER NOT NULL DEFAULT 0;
+
+CREATE EVENT remove_unpaid_bookings ON SCHEDULE EVERY 15 MINUTE ON COMPLETION PRESERVE DO delete from bs_bookings where `status` = 'single' and `status_billing` = 'pending' and created < (NOW() - INTERVAL 3 HOUR) and bid in (select bid from bs_bookings_meta where `key` = 'directpay' and `value` = 'true');
+
