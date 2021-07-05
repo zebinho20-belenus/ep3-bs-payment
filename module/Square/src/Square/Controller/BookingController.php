@@ -229,39 +229,6 @@ class BookingController extends AbstractActionController
 
             if (! isset($byproducts['message'])) {
 
-		       $bills = array();
-/*
-               $total = 0;
-
-               $member = 0;
-               if ($user != null && $user->getMeta('member') != null) {
-                  $member = $user->getMeta('member'); 
-               } 
-
-               $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');               
-               $finalPricing = $squarePricingManager->getFinalPricingInRange($byproducts['dateStart'], $byproducts['dateEnd'], $square, $quantityParam, $member);
-               if ($finalPricing['price']) {
-                   $total+=$finalPricing['price'];
-               }    
-
-		       foreach ($products as $product) {
-                        
-			     $bills[] = new Bill(array(
-			     'description' => $product->need('name'),
-			     'quantity' => $product->needExtra('amount'),
-			     'price' => $product->need('price') * $product->needExtra('amount'),
-			     'rate' => $product->need('rate'),
-			     'gross' => $product->need('gross'),
-			     ));
-
-                 $total+=$product->need('price') * $product->needExtra('amount'); 
-		       }
-
-               if ($total > 0 ) {
-                  $payable = true;
-               }
-*/
-
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
 
@@ -571,8 +538,8 @@ class BookingController extends AbstractActionController
                 $booking->setMeta('directpay_pending', 'false');
             }
 
-            // $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];
-            // $booking->setMeta('notes', $notes);
+            $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];
+            $booking->setMeta('notes', $notes);
             $bookingService->updatePaymentSingle($booking);
 	    }
 	    else
