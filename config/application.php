@@ -53,6 +53,7 @@ return array(
         'Frontend',
         'Service',
         'Square',
+        'SquareControl',
         'User',
         'Payum\PayumModule',
 

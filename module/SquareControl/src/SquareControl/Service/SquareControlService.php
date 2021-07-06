@@ -5,28 +5,32 @@ namespace SquareControl\Service;
 use Base\Manager\ConfigManager;
 use Base\Manager\OptionManager;
 use Base\Service\AbstractService;
+use Booking\Manager\BookingManager;
+use Booking\Manager\ReservationManager;
 
 class SquareControlService extends AbstractService
 {
 
     protected $configManager;
     protected $optionManager;
+    protected $bookingManager;
+    protected $reservationManager;
 
-    public function __construct(ConfigManager $configManager, OptionManager $optionManager)
+    public function __construct(ConfigManager $configManager, OptionManager $optionManager, BookingManager $bookingManager, ReservationManager $reservationManager)
     {
         $this->configManager = $configManager;
         $this->optionManager = $optionManager;
+        $this->bookingManager = $bookingManager;
+        $this->reservationManager = $reservationManager;
     }
 
     public function deactivateDoorCode($bid) {
 
-        $serviceManager = @$this->getServiceLocator();
-        $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
-        $booking = $bookingManager->get($bid);
+        $booking = $this->bookingManager->get($bid);
 
         $doorCodeUuid = $booking->getMeta('doorCodeUuid');
 
-        $doorCodeRequest = $this->config('deactivateDoorCodeRequest');
+        $doorCodeRequest = $this->configManager->get('deactivateDoorCodeRequest');
 
         $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
         $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
@@ -41,7 +45,7 @@ class SquareControlService extends AbstractService
 
     public function getDoorCode($bid) {
 
-        $request = $this->config('getDoorCodeRequest');
+        $request = $this->configManager->get('getDoorCodeRequest');
         $result = $this->sendDoorCodeRequest($request);
 
         // search for bid in result
@@ -70,14 +74,12 @@ class SquareControlService extends AbstractService
 
     }    
     
-    private function activateDoorCode($bid, $doorCode) {
+    public function activateDoorCode($bid, $doorCode) {
 
-        $serviceManager = @$this->getServiceLocator();
-        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
-        $reservations = $reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
+        $reservations = $this->reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
 
-        $timebuffer = $this->config('doorCodeTimeBuffer');
-        $doorCodeRequest = $this->config('createDoorCodeRequest');
+        $timebuffer = $this->configManager->get('doorCodeTimeBuffer');
+        $doorCodeRequest = $this->configManager->get('createDoorCodeRequest');
 
         $reservation = current($reservations);
 

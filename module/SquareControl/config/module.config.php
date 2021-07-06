@@ -22,7 +22,6 @@ return array(
     'service_manager' => array(
         'factories' => array(
             'SquareControl\Service\SquareControlService' => 'SquareControl\Service\SquareControlServiceFactory',
-
             'Zend\Session\Config\ConfigInterface' => 'Zend\Session\Service\SessionConfigFactory',
             'Zend\Session\SessionManager' => 'Zend\Session\Service\SessionManagerFactory',
         ),

@@ -12,8 +12,10 @@ class SquareControlServiceFactory implements FactoryInterface
     {
         $configManager = $sm->get('Base\Manager\ConfigManager');
         $optionManager = $sm->get('Base\Manager\OptionManager');
+        $bookingManager = $sm->get('Booking\Manager\BookingManager');
+        $reservationManager = $sm->get('Booking\Manager\ReservationManager');
 
-        return new SquareControlService($configManager, $optionManager);
+        return new SquareControlService($configManager, $optionManager, $bookingManager, $reservationManager);
     }
 
 }
