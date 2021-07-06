@@ -171,6 +171,7 @@ class BookingController extends AbstractActionController
         }
 
         $payable = false;
+        $bills = array();
         $total = 0;
 
         $member = 0;
@@ -227,7 +228,7 @@ class BookingController extends AbstractActionController
                     '<b>', '</b>');
             }
 
-            if (! isset($byproducts['message'])) {
+          if (! isset($byproducts['message'])) {
 
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
