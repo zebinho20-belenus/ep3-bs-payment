@@ -113,7 +113,7 @@ class NotificationListener extends AbstractListenerAggregate
                 $dateRangerHelper($reservationStart, $reservationEnd),
                 $booking->get('bid'));
         }
-
+        
         # player names
         $playerNames = $booking->getMeta('player-names');
 
@@ -165,6 +165,11 @@ class NotificationListener extends AbstractListenerAggregate
 
         $message = $message . sprintf($this->t('Should you have any questions and commentaries, please contact us through Email - %s'),
              $this->optionManager->get('client.contact.email'));
+
+        if ($square->get('allow_notes') && $booking->getMeta('notes')) {
+            $message .= "\n\nAnmerkungen:";
+            $message .= "\n" . $booking->getMeta('notes');
+        }
 
         if ($user->getMeta('notification.bookings', 'true') == 'true') {
             $attachments = ['event.ics' => ['name' => 'event.ics', 'disposition' => true, 'type' => 'text/calendar', 'content' => $vCalendar->render()]];            

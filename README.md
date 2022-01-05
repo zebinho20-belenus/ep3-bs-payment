@@ -1,5 +1,5 @@
 # ep-3 Bookingsystem with direct payment via payum  
-fork of 1.6.4 from tkrebs/ep3-bs
+fork of 1.7.0 from tkrebs/ep3-bs
 
 modified with payum / payumModule (https://github.com/Payum/PayumModule) for direct payment via paypal and stripe (credit cards, ( apple pay, google pay via PaymentRequest API), SEPA direct debit, iDEAL, Giropay) 
 
@@ -16,7 +16,6 @@ in addition to the original config there is a projetc.php in config/autoload and
 in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility (use like an app on smartphones) and the hammer.js for swiping left/right in the calendar
 
 the layout is a bit modified for better usability on smartphones (even the administration)
-
 
 
 # Payment

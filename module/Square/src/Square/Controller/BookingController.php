@@ -146,6 +146,12 @@ class BookingController extends AbstractActionController
 
         if ($playerNamesParam) {
             $playerNames = Json::decode($playerNamesParam, Json::TYPE_ARRAY);
+
+            foreach ($playerNames as $playerName) {
+                if (strlen(trim($playerName['value'])) < 5 || strpos(trim($playerName['value']), ' ') === false) {
+                    throw new \RuntimeException('Die <b>vollständigen Vor- und Nachnamen</b> der anderen Spieler sind erforderlich');
+                }
+            }
         } else {
             $playerNames = null;
         }
@@ -259,8 +265,14 @@ class BookingController extends AbstractActionController
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
 
+            if ($square->get('allow_notes')) {
+                $userNotes = "Anmerkungen des Benutzers:\n" . $this->params()->fromPost('bf-user-notes');
+            } else {
+                $userNotes = '';
+            }
+
             $payservice = $this->params()->fromPost('paymentservice');
-            $meta = array('player-names' => serialize($playerNames)); 
+            $meta = array('player-names' => serialize($playerNames), 'notes' => $userNotes); 
             
             if (($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') && $payable) {
                    $meta['directpay'] = 'true';
