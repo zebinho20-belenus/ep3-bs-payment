@@ -235,6 +235,7 @@ class UserManager extends AbstractManager
      */
     public function getBy($where, $order = null, $limit = null, $offset = null, $loadMeta = true)
     {
+        
         $select = $this->userTable->getSql()->select();
 
         if ($where) {

@@ -44,8 +44,9 @@ class DetermineFilters extends AbstractPlugin
                         strtolower($controller->t('Active')),
                         strtolower($controller->t('IP')),
                         strtolower($controller->t('Created')),
+                        strtolower($controller->t('Member')),
                     ),
-                    array('email', 'last_activity', 'last_ip', 'created'),
+                    array('email', 'last_activity', 'last_ip', 'created', 'member'),
                     $key);
 
                 // Translate values

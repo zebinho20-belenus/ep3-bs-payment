@@ -414,6 +414,7 @@ class AccountController extends AbstractActionController
         $serviceManager = @$this->getServiceLocator();
 
         $userManager = $serviceManager->get('User\Manager\UserManager');
+        $configManager = $serviceManager->get('Base\Manager\ConfigManager');
         $userSessionManager = $serviceManager->get('User\Manager\UserSessionManager');
         $formElementManager = $serviceManager->get('FormElementManager');
 
@@ -619,6 +620,7 @@ class AccountController extends AbstractActionController
 
         return array(
             'user' => $user,
+            'configManager' => $configManager,
             'editPhoneForm' => $editPhoneForm,
             'editIbanForm' => $editIbanForm,
             'editEmailForm' => $editEmailForm,

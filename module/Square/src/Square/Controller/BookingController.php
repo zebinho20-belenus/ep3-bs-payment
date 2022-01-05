@@ -198,6 +198,32 @@ class BookingController extends AbstractActionController
             $total+=$product->need('price') * $product->needExtra('amount');
         }
 
+        $newbudget = 0;
+        $byproducts['hasBudget'] = false; 
+        $budgetpayment = false;
+
+        // calculate end total from user budget
+        if ($user != null && $user->getMeta('budget') != null && $user->getMeta('budget') > 0 && $total > 0) {
+            $byproducts['hasBudget'] = true;
+            $budget = $user->getMeta('budget');
+            $byproducts['budget'] = $budget;
+            // syslog(LOG_EMERG, 'budget: ' . $budget);
+            $newtotal = $total - ($budget*100);
+            if ($newtotal <= 0) {
+                $budgetpayment = true;
+            }
+            $byproducts['newtotal'] = $newtotal;
+            // syslog(LOG_EMERG, 'newtotal: ' . $newtotal);
+            $newbudget = ($budget*100-$total)/100;
+            if ($newbudget < 0) { 
+                $newbudget = 0;
+            }
+            $byproducts['newbudget'] = $newbudget;
+            // syslog(LOG_EMERG, 'newbudget: ' . $newbudget);
+
+            $total = $newtotal;
+        }
+
         if ($total > 0 ) {
             $payable = true;
         }
@@ -257,6 +283,8 @@ class BookingController extends AbstractActionController
                    $captureToken = null;
                    $model = $storage->create();
                    $booking->setMeta('paymentMethod', $payservice);
+                   $booking->setMeta('hasBudget', $byproducts['hasBudget']);
+                   $booking->setMeta('newbudget', $byproducts['newbudget']);
                    $bookingManager->save($booking);
                    $userName = $user->getMeta('firstname') . ' ' . $user->getMeta('lastname');
                    $companyName = $this->option('client.name.full');
@@ -341,10 +369,23 @@ class BookingController extends AbstractActionController
                 # payment checkout
             } else {
                 # no paymentservice
+               
+                # redefine user budget
+                if ($budgetpayment) { 
+                    $userManager = $serviceManager->get('User\Manager\UserManager');
+                    $user->setMeta('budget', $newbudget);
+                    $userManager->save($user);
+                    # set booking to paid  
+                    $booking->set('status_billing', 'paid');
+                    $notes = $notes . "payment with user budget";
+                    $booking->setMeta('notes', $notes);
+                    $bookingService->updatePaymentSingle($booking);                   
+                }
+                
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
                     $doorCode = $booking->getMeta('doorCode');
                     $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
-                    if ($squareControlService->activateDoorCode($booking->need('bid'), $doorCode) == true) {
+                    if ($squareControlService->createDoorCode($booking->need('bid'), $doorCode) == true) {
                         $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
                             $this->option('subject.square.type'), $doorCode));
                     } else {
@@ -511,7 +552,7 @@ class BookingController extends AbstractActionController
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
                    $doorCode = $booking->getMeta('doorCode');  
                    $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService'); 
-                   if ($squareControlService->activateDoorCode($bid, $doorCode) == true) {
+                   if ($squareControlService->createDoorCode($bid, $doorCode) == true) {
                        $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %s has been booked! The doorcode is: %s'),
                            $this->option('subject.square.type'), $doorCode));
                    } else {
@@ -537,6 +578,16 @@ class BookingController extends AbstractActionController
                 $booking->set('status_billing', 'paid');
                 $booking->setMeta('directpay', 'true');
                 $booking->setMeta('directpay_pending', 'false');
+            }
+
+            # redefine user budget
+            if ($booking->getMeta('hasBudget')) {
+                $userManager = $serviceManager->get('User\Manager\UserManager');
+                $user = $userManager->get($booking->get('uid'));
+                $user->setMeta('budget', $booking->getMeta('newbudget'));
+                $userManager->save($user);
+                # set booking to paid
+                $notes = $notes . "payment with user budget | ";
             }
 
             $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];

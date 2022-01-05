@@ -157,6 +157,37 @@ return array(
                             ),
                         ),
                     ),
+                    'squarecontrol' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/squarecontrol',
+                            'defaults' => array(
+                                'controller' => 'Backend\Controller\SquareControl',
+                                'action' => 'index',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'removeinactivedoorcodes' => array(
+                                'type' => 'Literal',
+                                'options' => array(
+                                    'route' => '/removeinactivedoorcodes',
+                                    'defaults' => array(
+                                        'action' => 'removeinactivedoorcodes',
+                                    ),
+                                ),
+                            ),
+                            'deletedoorcode' => array(
+                                'type' => 'Segment',
+                                'options' => array(
+                                    'route' => '/deletedoorcode/:dcid',
+                                    'defaults' => array(
+                                        'action' => 'deletedoorcode',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                     'event' => array(
                         'type' => 'Literal',
                         'options' => array(
@@ -395,6 +426,7 @@ return array(
             'Backend\Controller\Index' => 'Backend\Controller\IndexController',
             'Backend\Controller\User' => 'Backend\Controller\UserController',
             'Backend\Controller\Booking' => 'Backend\Controller\BookingController',
+            'Backend\Controller\SquareControl' => 'Backend\Controller\SquareControlController',
             'Backend\Controller\Event' => 'Backend\Controller\EventController',
             'Backend\Controller\Config' => 'Backend\Controller\ConfigController',
             'Backend\Controller\ConfigSquare' => 'Backend\Controller\ConfigSquareController',
@@ -443,6 +475,9 @@ return array(
 
             'BackendSquareFormat' => 'Backend\View\Helper\Square\SquareFormat',
             'BackendSquaresFormat' => 'Backend\View\Helper\Square\SquaresFormat',
+
+            'BackendDoorCodeFormat' => 'Backend\View\Helper\SquareControl\DoorCodeFormat',
+            'BackendDoorCodesFormat' => 'Backend\View\Helper\SquareControl\DoorCodesFormat', 
 
             'BackendUserFilterHelp' => 'Backend\View\Helper\User\FilterHelp',
             'BackendUserFormat' => 'Backend\View\Helper\User\UserFormat',

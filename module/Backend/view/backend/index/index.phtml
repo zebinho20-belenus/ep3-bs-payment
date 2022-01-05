@@ -36,6 +36,13 @@ $this->setup(array(
     </div>
 
     <div style="margin-bottom: 8px;">
+        <a href="<?= $this->url('backend/squarecontrol') ?>" class="default-button" style="width: 150px; text-align: left;"><span class="symbolic symbolic-booking"><?= $this->t('Square control') ?></span></a>
+        <span class="no-ajax gray" style="margin-left: 16px;">
+            <?= $this->t('Delete the inactive door codes of your system') ?>
+        </span>
+    </div>    
+
+    <div style="margin-bottom: 8px;">
         <a href="<?= $this->url('backend/event') ?>" class="default-button" style="width: 150px; text-align: left;"><span class="symbolic symbolic-date"><?= $this->t('Events') ?></span></a>
         <span class="no-ajax gray" style="margin-left: 16px;">
             <?= $this->t('Create, edit or delete the events of your system') ?>

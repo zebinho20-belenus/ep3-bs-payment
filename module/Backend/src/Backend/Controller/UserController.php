@@ -24,6 +24,7 @@ class UserController extends AbstractActionController
 
         if ($search) {
             $filters = $this->backendUserDetermineFilters($search);
+      
             $filterFreeSearch = $filters['search'];
 
             try {
@@ -151,6 +152,7 @@ class UserController extends AbstractActionController
                 $user->setMeta('phone', $eud['euf-phone']);
                 // $user->setMeta('birthdate', $eud['euf-birthdate']);
                 $user->setMeta('member', $eud['euf-member']);
+                $user->setMeta('budget', $eud['euf-budget']);
                 $user->setMeta('notes', $eud['euf-notes']);
 
                 $userManager->save($user);
@@ -188,6 +190,7 @@ class UserController extends AbstractActionController
                     'euf-phone' => $user->getMeta('phone'),
                     // 'euf-birthdate' => $user->getMeta('birthdate'),
                     'euf-member' => $user->getMeta('member'),
+                    'euf-budget' => $user->getMeta('budget'),
                     'euf-notes' => $user->getMeta('notes'),
                 ));
             }

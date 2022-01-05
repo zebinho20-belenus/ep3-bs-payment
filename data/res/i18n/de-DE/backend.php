@@ -188,6 +188,9 @@ return array(
     'Privileges can only be edited by admins' => 'Berechtigungen können nur von Verwaltungskonten bearbeitet werden',
 
     'These are only visible for administration' => 'Nur für die Verwaltung sichtbar',
+    'These are only editable for administration' => 'Nur für die Verwaltung editierbar',
+
+    'Budget' => 'Buchungsbudget',
 
     'Billing status' => 'Rechnungsstatus',
     'Billing total' => 'Rechnungssumme',
@@ -315,6 +318,13 @@ return array(
     'Custom label for free squares in the calendar; default is <b>Free</b>' => 'Individuelle Bezeichnung freier Plätze im Kalender; Standard ist <b>Frei</b>',
     'Square control' => 'Platz Steuerung', 
     'Does a square control system exists for this aquare?' => 'Existiert eine Steuerungsanlage für diesen Platz?',
+
+    'Door code' => 'Tür Code',
+    'Door codes' => ' Tür Codes',
+
+    'Which inactive DoorCodes do you have? You may want to remove them?' => 'Abgelaufene / Inaktive Tür Codes. Diese können gelöscht werden', 
+    'Remove all inactive codes' => 'Alle abgelaufenen / inaktiven Codes löschen',
+    'Delete the inactive door codes of your system' => 'Entfernen Sie abgelaufene Tür Codes Ihres Systems',
 
     'Info (top)' => 'Info (oben)',
     'Optional info text, that will be displayed <b>above</b> square details'

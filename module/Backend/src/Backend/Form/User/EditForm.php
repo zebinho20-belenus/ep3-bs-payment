@@ -4,6 +4,7 @@ namespace Backend\Form\User;
 
 use User\Entity\User;
 use User\Manager\UserManager;
+use Base\Manager\ConfigManager;
 use Zend\Db\Sql\Predicate\IsNotNull;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
@@ -13,11 +14,12 @@ class EditForm extends Form
 
     protected $userManager;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, ConfigManager $configManager)
     {
         parent::__construct();
 
         $this->userManager = $userManager;
+        $this->configManager = $configManager;
     }
 
     public function init()
@@ -213,7 +215,23 @@ class EditForm extends Form
             ),
             'options' => array(
                 'label' => 'Member',
-                'notes' => 'These are only visible for administration',
+                'notes' => 'These are only editable for administration',
+            ),
+        ));
+
+        $this->add(array(
+            'name' => 'euf-budget',
+            'type' => 'Text',
+            'attributes' => array(
+                'id' => 'euf-budget',
+                'class' => 'right-text',
+                'style' => 'width: 100px;',
+                'value' => '0',
+            ),
+            'options' => array(
+                'label' => 'Budget',
+                'notes' => 'These are only editable for administration',
+                'postfix' => $this->configManager->get('i18n.currency'),
             ),
         ));
 
@@ -465,6 +483,20 @@ class EditForm extends Form
                 ),
             ),
             */
+            'euf-budget' => array(
+                'filters' => array(
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9\,\. ]+$/u',
+                            'message' => 'Please type a number here',
+                        ),
+                    ),
+                ),
+            ),
             'euf-notes' => array(
                 'required' => false,
                 'filters' => array(

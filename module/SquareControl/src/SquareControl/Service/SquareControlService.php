@@ -24,36 +24,148 @@ class SquareControlService extends AbstractService
         $this->reservationManager = $reservationManager;
     }
 
-    public function deactivateDoorCode($bid) {
+    public function deleteDoorCode($bid) {
 
-        $booking = $this->bookingManager->get($bid);
+        $doorCodeUuid = $this->getDoorCodeUuid($bid);
 
-        $doorCodeUuid = $booking->getMeta('doorCodeUuid');
-
-        $doorCodeRequest = $this->configManager->get('deactivateDoorCodeRequest');
-
-        $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
-        $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
-
-        if ($result['LL']['Code'] == '200') {
-           return true;
-        }
+        $this->deleteDoorCodeByUuid($doorCodeUuid);
 
         return false; 
 
     }
 
-    public function getDoorCode($bid) {
+    public function deleteDoorCodeByUuid($doorCodeUuid) {
 
-        $request = $this->configManager->get('getDoorCodeRequest');
-        $result = $this->sendDoorCodeRequest($request);
+        $request = $this->configManager->get('deleteDoorCodeRequest');
 
-        // search for bid in result
+        $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
 
+        // syslog(LOG_EMERG, $request);
+
+        $result = $this->sendRequest($request);
+
+        if ($result['LL']['Code'] == '200') {
+           return true;
+        }
+
+        return false;
 
     }
 
-    private function sendDoorCodeRequest($request) {
+    public function deactivateDoorCode($bid) {
+
+        $doorCodeUuid = $this->getDoorCodeUuid($bid);
+
+        $this->deactivateDoorCodeByUuid($doorCodeUuid);
+
+        return false;
+
+    }
+
+    private function deactivateDoorCodeByUuid($doorCodeUuid) {
+
+        $request = $this->configManager->get('deactivateDoorCodeRequest');
+
+        $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
+
+        $result = $this->sendRequest($request);
+
+        if ($result['LL']['Code'] == '200') {
+           return true;
+        }
+
+        return false;
+
+    }
+
+    public function getAllDoorCodes() {
+
+        $request = $this->configManager->get('getDoorCodesRequest');
+        $result = $this->sendRequest($request);
+
+
+        if ($result['LL']['Code'] == '200') {
+            $codes = json_decode($result['LL']['value']);
+            return array_reverse($codes);
+        }
+        return null;
+    }
+
+    public function getInactiveBookingDoorCodes() {
+
+        $codes = $this->getInactiveDoorCodes();
+
+        $inActiveBookingDoorCodes = array();
+
+        foreach($codes as $code) {
+
+            if (strpos($code->name, 'booking-') === 0) {
+                $inActiveBookingDoorCodes[] = $code;
+            }
+        }
+
+        return $inActiveBookingDoorCodes;
+
+    }    
+
+     public function getInactiveDoorCodes() {
+
+        $codes = $this->getAllDoorCodes();
+        // syslog(LOG_EMERG, json_encode($codes));
+        
+        $timest = time();
+
+        $inActiveDoorCodes = array();
+
+        foreach($codes as $code) {
+
+            if ($code->isActive == false && $timest > $code->timeTo) {
+                $inActiveDoorCodes[] = $code;
+                // syslog(LOG_EMERG, json_encode($code));
+            }
+        }
+
+        return $inActiveDoorCodes;
+
+    }
+
+    private function getDoorCodeUuid($bid) {
+
+        $codes = $this->getAllDoorCodes();
+
+        // search for bid in result
+        foreach($codes as $code) {
+            if ($code->name === 'booking-' . $bid) {
+                // syslog(LOG_EMERG, $code->uuid);
+                return $code->uuid;        
+            }    
+        }    
+        return null;
+    }
+
+    public function removeInActiveDoorCodes() {
+
+        $codes = $this->getInActiveDoorCodes();
+
+        foreach($codes as $code) {
+            // syslog(LOG_EMERG, $code->name);
+            $this->deleteDoorCodeByUuid($code->uuid);
+        }
+
+    }
+
+    public function removeInActiveBookingDoorCodes() {
+
+        $codes = $this->getInActiveBookingDoorCodes();
+
+        foreach($codes as $code) {
+            // syslog(LOG_EMERG, $code->name);
+            $this->deleteDoorCodeByUuid($code->uuid);
+        }
+
+    } 
+
+    private function sendRequest($request) {
 
         # senden mit guzzle
         try {
@@ -74,7 +186,7 @@ class SquareControlService extends AbstractService
 
     }    
     
-    public function activateDoorCode($bid, $doorCode) {
+    public function createDoorCode($bid, $doorCode) {
 
         $reservations = $this->reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
 
@@ -103,7 +215,7 @@ class SquareControlService extends AbstractService
         $request = str_replace("%%timeFrom%%", $timeFrom, $request);
         $request = str_replace("%%timeTo%%", $timeTo, $request);
 
-        $result = $this->sendDoorCodeRequest($request);
+        $result = $this->sendRequest($request);
 
         if ($result['LL']['Code'] == '200') {
            return true;

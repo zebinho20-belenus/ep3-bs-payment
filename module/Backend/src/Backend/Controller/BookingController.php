@@ -5,9 +5,12 @@ namespace Backend\Controller;
 use Booking\Entity\Booking;
 use Booking\Table\BookingTable;
 use Booking\Table\ReservationTable;
+use DateTime;
 use Zend\Db\Adapter\Adapter;
 use Zend\Mvc\Controller\AbstractActionController;
 use GuzzleHttp\Client;
+use Stripe\Webhook;
+use Stripe\Exception;
 
 class BookingController extends AbstractActionController
 {
@@ -377,12 +380,15 @@ class BookingController extends AbstractActionController
         $serviceManager = @$this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
+        $squareManager = $serviceManager->get('Square\Manager\SquareManager');
+        $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
 
         $rid = $this->params()->fromRoute('rid');
         $editMode = $this->params()->fromQuery('edit-mode');
 
         $reservation = $reservationManager->get($rid);
         $booking = $bookingManager->get($reservation->get('bid'));
+        $square = $squareManager->get($booking->get('sid'));
 
         switch ($booking->get('status')) {
             case 'single':
@@ -410,6 +416,10 @@ class BookingController extends AbstractActionController
                     $booking->setMeta('cancellor', $sessionUser->get('alias'));
                     $booking->setMeta('cancelled', date('Y-m-d H:i:s'));
                     $bookingManager->save($booking);
+
+                    if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                        $squareControlService->deactivateDoorCode($bid);
+                    }
 
                     $this->flashMessenger()->addSuccessMessage('Booking has been cancelled');
                 } else {
@@ -685,9 +695,14 @@ class BookingController extends AbstractActionController
 
         $serviceManager = @$this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
+        $squareManager = $serviceManager->get('Square\Manager\SquareManager');
+        $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
+
         // $bookingService = $serviceManager->get('Booking\Service\BookingService');
 
-        /*
+        $squareControlService->removeInactiveDoorCodes(); 
+
         $payload = @file_get_contents('php://input');
         $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
         $event = null;
@@ -698,40 +713,41 @@ class BookingController extends AbstractActionController
             );
         } catch(\UnexpectedValueException $e) {
             // Invalid payload
+            // syslog(LOG_EMERG, '|UnexpectedValueException|');
             http_response_code(400);
             return false;
         } catch(\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
+            // syslog(LOG_EMERG, '|invalid signature|');
             http_response_code(400);
             return false;
         }
-        */
+
+        // syslog(LOG_EMERG, '|'.$event.'|');
 
         $bid = -1;
         $intent = null;
-        $projectShort = $this->option('client.name.short');
-        $description_base = $projectShort.' booking-';
 
-        /* 
+        // syslog(LOG_EMERG, '|'.$description_base.'|');
+
         if ($event->type == "payment_intent.succeeded" || $event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
             $intent = $event->data->object;
-            $bid = str_replace($description_base,'',$intent->description);
+            $bid = $intent->metadata->bid;
         }
         else {
             http_response_code(400);
             return false;
         }
-        */
 
         // test
-        $bid='1299';
-        $event->type="payment_intent.payment_failed";
+        // $bid='1443';
+        // $event->type="payment_intent.payment_failed";
         // end test
-        
-        syslog(LOG_EMERG, '|'.$bid.'|');  
+
+        // syslog(LOG_EMERG, '|'.$bid.'|');  
 
         if (! (is_numeric($bid) && $bid > 0)) {
-            syslog(LOG_EMERG, 'This bid does not exist');
+            // syslog(LOG_EMERG, 'This bid does not exist');
             http_response_code(400);
             return false;
         }
@@ -743,20 +759,28 @@ class BookingController extends AbstractActionController
 
             if ($booking->getMeta('directpay_pending') == true && $booking->getMeta('paymentMethod') == 'stripe') {
 
+            $notes = $notes . " " . " -> via webhook "; 
+
             if ($event->type == "payment_intent.succeeded") {
-                syslog(LOG_EMERG, "Succeeded paymentIntent");
+                // syslog(LOG_EMERG, "Succeeded paymentIntent");
                 $notes = $notes . " " . "-> paymentIntent succeded";
                 $booking->set('status_billing', 'paid');
                 $booking->setMeta('paidAt', date('Y-m-d H:i:s'));
 
             } elseif ($event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
-                syslog(LOG_EMERG, "Failed or canceled paymentIntent");
+                // syslog(LOG_EMERG, "Failed or canceled paymentIntent");
                 $notes = $notes . " " . "-> paymentIntent failed or canceled";
                 $error_message = $intent->last_payment_error ? $intent->last_payment_error->message : "";
                 $notes = $notes . " -  " . $error_message;
+                
+                // deactivate door code
+                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                    $squareControlService->deactivateDoorCode($bid);
+                }
+                
                 // maybe if booking is not outdated cancel single bookings
                 $cancellable = false;
-                $reservations = $this->reservationManager->getBy(array('bid' => $bid), 'date ASC, time_start ASC');
+                $reservations = $reservationManager->getBy(array('bid' => $bid), 'date ASC, time_start ASC');
                 $reservation = current($reservations);
                 if ($reservation) { 
                     $reservationStartDate = new DateTime($reservation->need('date') . ' ' . $reservation->need('time_start'));
@@ -768,12 +792,6 @@ class BookingController extends AbstractActionController
                     $booking->set('status', 'cancelled');
                     $booking->setMeta('cancellor', 'stripe');
                     $booking->setMeta('cancelled', date('Y-m-d H:i:s'));
-
-                //  TODO!
-                //  if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
-                //      $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
-                //      $squareControlService->deactivateDoorCode($bid);
-                //  }   
                 }
             }
 
@@ -792,6 +810,5 @@ class BookingController extends AbstractActionController
 
         return false;
     }
-
 
 }
