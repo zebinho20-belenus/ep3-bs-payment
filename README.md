@@ -19,9 +19,11 @@ for the pwa functionality you must set your "square rules document" in the new e
 
 the layout is a bit modified for better usability on smartphones (even the administration)
 
-in addition to the original project there you can set a membership flag (for tennis club members) for users in the administration and so you can set different prices for mebers and others incuding vat
+in addition to the original project there you can set a membership flag (for tennis club members) for users in the administration and so you can set different prices for members and others incuding vat
 
 in addition to that you can set a time slot for squares in the administration which is reserved for the members of the club - so that only members ca are able to book in that time slot
+
+also you can set a "budget" for activated users in the administration section - maybe 100 Euro - and then the user can book from this budget - this is for selling gift cards or something like that - users can pay a "budget" at the beginning of the winter and then you do not need pay so much to paypal ;-)
 
 we have a door code system provided by a "loxone miniserver" - so there is a little squareControl module integrated -  we generate the door code according to the booking - this functionality can be ativated or deactivated in the config 
 
