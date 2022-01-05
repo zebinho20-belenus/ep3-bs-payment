@@ -265,14 +265,14 @@ class BookingController extends AbstractActionController
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
             $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
 
-            if ($square->get('allow_notes')) {
-                $userNotes = "Anmerkungen des Benutzers:\n" . $this->params()->fromPost('bf-user-notes');
-            } else {
-                $userNotes = '';
-            }
+            $notes = ''; 
+
+            if ($square->get('allow_notes') && $this->params()->fromPost('bf-user-notes') != null && $this->params()->fromPost('bf-user-notes') != '') {
+                $notes = "Anmerkungen des Benutzers:\n" . $this->params()->fromPost('bf-user-notes') . " || ";
+            } 
 
             $payservice = $this->params()->fromPost('paymentservice');
-            $meta = array('player-names' => serialize($playerNames), 'notes' => $userNotes); 
+            $meta = array('player-names' => serialize($playerNames), 'notes' => $notes); 
             
             if (($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') && $payable) {
                    $meta['directpay'] = 'true';
@@ -389,7 +389,7 @@ class BookingController extends AbstractActionController
                     $userManager->save($user);
                     # set booking to paid  
                     $booking->set('status_billing', 'paid');
-                    $notes = $notes . "payment with user budget";
+                    $notes = $notes . " payment with user budget";
                     $booking->setMeta('notes', $notes);
                     $bookingService->updatePaymentSingle($booking);                   
                 }
@@ -519,6 +519,8 @@ class BookingController extends AbstractActionController
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
 
+        $bookingService = $serviceManager->get('Booking\Service\BookingService');
+
         $token = $serviceManager->get('payum.security.http_request_verifier')->verify($this);
 
         $gateway = $serviceManager->get('payum')->getGateway($token->getGatewayName());
@@ -528,34 +530,37 @@ class BookingController extends AbstractActionController
         $payment = $status->getFirstModel();
 
         $origin = $this->redirectBack()->getOriginAsUrl();
-        
-        $bid = -1;
-        $notes = '';
+
+        $bid = -1;  
+        $paymentNotes = '';        
 #paypal
-        if ($token->getGatewayName() == 'paypal_ec') {       
+        if ($token->getGatewayName() == 'paypal_ec') {
             $bid = $payment['PAYMENTREQUEST_0_BID'];
-            $notes = 'direct pay with paypal - ';
+            $paymentNotes = ' direct pay with paypal - ';
         }
-#paypal        
+#paypal
 #stripe
         if ($token->getGatewayName() == 'stripe') {
             $bid = $payment['metadata']['bid'];
-            $notes = 'direct pay with stripe ' . $payment['charges']['data'][0]['payment_method_details']['type'] . ' - ';
-        }    
+            $paymentNotes = ' direct pay with stripe ' . $payment['charges']['data'][0]['payment_method_details']['type'] . ' - ';
+        }
 #stripe
 #klarna
         if ($token->getGatewayName() == 'klarna') {
             $bid = $payment['items']['reference'];
-            $notes = 'direct pay with klarna - ';
+            $paymentNotes = ' direct pay with klarna - ';
         }
 #klarna
-
+        
         if (! (is_numeric($bid) && $bid > 0)) {
             throw new RuntimeException('This booking does not exist');
         }
-        $bookingService = $serviceManager->get('Booking\Service\BookingService');
 
         $booking = $bookingManager->get($bid);
+        $notes = $booking->getMeta('notes');
+
+        $notes = $notes . $paymentNotes;
+
         $square = $squareManager->get($booking->need('sid'));
 
         if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing') || $status->getValue() === "success" || $payment['status'] === "succeeded" ) {
@@ -599,10 +604,10 @@ class BookingController extends AbstractActionController
                 $user->setMeta('budget', $booking->getMeta('newbudget'));
                 $userManager->save($user);
                 # set booking to paid
-                $notes = $notes . "payment with user budget | ";
+                $notes = $notes . " payment with user budget | ";
             }
 
-            $notes = $notes . "payment_status: " . $status->getValue() . ' ' . $payment['status'];
+            $notes = $notes . " payment_status: " . $status->getValue() . ' ' . $payment['status'];
             $booking->setMeta('notes', $notes);
             $bookingService->updatePaymentSingle($booking);
 	    }
