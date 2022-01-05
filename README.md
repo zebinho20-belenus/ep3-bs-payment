@@ -5,7 +5,7 @@ modified with payum / payumModule (https://github.com/Payum/PayumModule) for dir
 
 you can combine it with classic behaviour book on billing too
 
-runnnig with PHP 7.2 (not 7.3 - see original project tkrebs/ep3-bs for details) 
+runnnig up to PHP 7.4 - see original project tkrebs/ep3-bs for details) 
 
 vendor path completely from our instance (tennis-rudolstadt.de) with extended payumModule and payumStripe
 
@@ -15,7 +15,19 @@ in addition to the original config there is a projetc.php in config/autoload and
 
 in addition to the original project there is a manifest.json, js/sw.js and modified layout.phtml for pwa abbility (use like an app on smartphones) and the hammer.js for swiping left/right in the calendar
 
+for the pwa functionality you must set your "square rules document" in the new extern dir where our hallenordnung.pdf exists - otherwise the handling of the booking is bit blocked when the user wants to read the "square rules" because the pdf is opened in pwa directly and you have no back button or something else   
+
 the layout is a bit modified for better usability on smartphones (even the administration)
+
+in addition to the original project there you can set a membership flag (for tennis club members) for users in the administration and so you can set different prices for members and others incuding vat
+
+in addition to that you can set a time slot for squares in the administration which is reserved for the members of the club - so that only members ca are able to book in that time slot
+
+also you can set a "budget" for activated users in the administration section - maybe 100 Euro - and then the user can book from this budget - this is for selling gift cards or something like that - users can pay a "budget" at the beginning of the winter and then you do not need pay so much to paypal ;-)
+
+we have a door code system provided by a "loxone miniserver" - so there is a little squareControl module integrated -  we generate the door code according to the booking - this functionality can be ativated or deactivated in the config 
+
+
 
 
 # Payment
@@ -26,7 +38,7 @@ create an account at paypal.com - first sandbox for developing later live - get 
 ## stripe
 create an account at stripe.com - get the API keys (publishable and secret key) - first test later live - and put them in your config/autoload/local.php - enable your preferred payment methods at the stripe dashboard
 
-sepa_debit payments will remain "pending" status in the app - you have to check manually at the stripe dashboard if the payment is fullfilled - this can happens after a few days - then you can update the booking manually in the app as "paid" - a webhook functionality to automate this process is at work
+sepa_debit and other asynchronous payments will remain "pending" status in the app - you have to check manually at the stripe dashboard if the payment is fullfilled - this can happens after a few days - then you can update the booking manually in the app as "paid" - or you can create a webhook at the stripe developer dashboard to your site at https://whatever/public/backend/booking/webhook with events "payment_intent.canceled, payment_intent.payment_failed, payment_intent.succeeded" and then will stripe do it for you
 
 ## apple pay via stripe
 verify your domain for apple pay
