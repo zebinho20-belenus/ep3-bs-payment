@@ -5,7 +5,7 @@ modified with payum / payumModule (https://github.com/Payum/PayumModule) for dir
 
 you can combine it with classic behaviour book on billing too
 
-runnnig up to PHP 7.4 - see original project tkrebs/ep3-bs for details) 
+runnnig up to PHP 7.2 - not yet up to 7.4 as the orig project - more updates for modules necessary  
 
 vendor path completely from our instance (tennis-rudolstadt.de) with extended payumModule and payumStripe
 
