@@ -304,6 +304,9 @@
                            groupColOverlay.appendTo( groupColCellFirst.closest("td") );
                            groupColOverlay.attr("id", groupCol + "-overlay-" + dateIndex);
                            groupColOverlay.removeClass(groupCol);
+                           // get te from  groupColCellLast
+                           var te = groupColCellLast.attr("href").match(/te=\d+:\d+/);
+                           groupColOverlay.attr("href", groupColOverlay.attr("href").replace(/te=\d+:\d+/,te));
                        }
    
                        var groupColOverlayLabel = groupColOverlay.find(".cc-label");
