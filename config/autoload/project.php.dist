@@ -28,12 +28,17 @@ return array(
         'use_cookies' => true,
         'use_only_cookies' => true,
     ),
+    // enable /disable door code system
     'genDoorCode' => false,
+    // add a buffer to the booked time period for validity of the door code
     'doorCodeTimeBuffer' => '15 minutes',
     // API http request for your door system
-    'doorCodeRequest' => '?',
-    // show a flash message where you can manually book if you disable all payment methods 
-    'tmpBookingAt' => '?',
+    'getDoorCodesRequest' => 'http://admin:password@Miniserver/jdev/sps/io/Module_Uuid/codes',
+    'createDoorCodeRequest' => 'http://admin:password@Miniserver/jdev/sps/io/Module_Uuid/code/create/booking-%%bid%%/%%doorCode%%/2/1/1/%%timeFrom%%/%%timeTo%%',
+    'deactivateDoorCodeRequest' => 'http://admin:password@Miniserver/jdev/sps/io/Module_Uuid/code/deactivate/%%doorCodeUuid%%',
+    'deleteDoorCodeRequest' => 'http://admin:password@Miniserver/jdev/sps/io/Module_Uuid/code/delete/%%doorCodeUuid%%',
+    // show a flash message where you can manually book / pay temporarily if you disable all payment methods
+    // 'tmpBookingAt' => '?',
     // enable/disable specific payment providers 
     'paypal' => true,
     'stripe' => true,
