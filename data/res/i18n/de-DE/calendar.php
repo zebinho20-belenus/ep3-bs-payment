@@ -12,7 +12,7 @@ return array(
     'Too far' => 'Zu fern',
     'Closed' => 'Geschlossen',
     'Free' => 'Frei',
-    'Reserved' => 'Verein',
+    'Reserved' => 'Vereinsmitglieder',
     'Still free' => 'Noch frei',
     'Conflict' => 'Konflikt',
     'Occupied' => 'Belegt',

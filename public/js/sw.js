@@ -1,5 +1,5 @@
 // Use a cacheName for cache versioning
-var cacheName = 'tvas_dev_v2.1:static';
+var cacheName = 'tvas_dev_v2.3:static';
 
 // During the installation phase, you'll usually want to cache static assets.
 self.addEventListener('install', function(e) {
@@ -18,7 +18,6 @@ self.addEventListener('install', function(e) {
                 '../js/jquery-ui/jquery-ui.min.js',
                 '../js/default.min.js',
                 '../js/controller/frontend/index.min.js',
-                '../js/controller/calendar/index.min.js',
                 '../js/controller/frontend/hammer.min.js',
                 '../js/jquery-ui/i18n/de-DE.js',
                 '../js-client/tennis-rudolstadt.min.js',

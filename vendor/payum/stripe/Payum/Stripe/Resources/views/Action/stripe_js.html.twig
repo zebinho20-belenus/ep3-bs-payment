@@ -261,9 +261,9 @@
       supportedCountries: ['SEPA']
     };
     const iban = elements.create('iban', ibanOptions);
-  
+ 
     // Mount the IBAN Element on the page.
-    iban.mount('#iban-element'); 
+    iban.mount('#iban-element');
 
     // Monitor change events on the IBAN Element to display any errors.
     iban.on('change', ({error, bankName}) => {

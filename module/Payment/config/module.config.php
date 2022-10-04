@@ -3,12 +3,32 @@
 return array(
     'router' => array(
         'routes' => array(
-            'payment' => array(
+            'payment_done' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/payment/booking/done[/:payum_token]',
+                    'defaults' => array(
+                        'action' => 'done',
+                    ),
+                ),
+            ),
+            'payment_confirm' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route'    => '/payment/booking/confirm[/:payum_token]',
+                    'defaults' => array(
+                        'action' => 'confirm',
+                    ),
+                ),
+            ),
+            'payment_webhook' => array(
                 'type' => 'Literal',
                 'options' => array(
-                    'route' => '/payment',
+                    'route'    => '/payment/booking/webhook',
+                    'defaults' => array(
+                        'action' => 'webhook',
+                    ),
                 ),
-                'may_terminate' => false,
             ),
         ),
     ),

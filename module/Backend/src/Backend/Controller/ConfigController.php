@@ -130,6 +130,7 @@ class ConfigController extends AbstractActionController
                 $calendarDays = $data['cf-calendar-days'];
                 $calendarDayExceptions = $data['cf-calendar-day-exceptions'];
                 $calendarClubExceptions = $data['cf-calendar-club-exceptions'];
+                $calendarDisplayClubExceptions = $data['cf-calendar-display-club-exceptions'];
 
                 $locale = $this->config('i18n.locale');
 
@@ -141,6 +142,7 @@ class ConfigController extends AbstractActionController
                 $optionManager->set('service.calendar.days', $calendarDays);
                 $optionManager->set('service.calendar.day-exceptions', $calendarDayExceptions);
                 $optionManager->set('service.calendar.club-exceptions', $calendarClubExceptions);
+                $optionManager->set('service.calendar.display-club-exceptions', $calendarDisplayClubExceptions);
 
                 $this->flashMessenger()->addSuccessMessage('Configuration has been saved');
             } else {
@@ -157,6 +159,7 @@ class ConfigController extends AbstractActionController
             $behaviourForm->get('cf-calendar-days')->setValue($optionManager->get('service.calendar.days', '4'));
             $behaviourForm->get('cf-calendar-day-exceptions')->setValue($optionManager->get('service.calendar.day-exceptions'));
             $behaviourForm->get('cf-calendar-club-exceptions')->setValue($optionManager->get('service.calendar.club-exceptions'));
+            $behaviourForm->get('cf-calendar-display-club-exceptions')->setValue($optionManager->get('service.calendar.display-club-exceptions'));
         }
 
         return array(

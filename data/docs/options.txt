@@ -22,6 +22,7 @@ Options:
 - service.calendar.days                     int
 - service.calendar.day-exceptions           (optional)
 - service.calendar.club-exceptions          (optional)
+- service.calendar.display-club-exceptions  (optional) true|false
 - service.website                           URL
 - service.meta.description                  (optional)
 - service.maintenance                       (optional) true|false

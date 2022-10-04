@@ -17,12 +17,7 @@ use GuzzleHttp\Client;
 class PaymentController extends AbstractActionController
 {
 
-    public function paymentAction()
-    {
-
-    }
-
-    public function paymentConfirmAction()
+    public function confirmAction()
     {
 
         $token = $this->getServiceLocator()->get('payum.security.http_request_verifier')->verify($this);
@@ -68,13 +63,15 @@ class PaymentController extends AbstractActionController
     }
 
     
-    public function paymnDoneAction()
+    public function doneAction()
     {
         // syslog(LOG_EMERG, 'doneAction');
-
+        
         $serviceManager = $this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
+
+        $bookingService = $serviceManager->get('Booking\Service\BookingService');
 
         $token = $serviceManager->get('payum.security.http_request_verifier')->verify($this);
 
@@ -87,32 +84,35 @@ class PaymentController extends AbstractActionController
         $origin = $this->redirectBack()->getOriginAsUrl();
 
         $bid = -1;
-        $notes = '';
+        $paymentNotes = '';
 #paypal
         if ($token->getGatewayName() == 'paypal_ec') {
             $bid = $payment['PAYMENTREQUEST_0_BID'];
-            $notes = 'direct pay with paypal - ';
+            $paymentNotes = ' direct pay with paypal - ';
         }
 #paypal
 #stripe
         if ($token->getGatewayName() == 'stripe') {
             $bid = $payment['metadata']['bid'];
-            $notes = 'direct pay with stripe ' . $payment['charges']['data'][0]['payment_method_details']['type'] . ' - ';
+            $paymentNotes = ' direct pay with stripe ' . $payment['charges']['data'][0]['payment_method_details']['type'] . ' - ';
         }
 #stripe
 #klarna
         if ($token->getGatewayName() == 'klarna') {
             $bid = $payment['items']['reference'];
-            $notes = 'direct pay with klarna - ';
+            $paymentNotes = ' direct pay with klarna - ';
         }
 #klarna
 
         if (! (is_numeric($bid) && $bid > 0)) {
             throw new RuntimeException('This booking does not exist');
         }
-        $bookingService = $serviceManager->get('Booking\Service\BookingService');
 
         $booking = $bookingManager->get($bid);
+        $notes = $booking->getMeta('notes');
+
+        $notes = $notes . $paymentNotes;
+
         $square = $squareManager->get($booking->need('sid'));
 
         if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing') || $status->getValue() === "success" || $payment['status'] === "succeeded" ) {
@@ -179,6 +179,127 @@ class PaymentController extends AbstractActionController
         return $this->redirectBack()->toOrigin();
 
     }
+ 
+    public function webhookAction()
+    {
+        // $this->authorize('admin.booking');
+        // authorize is done via stripe webhook secret
 
+        $serviceManager = @$this->getServiceLocator();
+        $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+        $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
+        $squareManager = $serviceManager->get('Square\Manager\SquareManager');
+        $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
+
+        // $bookingService = $serviceManager->get('Booking\Service\BookingService');
+
+        $squareControlService->removeInactiveDoorCodes();
+
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload, $sig_header, $this->config('stripeWebhookSecret')
+            );
+        } catch(\UnexpectedValueException $e) {
+            // Invalid payload
+            // syslog(LOG_EMERG, '|UnexpectedValueException|');
+            http_response_code(400);
+            return false;
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            // syslog(LOG_EMERG, '|invalid signature|');
+            http_response_code(400);
+            return false;
+        }
+
+        // syslog(LOG_EMERG, '|'.$event.'|');
+
+        $bid = -1;
+        $intent = null;
+
+        if ($event->type == "payment_intent.succeeded" || $event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
+            $intent = $event->data->object;
+            $bid = $intent->metadata->bid;
+        }
+        else {
+            http_response_code(400);
+            return false;
+        }
+
+        // test
+        // $bid='1443';
+        // $event->type="payment_intent.payment_failed";
+        // end test
+
+        // syslog(LOG_EMERG, '|'.$bid.'|');
+
+        if (! (is_numeric($bid) && $bid > 0)) {
+            // syslog(LOG_EMERG, 'This bid does not exist');
+            http_response_code(400);
+            return false;
+        }
+
+        try {
+            $booking = $bookingManager->get($bid);
+            $square = $squareManager->get($booking->get('sid'));
+            $notes = $booking->getMeta('notes');
+
+            if ($booking->getMeta('directpay_pending') == true && $booking->getMeta('paymentMethod') == 'stripe') {
+
+            $notes = $notes . " " . " -> via webhook ";
+
+            if ($event->type == "payment_intent.succeeded") {
+                // syslog(LOG_EMERG, "Succeeded paymentIntent");
+                $notes = $notes . " " . "-> paymentIntent succeded";
+                $booking->set('status_billing', 'paid');
+                $booking->setMeta('paidAt', date('Y-m-d H:i:s'));
+
+            } elseif ($event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
+                // syslog(LOG_EMERG, "Failed or canceled paymentIntent");
+                $notes = $notes . " " . "-> paymentIntent failed or canceled";
+                $error_message = $intent->last_payment_error ? $intent->last_payment_error->message : "";
+                $notes = $notes . " -  " . $error_message;
+
+                // deactivate door code
+                if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                    $squareControlService->deactivateDoorCode($bid);
+                }
+
+                // maybe if booking is not outdated cancel single bookings
+                $cancellable = false;
+                $reservations = $reservationManager->getBy(array('bid' => $bid), 'date ASC, time_start ASC');
+                $reservation = current($reservations);
+                if ($reservation) {
+                    $reservationStartDate = new DateTime($reservation->need('date') . ' ' . $reservation->need('time_start'));
+                    $reservationCancelDate = new DateTime();
+                    if ($reservationStartDate > $reservationCancelDate) { $cancellable = true; }
+                }
+
+                if ($booking->get('status') == 'single' && $cancellable && $this->config('stripeWebhookCancel') == true) {
+                    $booking->set('status', 'cancelled');
+                    $booking->setMeta('cancellor', 'stripe');
+                    $booking->setMeta('cancelled', date('Y-m-d H:i:s'));
+                }
+            }
+
+            $booking->setMeta('notes', $notes);
+            $bookingManager->save($booking);
+            http_response_code(200);
+            return true;
+
+            }
+
+        } catch(RuntimeException $e) {
+            syslog(LOG_EMERG, $e->getMessage());
+            http_response_code(400);
+            return false;
+        }
+
+        return false;
+    }
+ 
 }
 

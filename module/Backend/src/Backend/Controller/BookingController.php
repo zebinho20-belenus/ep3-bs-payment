@@ -131,6 +131,8 @@ class BookingController extends AbstractActionController
 
         $serviceManager = @$this->getServiceLocator();
         $formElementManager = $serviceManager->get('FormElementManager');
+        $squareManager = $serviceManager->get('Square\Manager\SquareManager');
+        $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
 
         $editForm = $formElementManager->get('Backend\Form\Booking\EditForm');
 
@@ -150,12 +152,20 @@ class BookingController extends AbstractActionController
                     $savedBooking = $this->backendBookingUpdate($d['bf-rid'], $d['bf-user'], $d['bf-time-start'], $d['bf-time-end'], $d['bf-date-start'],
                         $d['bf-sid'], $d['bf-status-billing'], $d['bf-quantity'], $d['bf-notes'], $params['editMode']);
 
+                    $bid = $savedBooking->get('bid');
+                    $square = $squareManager->get($booking->get('sid'));
+
+                    if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                            $squareControlService->updateDoorCode($bid);
+                    }
+
                 } else {
 
                     /* Create booking/reservation */
 
                     $savedBooking = $this->backendBookingCreate($d['bf-user'], $d['bf-time-start'], $d['bf-time-end'], $d['bf-date-start'], $d['bf-date-end'],
                         $d['bf-repeat'], $d['bf-sid'], $d['bf-status-billing'], $d['bf-quantity'], $d['bf-notes'], $sessionUser->get('alias'));
+         
                 }
 
                 $this->flashMessenger()->addSuccessMessage('Booking has been saved');
@@ -278,10 +288,13 @@ class BookingController extends AbstractActionController
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $reservationManager = $serviceManager->get('Booking\Manager\ReservationManager');
         $formElementManager = $serviceManager->get('FormElementManager');
+        $squareManager = $serviceManager->get('Square\Manager\SquareManager');
+        $squareControlService = $serviceManager->get('SquareControl\Service\SquareControlService');
 
         $bid = $this->params()->fromRoute('bid');
 
         $booking = $bookingManager->get($bid);
+        $square = $squareManager->get($booking->get('sid'));
 
         if ($booking->get('status') != 'subscription') {
             throw new \RuntimeException('Time and date range can only be edited on subscription bookings');
@@ -312,6 +325,10 @@ class BookingController extends AbstractActionController
                         $booking->setMeta('time_end', $data['bf-time-end']);
 
                         $bookingManager->save($booking);
+
+                        if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                            $squareControlService->updateDoorCode($bid);
+                        }
                     }
 
                     $this->flashMessenger()->addSuccessMessage('Booking has been saved');
@@ -342,6 +359,10 @@ class BookingController extends AbstractActionController
                         $booking->setMeta('repeat', $repeat);
 
                         $bookingManager->save($booking);
+
+                        if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                            $squareControlService->updateDoorCode($bid);
+                        }
                     }
 
                     $this->flashMessenger()->addSuccessMessage('Booking has been saved');
@@ -727,8 +748,6 @@ class BookingController extends AbstractActionController
 
         $bid = -1;
         $intent = null;
-
-        // syslog(LOG_EMERG, '|'.$description_base.'|');
 
         if ($event->type == "payment_intent.succeeded" || $event->type == "payment_intent.payment_failed" || $event->type == "payment_intent.canceled") {
             $intent = $event->data->object;

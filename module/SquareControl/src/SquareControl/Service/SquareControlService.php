@@ -28,7 +28,9 @@ class SquareControlService extends AbstractService
 
         $doorCodeUuid = $this->getDoorCodeUuid($bid);
 
-        $this->deleteDoorCodeByUuid($doorCodeUuid);
+        if ($doorCodeUuid != null) {
+            $this->deleteDoorCodeByUuid($doorCodeUuid);
+        }
 
         return false; 
 
@@ -56,7 +58,9 @@ class SquareControlService extends AbstractService
 
         $doorCodeUuid = $this->getDoorCodeUuid($bid);
 
-        $this->deactivateDoorCodeByUuid($doorCodeUuid);
+        if ($doorCodeUuid != null) {
+            $this->deactivateDoorCodeByUuid($doorCodeUuid);
+        }
 
         return false;
 
@@ -66,6 +70,59 @@ class SquareControlService extends AbstractService
 
         $request = $this->configManager->get('deactivateDoorCodeRequest');
 
+        $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
+
+        $result = $this->sendRequest($request);
+
+        if ($result['LL']['Code'] == '200') {
+           return true;
+        }
+
+        return false;
+
+    }
+
+    public function updateDoorCode($bid) {
+
+        $doorCodeUuid = $this->getDoorCodeUuid($bid);
+
+        if ($doorCodeUuid != null) {
+            $this->updateDoorCodeByUuid($bid, $doorCodeUuid);
+        }
+
+        return false;
+
+    }
+
+    private function updateDoorCodeByUuid($bid, $doorCodeUuid) {
+
+        $request = $this->configManager->get('updateDoorCodeRequest');
+
+        $reservations = $this->reservationManager->getBy(['bid' => $bid], 'date ASC', 1);
+
+        $timebuffer = $this->configManager->get('doorCodeTimeBuffer');
+        $doorCodeRequest = $this->configManager->get('createDoorCodeRequest');
+
+        $reservation = current($reservations);
+
+        $reservationTimeStart = explode(':', $reservation->need('time_start'));
+        $reservationTimeEnd = explode(':', $reservation->need('time_end'));
+
+        $reservationStart = new \DateTime($reservation->need('date'));
+        $reservationStart->setTime($reservationTimeStart[0], $reservationTimeStart[1]);
+        $reservationStart->modify('-' . $timebuffer);
+        $reservationStart->setTimezone(new \DateTimeZone("UTC"));
+        $reservationEnd = new \DateTime($reservation->need('date'));
+        $reservationEnd->setTime($reservationTimeEnd[0], $reservationTimeEnd[1]);
+        $reservationEnd->modify('+' . $timebuffer);
+        $reservationEnd->setTimezone(new \DateTimeZone("UTC"));
+
+        $timeFrom = $reservationStart->getTimestamp();
+        $timeTo = $reservationEnd->getTimestamp();
+
+        $request = str_replace("%%bid%%", $bid, $doorCodeRequest);
+        $request = str_replace("%%timeFrom%%", $timeFrom, $request);
+        $request = str_replace("%%timeTo%%", $timeTo, $request);
         $request = str_replace("%%doorCodeUuid%%", $doorCodeUuid, $request);
 
         $result = $this->sendRequest($request);

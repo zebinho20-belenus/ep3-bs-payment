@@ -77,6 +77,7 @@ class Cell extends AbstractHelper
         $cellReserved = false;
 
         $clubExceptions = $this->optionManager->get('service.calendar.club-exceptions');
+        $displayClubExceptions = $this->optionManager->get('service.calendar.display-club-exceptions');
 
         if ($clubExceptions) {
             $clubExceptions = preg_split('~(\\n|,)~', $clubExceptions);
@@ -133,7 +134,7 @@ class Cell extends AbstractHelper
         }
 
         if ($cellFree) {
-            if ($cellReserved) {
+            if ($cellReserved && $displayClubExceptions && ($user && !$user->getMeta('member'))) {
                 return $view->calendarCellRenderReserved($user, $userBooking, $reservationsForCell, $cellLinkParams, $square);   
             } else {             
                 return $view->calendarCellRenderFree($user, $userBooking, $reservationsForCell, $cellLinkParams, $square);

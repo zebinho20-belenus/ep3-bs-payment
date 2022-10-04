@@ -6,8 +6,6 @@ use DateTime;
 use Zend\Db\Adapter\Adapter;
 use Zend\Mvc\Controller\AbstractActionController;
 use GuzzleHttp\Client;
-use Stripe\Webhook;
-use Stripe\Exception;
 
 class SquareControlController extends AbstractActionController
 {

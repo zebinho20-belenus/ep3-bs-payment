@@ -68,6 +68,7 @@ return array(
     'No.' => 'Nr.',
     'Notes' => 'Notizen',
     'Member' => 'Vereinsmitglied',
+    'Members' => 'Vereinsmitglieder',
 
     'Arbitrary name or identifier for this user' => 'Beliebiger Name oder Bezeichnung',
     'Privileges' => 'Berechtigungen',
@@ -242,6 +243,8 @@ return array(
     => 'Name des Tages (z.B. Sunday - nicht lokalisiert als Sonntag!) oder konkrete Datumangaben (z.B. 2016-08-30);<br>Getrennt durch Zeilenumbrüche oder Kommata;<br>Ein versteckter Tag kann mit einem Plus wieder angezeigt werden (z.B. +2016-08-30)',
     'Day names (like Sunday) or concrete dates (like 2016-08-16);<br>Separated by line breaks or commas;<br>Force concrete dates to be free for everyone by adding a plus (like +2016-08-30)<br>The time can be additionally limited in the court config (i.e. 14:00 to 20:00)'
     => 'Name des Tages (z.B. Sunday - nicht lokalisiert als Sonntag!) oder konkrete Datumangaben (z.B. 2016-08-30);<br>Getrennt durch Zeilenumbrüche oder Kommata;<br>Ein reservierter Tag kann mit einem Plus wieder für alle freigegeben werden (z.B. +2016-08-30)<br>Die Zeit kann noch über die Platz-Konfiguration weiter eingeschränkt werden (z.Bspl. 14:00 bis 20:00 Uhr)',    
+    'Display reserved time in Calendar' => 'Stelle die reservierte Zeit im Kalendar dar',
+    'activate to show the calendar cells as blocked for members - otherwise as free' => 'aktivieren um die Kalender Zellen als blockiert für Mitglieder darzustellen - andererseits normal als frei',
 
     'Your name' => 'Ihr Name',
     'Will be shown as the operator of this site.<br>Displayed next to the logo, for example.'

@@ -139,6 +139,18 @@ class BehaviourForm extends Form
         ));
 
         $this->add(array(
+            'name' => 'cf-calendar-display-club-exceptions',
+            'type' => 'Checkbox',
+            'attributes' => array(
+                'id' => 'cf-calendar-display-club-exceptions'
+            ),
+            'options' => array(
+                'label' => 'Display reserved time in Calendar',
+                'notes' => 'activate to show the calendar cells as blocked for members - otherwise as free',
+            ),
+        ));
+
+        $this->add(array(
             'name' => 'cf-submit',
             'type' => 'Submit',
             'attributes' => array(

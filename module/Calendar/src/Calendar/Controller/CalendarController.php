@@ -20,6 +20,7 @@ class CalendarController extends AbstractActionController
         $daysToRender = $this->option('service.calendar.days', false);
         $dayExceptions = $this->option('service.calendar.day-exceptions');
         $clubExceptions = $this->option('service.calendar.club-exceptions');
+        $displayClubExceptions = $this->option('service.calendar.display-club-exceptions');
 
         if ($dayExceptions) {
             $dayExceptions = preg_split('~(\\n|,)~', $dayExceptions);
@@ -163,6 +164,7 @@ class CalendarController extends AbstractActionController
             'dayExceptionsExceptions' => $dayExceptionsExceptions,
             'clubExceptions' => $clubExceptions,
             'clubExceptionsExceptions' => $clubExceptionsExceptions,
+            'displayClubExceptions' => $displayClubExceptions,
             'squares' => $squares,
             'squaresCount' => $squaresCount,
             'squaresFilter' => $squaresFilter,

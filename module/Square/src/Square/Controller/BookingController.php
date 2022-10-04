@@ -283,6 +283,9 @@ class BookingController extends AbstractActionController
             if (($payservice == 'paypal' || $payservice == 'stripe' || $payservice == 'klarna') && $payable) {
             # payment checkout
                 if($payable) {
+                   // $paymentService = $serviceManager->get('Payment\Service\PaymentService'); 
+                   // $paymentService->initBookingPayment($booking, $user, $payservice, $total, $byproducts); 
+                    
                    $basepath = $this->config('basepath');
                    if (isset($basepath) && $basepath != '' && $basepath != ' ') {
                        $basepath = '/'.$basepath;  
@@ -297,6 +300,7 @@ class BookingController extends AbstractActionController
                    $booking->setMeta('paymentMethod', $payservice);
                    $booking->setMeta('hasBudget', $byproducts['hasBudget']);
                    $booking->setMeta('newbudget', $byproducts['newbudget']);
+                   $booking->setMeta('budget', $byproducts['budget']); 
                    $bookingManager->save($booking);
                    $userName = $user->getMeta('firstname') . ' ' . $user->getMeta('lastname');
                    $companyName = $this->option('client.name.full');
@@ -323,6 +327,9 @@ class BookingController extends AbstractActionController
                    #stripe checkout
                    if ($payservice == 'stripe') {
                        $model["payment_method_types"] = $this->config('stripePaymentMethods');                       
+                       // nur zusammen mit stripe customer objekt
+                       // $model["payment_method_options"] = $this->config('stripePaymentMethodOptions');
+                       
                        $model["amount"] = $total;
                        $model["currency"] = 'EUR';
                        $model["description"] = $description;
@@ -387,6 +394,8 @@ class BookingController extends AbstractActionController
                     $userManager = $serviceManager->get('User\Manager\UserManager');
                     $user->setMeta('budget', $newbudget);
                     $userManager->save($user);
+                    $booking->setMeta('budget', $budget);
+                    $booking->setMeta('newbudget', $newbudget);
                     # set booking to paid  
                     $booking->set('status_billing', 'paid');
                     $notes = $notes . " payment with user budget";
@@ -433,6 +442,7 @@ class BookingController extends AbstractActionController
 
         $serviceManager = $this->getServiceLocator();
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
+        $bookingBillManager = $serviceManager->get('Booking\Manager\Booking\BillManager');
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
 
         $booking = $bookingManager->get($bid);
@@ -452,7 +462,32 @@ class BookingController extends AbstractActionController
         if ($confirmed == 'true') {
 
             $bookingService = $serviceManager->get('Booking\Service\BookingService');
-            $bookingService->cancelSingle($booking);
+
+            $userManager = $serviceManager->get('User\Manager\UserManager');
+            $user = $userManager->get($booking->get('uid'));
+
+            # redefine user budget if payed with budget
+            if ($booking->getMeta('budget')) {
+                $user->setMeta('budget', $booking->getMeta('budget'));
+                $userManager->save($user);
+            }
+
+            # redefine user budget if payed online
+            if ($booking->get('status_billing') == 'paid' && $booking->getMeta('directpay') == 'true') {
+                $oldbudget = $user->getMeta('budget');
+                $bills = $bookingBillManager->getBy(array('bid' => $booking->get('bid')), 'bbid ASC');
+                $total = 0;
+                if ($bills) {
+                    foreach ($bills as $bill) {
+                        $total += $bill->need('price');
+                    }
+                } 
+                $newbudget = ($oldbudget*100+$total)/100;
+                $user->setMeta('budget', $newbudget);
+                $userManager->save($user);
+            }
+
+            $bookingService->cancelSingle($booking); 
 
             $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your booking has been %scancelled%s.'),
                 '<b>', '</b>'));
@@ -477,17 +512,24 @@ class BookingController extends AbstractActionController
         $payment = $status->getFirstModel();
 
         // syslog(LOG_EMERG, $payment['status']);
+        // syslog(LOG_EMERG, json_encode($payment));
 
-        if ($payment['status'] === "requires_action" && !(array_key_exists('error',$payment))) {
+        if (($payment['status'] == "requires_action" && !(array_key_exists('error',$payment)))) {
             
-           $payment['doneAction'] = $token->getTargetUrl();
+          // syslog(LOG_EMERG, "confirm success");
+          $payment['doneAction'] = $token->getTargetUrl();
 
            try {
+               // syslog(LOG_EMERG, "executing confirm");
+
                $gateway->execute(new Confirm($payment));
+
+               // syslog(LOG_EMERG, $payment['status']);
+               // syslog(LOG_EMERG, json_encode($payment));
 
            } catch (ReplyInterface $reply) {
                if ($reply instanceof HttpRedirect) {
-                  return $this->redirect()->toUrl($reply->getUrl());
+                   return $this->redirect()->toUrl($reply->getUrl());
                }
                if ($reply instanceof HttpResponse) {
                   $this->getResponse()->setContent($reply->getContent());
@@ -502,6 +544,9 @@ class BookingController extends AbstractActionController
         }
    
         if ($payment['status'] != "requires_action" || array_key_exists('error',$payment)) {
+           // syslog(LOG_EMERG, json_encode($payment)); 
+           // syslog(LOG_EMERG, $payment['status']); 
+           // syslog(LOG_EMERG, "confirm error");
            $doneAction = str_replace("confirm", "done", $token->getTargetUrl());
 
            $token->setTargetUrl($doneAction);
@@ -528,6 +573,9 @@ class BookingController extends AbstractActionController
         $gateway->execute($status = new GetHumanStatus($token));
 
         $payment = $status->getFirstModel();
+
+        // syslog(LOG_EMERG, json_encode($status));
+        // syslog(LOG_EMERG, json_encode($payment));
 
         $origin = $this->redirectBack()->getOriginAsUrl();
 
@@ -563,8 +611,11 @@ class BookingController extends AbstractActionController
 
         $square = $squareManager->get($booking->need('sid'));
 
+
         if ($status->isCaptured() || $status->isAuthorized() || $status->isPending() || ($status->isUnknown() && $payment['status'] == 'processing') || $status->getValue() === "success" || $payment['status'] === "succeeded" ) {
 
+            // syslog(LOG_EMERG, 'doneAction - success');
+            
             if (!$booking->getMeta('directpay_pending') == 'true') {
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
                    $doorCode = $booking->getMeta('doorCode');  
@@ -613,6 +664,8 @@ class BookingController extends AbstractActionController
 	    }
 	    else
         {
+            // syslog(LOG_EMERG, 'doneAction - error');
+            
             if (!$booking->getMeta('directpay_pending') == 'true') {
                 if(isset($payment['error']['message'])) {
                     $this->flashMessenger()->addErrorMessage(sprintf($payment['error']['message'],
