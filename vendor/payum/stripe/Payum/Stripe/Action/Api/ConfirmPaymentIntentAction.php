@@ -69,8 +69,6 @@ class ConfirmPaymentIntentAction implements ActionInterface, ApiAwareInterface
 
             $intent = PaymentIntent::retrieve($model['payment_intent']);
 
-            // syslog(LOG_EMERG, $intent['status']);
-
             if ($intent['status'] == 'requires_confirmation' || $intent['status'] == 'requires_action') {
                 $intent->confirm();
             }
