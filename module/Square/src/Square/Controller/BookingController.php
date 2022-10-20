@@ -466,28 +466,31 @@ class BookingController extends AbstractActionController
             $userManager = $serviceManager->get('User\Manager\UserManager');
             $user = $userManager->get($booking->get('uid'));
 
-            # redefine user budget if payed with budget
-            if ($booking->getMeta('budget')) {
-                $user->setMeta('budget', $booking->getMeta('budget'));
-                $userManager->save($user);
-            }
+            $bookingService->cancelSingle($booking);
 
-            # redefine user budget if payed online
-            if ($booking->get('status_billing') == 'paid' && $booking->getMeta('directpay') == 'true') {
-                $oldbudget = $user->getMeta('budget');
+            # redefine user budget if status paid
+            if ($booking->need('status') == 'cancelled' && $booking->get('status_billing') == 'paid' && !$booking->getMeta('refunded') == 'true') {
+                $booking->setMeta('refunded', 'true');
+                $bookingManager->save($booking);
                 $bills = $bookingBillManager->getBy(array('bid' => $booking->get('bid')), 'bbid ASC');
                 $total = 0;
                 if ($bills) {
                     foreach ($bills as $bill) {
                         $total += $bill->need('price');
                     }
-                } 
-                $newbudget = ($oldbudget*100+$total)/100;
+                }
+            
+                $olduserbudget = $user->getMeta('budget');
+                if ($olduserbudget == null || $olduserbudget == '') {
+                    $olduserbudget = 0;
+                }
+
+                $newbudget = ($olduserbudget*100+$total)/100;
+
                 $user->setMeta('budget', $newbudget);
                 $userManager->save($user);
             }
 
-            $bookingService->cancelSingle($booking); 
 
             $this->flashMessenger()->addErrorMessage(sprintf($this->t('Your booking has been %scancelled%s.'),
                 '<b>', '</b>'));

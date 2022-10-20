@@ -150,6 +150,9 @@ class AccountController extends AbstractActionController
                 $meta = array();
                 $meta['gender'] = $registrationData['rf-gender'];
 
+                /* initialize user budget with 0 */
+                $user->setMeta('budget', 0);
+
                 if (isset($registrationData['rf-lastname']) && $registrationData['rf-lastname']) {
                     $meta['firstname'] = ucfirst($registrationData['rf-firstname']);
                     $meta['lastname'] = ucfirst($registrationData['rf-lastname']);

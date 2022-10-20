@@ -442,6 +442,35 @@ class BookingController extends AbstractActionController
                         $squareControlService->deactivateDoorCode($bid);
                     }
 
+                    # redefine user budget if status paid
+                    if ($booking->need('status') == 'cancelled' && $booking->get('status_billing') == 'paid' && !$booking->getMeta('refunded') == 'true') {
+                        $booking->setMeta('refunded', 'true');
+                        $bookingManager->save($booking);
+
+                        $userManager = $serviceManager->get('User\Manager\UserManager');
+                        $user = $userManager->get($booking->get('uid'));
+
+                        $bookingBillManager = $serviceManager->get('Booking\Manager\Booking\BillManager'); 
+
+                        $bills = $bookingBillManager->getBy(array('bid' => $booking->get('bid')), 'bbid ASC');
+                        $total = 0;
+                        if ($bills) {
+                            foreach ($bills as $bill) {
+                                $total += $bill->need('price');
+                            }
+                        }
+
+                        $olduserbudget = $user->getMeta('budget');
+                        if ($olduserbudget == null || $olduserbudget == '') {
+                            $olduserbudget = 0;
+                        }
+
+                        $newbudget = ($olduserbudget*100+$total)/100;
+
+                        $user->setMeta('budget', $newbudget);
+                        $userManager->save($user);
+                    }
+
                     $this->flashMessenger()->addSuccessMessage('Booking has been cancelled');
                 } else {
                     $this->authorize(['calendar.delete-single-bookings', 'calendar.delete-subscription-bookings']);
