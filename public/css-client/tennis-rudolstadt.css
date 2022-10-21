@@ -33,7 +33,7 @@ body.tennis-rudolstadt > div.panel:first-child {
   margin-top: 0px;
 }
 .tennis-rudolstadt #label-service-phone {
-  margin-left: 91px;
+  margin-left: 80px;
   font-size: 16px;
   font-family: Arial, sans-serif;
   padding-top: 3px;
@@ -73,7 +73,7 @@ body.tennis-rudolstadt > div.panel:first-child {
   .tennis-rudolstadt #header #label-client,
   .tennis-rudolstadt #header #label-service {
     text-align: left;
-    text-indent: 91px;
+    text-indent: 80px;
   }
   .tennis-rudolstadt #header #topbar-i18n {
     position: relative;
@@ -101,7 +101,7 @@ body.tennis-rudolstadt > div.panel:first-child {
 }
 
 .tennis-rudolstadt #calendar-toolbar-datepicker {
-  padding: 4px;
+  padding: 6px;
   margin-bottom: 6px;
 }
 
@@ -111,19 +111,21 @@ body.tennis-rudolstadt > div.panel:first-child {
   }
 }
 @media (max-width: 1100px) {
+  /*
   .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-4 {
     display: none;
   }
-  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-4.never-hide-table-cell {
+  */
+  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-up.never-hide-table-cell {
     display: table-cell;
   }
-  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-4.never-hide-block {
+  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-up.never-hide-block {
     display: block;
   }
-  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-4.never-hide-inline-block {
+  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-up.never-hide-inline-block {
     display: inline-block;
   }
-  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-4.never-hide-inline {
+  .tennis-rudolstadt #calendar-toolbar-userpanel .responsive-pass-up.never-hide-inline {
     display: inline;
   }
 }
@@ -158,26 +160,32 @@ body.tennis-rudolstadt > div.panel:first-child {
   }
 }
 @media (min-width: 700px) {
+  /*  
   .tennis-rudolstadt #calendar .calendar-table .calendar-date-col {
     display: table-cell;
   }
+  */
 }
 @media (max-width: 699px) and (min-width: 480px) {
+  /*
   .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-4,
   .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-3,
   .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-2,
   .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-1:nth-of-type(6) {
     display: table-cell;
   }
+  */
 }
 @media (max-width: 699px) and (min-width: 320px) {
-  .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-4 {
-    display: table-cell;
-  }
   .tennis-rudolstadt #calendar-toolbar-datepicker {
     margin-left: 0px;
     margin-right: 0px;
-  }    
+  }
+  /*
+  .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-4 {
+    display: table-cell;
+  }
+  */
 }
 @media (max-width: 320px) {
   body.tennis-rudolstadt {
@@ -188,9 +196,11 @@ body.tennis-rudolstadt > div.panel:first-child {
     margin-left: 0px;
     margin-right: 0px;
   }
-  .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-4 {
+  /*
+    .tennis-rudolstadt #calendar .calendar-table .calendar-date-col.responsive-pass-4 {
     display: table-cell;
   }
+  */
   
 }
 @media (max-width: 410px) {

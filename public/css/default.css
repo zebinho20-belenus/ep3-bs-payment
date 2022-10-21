@@ -163,7 +163,7 @@ a#logo:active { top: 1px; }
 
     #topbar > div:not(#topbar-contact):not(#topbar-separator) {
         display: inline-block !important;
-        margin: 16px 16px 0 24px;
+        margin: 0px 10px 0 10px;
         float: none;
     }
 
@@ -602,8 +602,8 @@ a.default-button:visited {
     position: relative;
     display: inline-block;
     padding: 6px 12px;
-    margin-top: 2px;
-    margin-left: 4px;
+    margin-top: 0px;
+    margin-left: 0px;
     font-family: Poppins, sans-serif;
     font-size: 12px;
     color: #666;
@@ -745,15 +745,40 @@ option { padding-right: 16px; }
 
 /* Responsive - We haz it :D */
 
-@media screen and (max-width: 1536px)
+/* calendar date cols - default up to 3 courts (1536,1280,1024,768,680) - 2 courts (1300,1100,900,700,500)  - 1 court (950,800,650,500,350) */
+/* five date cols - above all date cols */
+@media screen and (max-width: 1300px)
 {
     .responsive-pass-1 { display: none; }
 }
 
-@media screen and (max-width: 1280px)
+/* four date cols */
+@media screen and (max-width: 1100px)
 {
     .responsive-pass-2 { display: none; }
+}
 
+/* three date cols */
+@media screen and (max-width: 900px)
+{
+    .responsive-pass-3 { display: none; }
+}
+
+/* two date cols */
+@media screen and (max-width: 700px)
+{
+    .responsive-pass-4 { display: none; }
+}
+
+/* one date col */
+@media screen and (max-width: 500px)
+{
+    .responsive-pass-5 { display: none; }
+}
+
+
+@media screen and (max-width: 1280px)
+{
     #calendar-toolbar { text-align: center; }
     #calendar-toolbar-datepicker { display: inline-block; margin-left: 8px; margin-right: 8px; float: none; }
     #calendar-toolbar-userpanel { display: inline-block; margin-left: 8px; margin-right: 8px; float: none; }
@@ -761,8 +786,6 @@ option { padding-right: 16px; }
 
 @media screen and (max-width: 1024px)
 {
-    .responsive-pass-3 { display: none; }
-
     .half-table { margin-bottom: 32px; width: 100% !important; border: none !important; }
     .half-table:last-child { margin-bottom: 32px; width: 100% !important; border: none !important; }
 
@@ -773,17 +796,15 @@ option { padding-right: 16px; }
 
 @media screen and (max-width: 768px)
 {
-    .responsive-pass-4 { display: none; }
+    .responsive-pass-up { display: none; }
 }
 
 @media screen and (max-width: 680px)
 {
-    .responsive-pass-5 { display: none; }
-
     #label { position: static; }
 
-    #label-client { font-size: 14px; text-align: left; text-indent: 91px; margin-top: 8px; }
-    #label-service { font-size: 16px; text-align: left; text-indent: 91px; }
+    #label-client { font-size: 14px; text-align: left; text-indent: 80px; margin-top: 8px; }
+    #label-service { font-size: 16px; text-align: left; text-indent: 80px; }
 
     #branding { text-indent: 64px; text-align: center; }
 }
