@@ -602,8 +602,7 @@ a.default-button:visited {
     position: relative;
     display: inline-block;
     padding: 6px 12px;
-    margin-top: 0px;
-    margin-left: 0px;
+    margin: 2px 2px 0px 4px;
     font-family: Poppins, sans-serif;
     font-size: 12px;
     color: #666;
