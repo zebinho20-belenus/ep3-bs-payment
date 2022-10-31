@@ -400,7 +400,7 @@ class BookingController extends AbstractActionController
                     $booking->set('status_billing', 'paid');
                     $notes = $notes . " payment with user budget";
                     $booking->setMeta('notes', $notes);
-                    $bookingService->updatePaymentSingle($booking);                   
+                    $bookingManager->save($booking);                   
                 }
                 
                 if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
