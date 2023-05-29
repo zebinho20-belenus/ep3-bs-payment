@@ -12,16 +12,16 @@ $project_config = require 'config/autoload/project.php';
 
 return array_merge($project_config, array(
     'db' => array(
-        'database' => '?',
-        'username' => '?',
-        'password' => '?',
+        'database' => 'ep3',
+        'username' => 'root',
+        'password' => 'root',
 
         'hostname' => 'localhost',
         'port' => null,
     ),
     'mail' => array(
         'type' => 'sendmail', // or 'smtp' or 'smtp-tls'
-        'address' => '?',
+        'address' => 'info@localhost',
             // Make sure 'bookings.example.com' matches the hosting domain when using type 'sendmail'
 
         'host' => '?', // for 'smtp' type only, otherwise remove or leave as is
