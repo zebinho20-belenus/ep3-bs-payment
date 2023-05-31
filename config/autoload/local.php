@@ -34,19 +34,19 @@ return array_merge($project_config, array(
     'i18n' => array(
         'choice' => array(
             'en-US' => 'English',
-            'de-DE' => 'Deutsch',
+            'de-DE' => 'Deutsch'
 
             // More possible languages:
             // 'fr-FR' => 'Français',
             // 'hu-HU' => 'Magyar',
         ),
 
-        'currency' => 'EUR',
+        'currency' => 'AUD',
 
         // The language is usually detected from the user's web browser.
         // If it cannot be detected automatically and there is no cookie from a manual language selection,
         // the following locale will be used as the default "fallback":
-        'locale' => 'de-DE',
+        'locale' => 'en-US',
     ),
     'payum' => array(
         'token_storage' => new \Payum\Core\Storage\FilesystemStorage(
@@ -59,11 +59,11 @@ return array_merge($project_config, array(
                 'username' => '?',
                 'password' => '?',
                 'signature' => '?',
-                'sandbox' => true
+                'sandbox' => false
             )),
             'stripe' => (new \Payum\Stripe\StripeCheckoutGatewayFactory())->create(array(
-                'publishable_key' => '?',
-                'secret_key' => '?',
+                'publishable_key' => 'pk_test_51N3B1LFxrkun3mFr4l4jqlCMCVaQQBOEaSs389IHa6nNzoUa4S8xekbvdnrM95bxPf9305v2HSGXf4jSUItSTdSj004fHTTvr9',
+                'secret_key' => 'sk_test_51N3B1LFxrkun3mFrYa9JoEAMFrlYBLNULmlJzJBNRtY6l76csZP4yhmO2IoXmJYeCgRDUuUUcOUcTrUl9tzzFmwK00t9W7IY8x',
                 'sca_flow' => true,
                 'payum.template.obtain_token' => '@PayumStripe/Action/stripe_js.html.twig',
                 'payum.template.require_confirmation' => '@PayumStripe/Action/stripe_confirm.html.twig'
@@ -71,7 +71,7 @@ return array_merge($project_config, array(
             'klarna_checkout' => (new \Payum\Klarna\Checkout\KlarnaCheckoutGatewayFactory())->create(array(
                 'secret' => '?',
                 'merchant_id' => '?',
-                'sandbox' => true
+                'sandbox' => false
             )),
         ),
         'storages' => array(

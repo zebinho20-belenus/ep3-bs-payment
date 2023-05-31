@@ -5,16 +5,16 @@
  */
 
 
-$instance = 'tvas-booking-dev';
+$instance = 'public';
 
 return array(
     // basepath of the instance on your server - i.e. tvas-booking-dev for https://tennis-rudolstadt.de/tvas-booking-dev or '' if you don't have a basepath square/ i.e. 
     // if you don't point to your public dir directly as described in the install doc of the original project you have to point here to $instance."/public" 
     'basepath' => $instance,
     // origin url of your server - http://yourip - if  you don't have a proxy, baseurl and proxyurl should be the same like https://tennis-rudolstadt.de
-    'baseurl' => '?',
+    'baseurl' => 'http://localhost:8000',
     // the proxy url - i.e. https://tennis-rudolstadt.de
-    'proxyurl' => '?',
+    'proxyurl' => 'http://localhost:8000',
     'cookie_config' => array(
         'cookie_name_prefix' => $instance,
     ),
@@ -40,17 +40,17 @@ return array(
     // show a flash message where you can manually book / pay temporarily if you disable all payment methods
     // 'tmpBookingAt' => '?',
     // enable/disable specific payment providers 
-    'paypal' => true,
+    'paypal' => false,
     'stripe' => true,
     // enable/disable stripe payment methods (possible values: card, sepa_debit, ideal, giropay, sofort)
     'stripePaymentMethods' => array(
         'card',
-        'sepa_debit'
+        //'sepa_debit'
     ),
     // enable/disable stripe PaymentRequest (pmr) API for apple / google pay  
     'stripePaymentRequest' => 'false',
-    // select the suitable icon for the selected stripe payment methods from imgs-client/layout/stripe_icons  
-    'stripeIcon' => 'card_sepa.png',
+    // select the suitable icon for the selected stripe payment methods from imgs-client/layout/card_sepa  
+    'stripeIcon' => 'card_ideal_sepa.png',
     // select a default method 
     'stripeDefaultPaymentMethod' => 'card',
     // some payment methods require a confirmation process - select if you want to automate the click on 'authorize' and 'confirm' button
@@ -62,7 +62,7 @@ return array(
     // not yet fully implemented
     'klarna' => false,
     // classic behaviour of ep3-bs with booking on bill 
-    'billing' => false,
+    'billing' => true,
     // select which payment provider should be activated as default 
     'payment_default' => 'stripe',
 );
