@@ -3,7 +3,6 @@ body {
     padding: 16px;
     font-family: Poppins, sans-serif;
     font-size: 12px;
-    line-height: 1.3;
     color: #FFF;
     min-width: 380px;
     background: #4a3827 url(../imgs/layout/bg.jpg) center top
@@ -344,7 +343,7 @@ a#logo:active {
 }
 
 .calendar-time-row td {
-    height: 42px
+    height: 69px
 }
 
 .calendar-square-row td {
