@@ -70,7 +70,7 @@ code {
     padding-bottom: 16px;
     position: relative;
     height: 60px;
-    overflow: hidden;
+    overflow: auto;
     border-bottom: solid 1px #666;
 }
 
@@ -260,7 +260,7 @@ a#logo:active { top: 1px; }
     font-size: 10px;
     line-height: 1.0;
     padding: 10px 0;
-    overflow: hidden;
+    overflow: scroll;
     text-decoration: none;
 
     -webkit-border-radius: 3px;
