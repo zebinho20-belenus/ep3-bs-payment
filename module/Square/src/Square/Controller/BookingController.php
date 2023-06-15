@@ -377,6 +377,9 @@ class BookingController extends AbstractActionController
                    }
                    #klarna checkout
 
+                   $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sPayment and Booking Succeed%s'),
+                       '<b>', '</b>'));
+
                    return $this->redirect()->toUrl($captureToken->getTargetUrl());
                    }
                 else {
