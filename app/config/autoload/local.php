@@ -8,16 +8,14 @@
 
 $detailsClass = 'Application\Model\PaymentDetails';
 
-$project_config = require 'config/autoload/project.php';
-
-return array_merge($project_config, array(
+return array(
     'db' => array(
-        'database' => 'ep3',
-        'username' => 'root',
-        'password' => 'root',
+        'database' => 'ep3bs',
+        'username' => 'ep3bs',
+        'password' => 'PuLf648YbAGq7B2m8H',
 
-        'hostname' => 'localhost',
-        'port' => null,
+        'hostname' => 'db',
+        'port' => 3306,
     ),
     'mail' => array(
         'type' => 'sendmail', // or 'smtp' or 'smtp-tls'
@@ -78,4 +76,4 @@ return array_merge($project_config, array(
             $detailsClass => new \Payum\Core\Storage\FilesystemStorage(__DIR__.'/../../data/payum', $detailsClass, 'id'),
         )
     ),
-));
+);

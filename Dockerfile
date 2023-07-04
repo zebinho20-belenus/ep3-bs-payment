@@ -1,7 +1,6 @@
 FROM php:7.2-apache 
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-# USER www-data
 
 ENV ICU_RELEASE=65.1
 RUN apt-get update \
@@ -26,8 +25,6 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY app /var/www/html
 RUN cd /var/www/html/ && composer install
 
-COPY install/app /var/www/html
-
 RUN chown -R www-data:www-data /var/www/html/*
 
 RUN cd /var/www/html \
@@ -41,7 +38,5 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-#RUN php --ini
 
 

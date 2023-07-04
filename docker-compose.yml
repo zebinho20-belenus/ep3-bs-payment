@@ -4,17 +4,13 @@ services:
         build: .
         restart: always
         ports: 
-            - "8001:80"
-        volumes:
-         #- ./app:/var/www/html/
-          - ./volumes/app/data/backup:/var/www/html/data/backup/
-          - ./volumes/app/public/docs-client:/var/www/html/public/docs-client/
-          - ./volumes/app/public/imgs-client:/var/www/html/public/imgs-client/
-          - ./volumes/app/public/misc-client:/var/www/html/public/misc-client/          
-        # links:
-        #     - db
-        # networks:
-        #     - default
+            - "8080:80" # ep3bs
+        # volumes:
+        #   - ./app:/var/www/html/
+        #   - ./volumes/app/data/backup:/var/www/html/data/backup/
+        #   - ./volumes/app/public/docs-client:/var/www/html/public/docs-client/
+        #   - ./volumes/app/public/imgs-client:/var/www/html/public/imgs-client/
+        #   - ./volumes/app/public/misc-client:/var/www/html/public/misc-client/          
         environment:
             - MAIL_TYPE
             - MAIL_ADDRESS
@@ -28,8 +24,6 @@ services:
         restart: always
         ports: 
            - "3306:3306"
-        # expose: 
-        #     - 3306
         command: --default-authentication-plugin=mysql_native_password
         environment:
             MYSQL_DATABASE: ep3bs
@@ -40,8 +34,6 @@ services:
             #- ./dump:/docker-entrypoint-initdb.d
             #- ./conf:/etc/mysql/conf.d
             - ./volumes/mysql:/var/lib/mysql
-        # networks:
-        #     - default
     # phpmyadmin:
     #     image: phpmyadmin/phpmyadmin
     #     links: 

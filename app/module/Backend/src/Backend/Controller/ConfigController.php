@@ -156,7 +156,7 @@ class ConfigController extends AbstractActionController
             $behaviourForm->get('cf-registration')->setValue($optionManager->get('service.user.registration', 'false'));
             $behaviourForm->get('cf-registration-message')->setValue($optionManager->get('service.user.registration.message'));
             $behaviourForm->get('cf-activation')->setValue($optionManager->get('service.user.activation', 'email'));
-            $behaviourForm->get('cf-calendar-days')->setValue($optionManager->get('service.calendar.days', '4'));
+            $behaviourForm->get('cf-calendar-days')->setValue($optionManager->get('service.calendar.days', '1'));
             $behaviourForm->get('cf-calendar-day-exceptions')->setValue($optionManager->get('service.calendar.day-exceptions'));
             $behaviourForm->get('cf-calendar-club-exceptions')->setValue($optionManager->get('service.calendar.club-exceptions'));
             $behaviourForm->get('cf-calendar-display-club-exceptions')->setValue($optionManager->get('service.calendar.display-club-exceptions'));

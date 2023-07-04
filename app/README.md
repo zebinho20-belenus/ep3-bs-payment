@@ -59,4 +59,29 @@ can be changed via the twig templates of payumStripe - for other language suppor
 
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_confirm.html.twig
- 
+
+## dockerization
+The dockerization is based on the https://gitlab.kh-berlin.de/hheiss/ep3-bs-docker/-/tree/master but with some changes for our needs. The changes we made are listed below:
+- In Dockerfile: 
+  - Add ENV COMPOSER_ALLOW_SUPERUSER=1 to give root privileges to install packages and dependencies
+  - Remove install/app since we are using our own app folder
+
+- In docker-compose.yml:
+  - Use new docker compose syntax
+  - Open port 3306 for mysql, which enables local mysql client to connect to the database
+  - Only store database data in volumes. Other images like logo not stored in volumes but copy to the container from app folder
+
+- In app/config/global.php and app/config/project.php:
+  - Add cookie_name_prefix
+  - Make cookie_name_prefix consistent
+
+- In app/config/local.php:
+  - Make database username and password consistent
+  - Open port 3306 for db
+- In app/module/Setup/src/Setup/Controller/Plugin/ValidateSetup.php:
+  - Comment out exception to raise 'System has already been setup' error
+
+- Copy data/database_charlotte/payment.sql to data/db/ep3-bs.sql
+
+
+
