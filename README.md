@@ -60,7 +60,8 @@ can be changed via the twig templates of payumStripe - for other language suppor
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_confirm.html.twig
 
-## dockerization
+# dockerization
+
 The dockerization is based on the https://gitlab.kh-berlin.de/hheiss/ep3-bs-docker/-/tree/master but with some changes for our needs. The changes we made are listed below:
 - In Dockerfile: 
   - Add ENV COMPOSER_ALLOW_SUPERUSER=1 to give root privileges to install packages and dependencies
