@@ -88,6 +88,15 @@ The dockerization is based on the https://gitlab.kh-berlin.de/hheiss/ep3-bs-dock
 
 - In root folder, run:
   -  `docker compose build`
-  - `docker compose up -d`
+  -  `docker compose up -d`
+  -  `docker compose stop`: stop the containers
+  -  `docker compose down`: stop and remove containers
+  
 - Open web browser at http://localhost:8080
+
+- It will take a while when first setting up the website, if you see error message ![image-20230705151846749](images/README/image-20230705151846749.png)
+
+  at the beginning, wait for a while and refresh the page.
+
+- The commit history cannot be maintained in github, using `git log --follow filepath` to check full history
 
