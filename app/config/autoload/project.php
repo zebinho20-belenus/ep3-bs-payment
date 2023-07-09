@@ -62,7 +62,7 @@ return array(
     // not yet fully implemented
     'klarna' => false,
     // classic behaviour of ep3-bs with booking on bill 
-    'billing' => true,
+    'billing' => false,
     // select which payment provider should be activated as default 
     'payment_default' => 'stripe',
 );
