@@ -17,6 +17,8 @@ use Payum\Core\Reply\ReplyInterface;
 use Payum\Stripe\Request\Confirm;
 use Stripe;
 use GuzzleHttp\Client; 
+use Zend\Log\Syslog;
+
 
 
 class BookingController extends AbstractActionController
@@ -377,8 +379,8 @@ class BookingController extends AbstractActionController
                    }
                    #klarna checkout
 
-                   $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sPayment and Booking Succeed%s'),
-                       '<b>', '</b>'));
+                   #$this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sPayment and Booking Succeed%s'),
+                    #   '<b>', '</b>'));
 
                    return $this->redirect()->toUrl($captureToken->getTargetUrl());
                    }
@@ -635,7 +637,8 @@ class BookingController extends AbstractActionController
                    }
                 }
                 else {
-                    // syslog(LOG_EMERG, 'success not pending');
+                    syslog(LOG_EMERG, 'success not pending');
+                    // This message is not being displayed, need to figure out why
                     $this->flashMessenger()->addSuccessMessage(sprintf($this->t('%sCongratulations:%s Your %s has been booked!'),
                         '<b>', '</b>',$this->option('subject.square.type')));
                 }
