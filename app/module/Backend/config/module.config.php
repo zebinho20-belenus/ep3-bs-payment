@@ -290,6 +290,15 @@ return array(
                                     ),
                                 ),
                             ),
+                            'cancelpolicy' => array(
+                                'type' => 'Literal',
+                                'options' => array(
+                                    'route' => '/cancelpolicy',
+                                    'defaults' => array(
+                                        'action' => 'cancelpolicy',
+                                    ),
+                                ),
+                            ),
                             'square' => array(
                                 'type' => 'Literal',
                                 'options' => array(

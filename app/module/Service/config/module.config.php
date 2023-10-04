@@ -40,6 +40,15 @@ return array(
                             ),
                         ),
                     ),
+                    'cancelpolicy' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/cancelpolicy',
+                            'defaults' => array(
+                                'action' => 'cancelpolicy',
+                            ),
+                        ),
+                    ),
                     'status' => array(
                         'type' => 'Literal',
                         'options' => array(
