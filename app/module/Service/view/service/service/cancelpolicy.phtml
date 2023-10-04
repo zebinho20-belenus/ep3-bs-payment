@@ -1,0 +1,22 @@
+<?php
+
+$this->setup(array(
+    'title' => 'Cancellation Policy',
+    'panel' => 'centered-panel large-sized',
+    'back' => true,
+    'links' => array(
+        'Help' => $this->url('service/help'),
+    ),
+));
+
+$this->headScript()->appendFile($this->basePath('js/controller/service/cancelpolicy.min.js'));
+
+?>
+
+<div id="cancelpolicy-panel">
+    <h1><?= $this->t('Cancellation Policy') ?></h1>
+
+    <div class="separator-small"></div>
+
+    <?= $this->option('subject.cancelpolicy', '<p><em>' . $this->t('We are currently working on this page.') . '</em></p>') ?>
+</div>

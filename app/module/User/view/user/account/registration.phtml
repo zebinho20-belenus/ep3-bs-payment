@@ -131,8 +131,9 @@ $this->headScript()->appendFile($this->basePath('js/controller/user/registration
                     if (! $this->option('service.user.registration.privacy.file')) {
                         if ($this->option('client.website.privacy')) {
                             $html .= sprintf('<div><input type="checkbox" required> %s</div>',
-                                sprintf($this->t('I have read and accept the %1$sprivacy policy%2$s'),
-                                    '<a href="' . $this->option('client.website.privacy') . '" target="_blank">', '</a>'));
+                                sprintf($this->t('I have read and accept the %1$sterms & conditions%2$s'),
+                                // '<a href="' . $this->option('client.website.privacy') . '" target="_blank">', '</a>'));
+                                    '<a href="' . $this->url('service/term') . '" target="_blank">', '</a>'));
                         }
                     }
 

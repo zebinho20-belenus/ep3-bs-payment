@@ -106,6 +106,46 @@ class ConfigController extends AbstractActionController
         }
     }
 
+    public function termAction()
+    {
+        $this->authorize('admin.config');
+
+        if ($this->getRequest()->isPost()) {
+            $term = $this->params()->fromPost('cf-term');
+
+            if ($term && strlen($term) > 32) {
+                $optionManager = @$this->getServiceLocator()->get('Base\Manager\OptionManager');
+                $optionManager->set('subject.term', $term, $this->config('i18n.locale'));
+
+                $this->flashMessenger()->addSuccessMessage('Terms page has been saved');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Terms page text is too short');
+            }
+
+            return $this->redirect()->toRoute('backend/config/term');
+        }
+    }
+
+    public function cancelpolicyAction()
+    {
+        $this->authorize('admin.config');
+
+        if ($this->getRequest()->isPost()) {
+            $cancelpolicy = $this->params()->fromPost('cf-cancelpolicy');
+
+            if ($cancelpolicy && strlen($cancelpolicy) > 32) {
+                $optionManager = @$this->getServiceLocator()->get('Base\Manager\OptionManager');
+                $optionManager->set('subject.cancelpolicy', $cancelpolicy, $this->config('i18n.locale'));
+
+                $this->flashMessenger()->addSuccessMessage('Cancellation Policy page has been saved');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Cancellation Policy page text is too short');
+            }
+
+            return $this->redirect()->toRoute('backend/config/cancelpolicy');
+        }
+    }
+
     public function behaviourAction()
     {
         $this->authorize('admin.config');

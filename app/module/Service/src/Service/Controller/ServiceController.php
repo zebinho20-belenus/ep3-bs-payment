@@ -13,6 +13,12 @@ class ServiceController extends AbstractActionController
     public function helpAction()
     { }
 
+    public function termAction()
+    { }
+
+    public function cancelpolicyAction()
+    { }
+
     public function statusAction()
     {
         if ($this->option('service.maintenance', 'false') == 'true') {
