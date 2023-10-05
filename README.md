@@ -60,8 +60,7 @@ can be changed via the twig templates of payumStripe - for other language suppor
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_js.html.twig
 vendor/payum/stripe/Payum/Stripe/Resources/views/Action/stripe_confirm.html.twig
 
-# dockerization
-
+## dockerization
 The dockerization is based on the https://gitlab.kh-berlin.de/hheiss/ep3-bs-docker/-/tree/master but with some changes for our needs. The changes we made are listed below:
 - In Dockerfile: 
   - Add ENV COMPOSER_ALLOW_SUPERUSER=1 to give root privileges to install packages and dependencies
@@ -84,19 +83,5 @@ The dockerization is based on the https://gitlab.kh-berlin.de/hheiss/ep3-bs-dock
 
 - Copy data/database_charlotte/payment.sql to data/db/ep3-bs.sql
 
-## How to run
 
-- In root folder, run:
-  -  `docker compose build`
-  -  `docker compose up -d`
-  -  `docker compose stop`: stop the containers
-  -  `docker compose down`: stop and remove containers
-  
-- Open web browser at http://localhost:8080
-
-- It will take a while when first setting up the website, if you see error message ![image-20230705151846749](images/README/image-20230705151846749.png)
-
-  at the beginning, wait for a while and refresh the page.
-
-- The commit history cannot be maintained in github, using `git log --follow filepath` to check full history
 
