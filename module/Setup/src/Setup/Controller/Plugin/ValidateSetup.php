@@ -20,35 +20,35 @@ class ValidateSetup extends AbstractPlugin
 
     public function __invoke($action)
     {
-        switch ($action) {
-            case 'index':
-            case 'tables':
-                $res = $this->dbAdapter->query('SHOW TABLES', Adapter::QUERY_MODE_EXECUTE)->toArray();
+        // switch ($action) {
+        //     case 'index':
+        //     case 'tables':
+        //         $res = $this->dbAdapter->query('SHOW TABLES', Adapter::QUERY_MODE_EXECUTE)->toArray();
 
-                if ($res && count($res) > 0) {
-                    throw new \RuntimeException('System has already been setup');
-                }
+        //         if ($res && count($res) > 0) {
+        //             throw new \RuntimeException('System has already been setup');
+        //         }
 
-                break;
-            case 'records':
-                $optionManager = $this->serviceManager->get('Base\Manager\OptionManager');
+        //         break;
+        //     case 'records':
+        //         $optionManager = $this->serviceManager->get('Base\Manager\OptionManager');
 
-                if ($optionManager->get('client.name.full')) {
-                    throw new \RuntimeException('System has already been setup');
-                }
+        //         if ($optionManager->get('client.name.full')) {
+        //             throw new \RuntimeException('System has already been setup');
+        //         }
 
-                break;
-            case 'user':
-                $userManager = $this->serviceManager->get('User\Manager\UserManager');
+        //         break;
+        //     case 'user':
+        //         $userManager = $this->serviceManager->get('User\Manager\UserManager');
 
-                $users = $userManager->getAll(null, 1);
+        //         $users = $userManager->getAll(null, 1);
 
-                if ($users && count($users) > 0) {
-                    throw new \RuntimeException('System has already been setup');
-                }
+        //         if ($users && count($users) > 0) {
+        //             throw new \RuntimeException('System has already been setup');
+        //         }
 
-                break;
-        }
+        //         break;
+        // }
     }
 
 }

@@ -5,7 +5,7 @@
  */
 
 
-$instance = 'public';
+$instance = 'ep3-bs-payment';
 
 return array(
     // basepath of the instance on your server - i.e. tvas-booking-dev for https://tennis-rudolstadt.de/tvas-booking-dev or '' if you don't have a basepath square/ i.e. 
@@ -62,8 +62,7 @@ return array(
     // not yet fully implemented
     'klarna' => false,
     // classic behaviour of ep3-bs with booking on bill 
-    'billing' => true,
+    'billing' => false,
     // select which payment provider should be activated as default 
     'payment_default' => 'stripe',
 );
-

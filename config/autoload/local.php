@@ -7,7 +7,6 @@
  */
 
 $detailsClass = 'Application\Model\PaymentDetails';
-
 $project_config = require 'config/autoload/project.php';
 
 return array_merge($project_config, array(
@@ -17,7 +16,7 @@ return array_merge($project_config, array(
         'password' => 'root',
 
         'hostname' => 'localhost',
-        'port' => null,
+        'port' => 3306,
     ),
     'mail' => array(
         'type' => 'sendmail', // or 'smtp' or 'smtp-tls'

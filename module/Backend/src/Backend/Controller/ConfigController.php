@@ -106,6 +106,46 @@ class ConfigController extends AbstractActionController
         }
     }
 
+    public function termAction()
+    {
+        $this->authorize('admin.config');
+
+        if ($this->getRequest()->isPost()) {
+            $term = $this->params()->fromPost('cf-term');
+
+            if ($term && strlen($term) > 32) {
+                $optionManager = @$this->getServiceLocator()->get('Base\Manager\OptionManager');
+                $optionManager->set('subject.term', $term, $this->config('i18n.locale'));
+
+                $this->flashMessenger()->addSuccessMessage('Terms page has been saved');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Terms page text is too short');
+            }
+
+            return $this->redirect()->toRoute('backend/config/term');
+        }
+    }
+
+    public function cancelpolicyAction()
+    {
+        $this->authorize('admin.config');
+
+        if ($this->getRequest()->isPost()) {
+            $cancelpolicy = $this->params()->fromPost('cf-cancelpolicy');
+
+            if ($cancelpolicy && strlen($cancelpolicy) > 32) {
+                $optionManager = @$this->getServiceLocator()->get('Base\Manager\OptionManager');
+                $optionManager->set('subject.cancelpolicy', $cancelpolicy, $this->config('i18n.locale'));
+
+                $this->flashMessenger()->addSuccessMessage('Cancellation Policy page has been saved');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Cancellation Policy page text is too short');
+            }
+
+            return $this->redirect()->toRoute('backend/config/cancelpolicy');
+        }
+    }
+
     public function behaviourAction()
     {
         $this->authorize('admin.config');
@@ -156,7 +196,7 @@ class ConfigController extends AbstractActionController
             $behaviourForm->get('cf-registration')->setValue($optionManager->get('service.user.registration', 'false'));
             $behaviourForm->get('cf-registration-message')->setValue($optionManager->get('service.user.registration.message'));
             $behaviourForm->get('cf-activation')->setValue($optionManager->get('service.user.activation', 'email'));
-            $behaviourForm->get('cf-calendar-days')->setValue($optionManager->get('service.calendar.days', '4'));
+            $behaviourForm->get('cf-calendar-days')->setValue($optionManager->get('service.calendar.days', '1'));
             $behaviourForm->get('cf-calendar-day-exceptions')->setValue($optionManager->get('service.calendar.day-exceptions'));
             $behaviourForm->get('cf-calendar-club-exceptions')->setValue($optionManager->get('service.calendar.club-exceptions'));
             $behaviourForm->get('cf-calendar-display-club-exceptions')->setValue($optionManager->get('service.calendar.display-club-exceptions'));

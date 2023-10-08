@@ -700,6 +700,7 @@ class BookingController extends AbstractActionController
          syslog(LOG_EMERG, 'doneAction');
         
         $serviceManager = $this->getServiceLocator();
+        $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
         $bookingManager = $serviceManager->get('Booking\Manager\BookingManager');
         $squareManager = $serviceManager->get('Square\Manager\SquareManager');
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');

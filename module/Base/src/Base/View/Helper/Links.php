@@ -17,7 +17,7 @@ class Links extends AbstractHelper
 
         if ($backHref && $backTitle) {
             $html .= sprintf('<div class="links-back left-text"><a href="%s" class="unlined white back-button"><span class="light-gray">%s:</span><br>%s</a></div>',
-                $backHref, $view->translate('Back to'), $backTitle);
+                $backHref, $view->translate('Book another court'), $backTitle);
         }
 
         $links = $view->placeholder('links')->getValue();
@@ -42,5 +42,4 @@ class Links extends AbstractHelper
 
         return $html;
     }
-
 }

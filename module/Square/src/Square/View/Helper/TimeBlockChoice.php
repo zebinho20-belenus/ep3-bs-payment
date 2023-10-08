@@ -235,7 +235,7 @@ class TimeBlockChoice extends AbstractHelper
         $html .= '<label for="sb-date-start-choice" class="inline-label symbolic symbolic-date"><span>' . $view->t('Start date') . '</span></label>';
         $html .= '<input type="text" name="sb-date-start-choice" id="sb-date-start-choice" value="' . $view->dateFormat($dateTimeStart, IntlDateFormatter::MEDIUM) . '" class="inline-label-container datepicker" style="padding-left: 28px; width: 96px;">';
         $html .= '</div>';
-        $html .= $this->renderDateBlockTimeChoice($square, 'sb-time-start-choice', $dateTimeStart);
+        $html .= $this->renderStartDateBlockTimeChoice($square, 'sb-time-start-choice', $dateTimeStart);
         $html .= '</div>';
 
         $html .= '<div class="gray" style="margin: 8px 0px;">';
@@ -246,7 +246,7 @@ class TimeBlockChoice extends AbstractHelper
         $html .= '<label for="sb-date-end-choice" class="inline-label symbolic symbolic-date"><span>' . $view->t('End date') . '</span></label>';
         $html .= '<input type="text" name="sb-date-end-choice" id="sb-date-end-choice" value="' . $view->dateFormat($dateTimeEnd, IntlDateFormatter::MEDIUM) . '" class="inline-label-container datepicker" style="padding-left: 28px; width: 96px;">';
         $html .= '</div>';
-        $html .= $this->renderDateBlockTimeChoice($square, 'sb-time-end-choice', $dateTimeEnd);
+        $html .= $this->renderEndDateBlockTimeChoice($square, 'sb-time-end-choice', $dateTimeEnd);
         $html .= '</div>';
 
         $html .= '</div>';
@@ -254,7 +254,7 @@ class TimeBlockChoice extends AbstractHelper
         return $html;
     }
 
-    protected function renderDateBlockTimeChoice(Square $square, $id, DateTime $timeNow)
+    protected function renderEndDateBlockTimeChoice(Square $square, $id, DateTime $timeNow)
     {
         $view = $this->getView();
         $html = '';
@@ -270,20 +270,50 @@ class TimeBlockChoice extends AbstractHelper
         if ($timeEnd == 0) {
             $timeEnd = 86400;
         }
-
         $html .= '<select id="' . $id . '" style="margin-left: 8px;">';
+            for ($walkingTime = $timeStart; $walkingTime <= $timeEnd; $walkingTime += $timeBlockBookable) {
+                $walkingTimeFormat = gmdate('H:i', $walkingTime);
 
-        for ($walkingTime = $timeStart; $walkingTime < $timeEnd; $walkingTime += $timeBlockBookable) {
-            $walkingTimeFormat = gmdate('H:i', $walkingTime);
-
-            if ($walkingTimeFormat == $timeNow->format('H:i')) {
-                $attr = 'selected="selected"';
-            } else {
-                $attr = null;
+                if ($walkingTimeFormat == $timeNow->format('H:i')) {
+                    $attr = 'selected="selected"';
+                } else {
+                    $attr = null;
+                }
+                $html .= '<option value="' . $walkingTimeFormat . '" ' . $attr . '>' . $view->timeFormat($walkingTime, true, 'UTC') . '</option>';
             }
 
-            $html .= '<option value="' . $walkingTimeFormat . '" ' . $attr . '>' . $view->timeFormat($walkingTime, true, 'UTC') . '</option>';
+        $html .= '</select>';
+
+        return $html;
+    }
+
+    protected function renderStartDateBlockTimeChoice(Square $square, $id, DateTime $timeNow)
+    {
+        $view = $this->getView();
+        $html = '';
+
+        $timeBlockBookable = $square->need('time_block_bookable');
+
+        $timeStartParts = explode(':', $square->need('time_start'));
+        $timeStart = $timeStartParts[0] * 3600 + $timeStartParts[1] * 60;
+
+        $timeEndParts = explode(':', $square->need('time_end'));
+        $timeEnd = $timeEndParts[0] * 3600 + $timeEndParts[1] * 60;
+
+        if ($timeEnd == 0) {
+            $timeEnd = 86400;
         }
+        $html .= '<select id="' . $id . '" style="margin-left: 8px;">';
+            for ($walkingTime = $timeStart; $walkingTime < $timeEnd; $walkingTime += $timeBlockBookable) {
+                $walkingTimeFormat = gmdate('H:i', $walkingTime);
+
+                if ($walkingTimeFormat == $timeNow->format('H:i')) {
+                    $attr = 'selected="selected"';
+                } else {
+                    $attr = null;
+                }
+                $html .= '<option value="' . $walkingTimeFormat . '" ' . $attr . '>' . $view->timeFormat($walkingTime, true, 'UTC') . '</option>';
+            }
 
         $html .= '</select>';
 
