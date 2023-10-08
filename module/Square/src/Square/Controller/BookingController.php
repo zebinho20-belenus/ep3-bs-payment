@@ -178,6 +178,9 @@ class BookingController extends AbstractActionController
         $bookingStartTime = new DateTime($bookingInfo['start']);
         $bookingEndTime = new DateTime($bookingInfo['end']);
 
+        syslog(LOG_EMERG, $bookingInfo['start']);
+        syslog(LOG_EMERG, $byproducts['dateStart']);
+
         foreach ($cartItems as $cartItem) {
             if ($cartItem['square'] === $bookingInfo['square']) {
                 // Check for time overlap
@@ -224,6 +227,24 @@ class BookingController extends AbstractActionController
         // Retrieve the booking details from the cart
         $cartService = Cart::getInstance();
         $cartItems = $cartService->getItems();
+
+        //clear cart if the square is dated old
+        // Get the current datetime
+        $current_datetime = date('Y-m-d H:i:s'); // Format it as 'YYYY-MM-DD HH:MM:SS'
+
+        // // Iterate through the $cartItem array and remove items where "start" time is before the current datetime
+        // foreach ($cartItems as $key => $item) {
+        //     $start_time = $item['start'];
+        //     if ($start_time < $current_datetime) {
+        //         unset($cartItems[$key]);
+        //     }
+        // }
+
+        // // Re-index the array if needed
+        // $cartItems = array_values($cartItems);
+
+        // syslog(LOG_EMERG, 'printing cart in checkout action');
+        // syslog(LOG_EMERG, json_encode($cartItems));
 
         // Check if the user is a member
         $member = 0;
@@ -716,6 +737,7 @@ class BookingController extends AbstractActionController
         // iterate through bookings
         preg_match_all('/\d+/', $payment['description'], $matches);
         $bids = $matches[0];
+        syslog(LOG_EMERG, json_encode($bids));
         foreach ($bids as $bid) {
             if (! (is_numeric($bid) && $bid > 0)) {
                 throw new RuntimeException('This booking does not exist');
@@ -723,6 +745,10 @@ class BookingController extends AbstractActionController
     
             $booking = $bookingManager->get($bid);
             $notes = $booking->getMeta('notes');
+    
+            syslog(LOG_EMERG, 'print booking manager');
+            syslog(LOG_EMERG,$booking);
+            syslog(LOG_EMERG,json_encode($booking));
     
             $notes = $notes . $paymentNotes;
     

@@ -44,6 +44,24 @@ class PriceFormat extends AbstractHelper
             }
         }
 
+        if ($rate && $gross) {
+
+            if ($break) {
+                $html .= '<br>';
+            } else {
+                $html .= ' &nbsp; ';
+            }
+
+            if ($gross) {
+                $grossFormulation = $view->t('incl.');
+            } else {
+                $grossFormulation = $view->t('plus');
+            }
+
+            $html .= sprintf('<span class="small-text"></span>',
+                $grossFormulation, $rate, $view->t('VAT'));
+        }
+
         $html .= '</span>';
 
         return $html;

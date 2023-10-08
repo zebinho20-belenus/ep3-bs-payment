@@ -203,6 +203,10 @@ class Cell extends AbstractHelper
             $cellLinkParamsCart = [];
         }
 
+        
+        // syslog(LOG_EMERG, print_r($cellLinkParamsCart, true));
+        // syslog(LOG_EMERG, print_r($this->splitElementsIfTimeDifferenceExceeds($cellLinkParamsCart, $maxTimeDifferenceMinutes = 30), true));
+
         if ($this->arrays_match($cellLinkParams, $this->splitElementsIfTimeDifferenceExceeds($cellLinkParamsCart, $maxTimeDifferenceMinutes = 30)))
         {
             $match = true;
@@ -210,6 +214,14 @@ class Cell extends AbstractHelper
             $match = false;
 
         }
+
+        // syslog(LOG_EMERG, print_r($cellLinkParamsCart, true));
+        // syslog(LOG_EMERG, print_r($this->splitElementsIfTimeDifferenceExceeds($cellLinkParamsCart, $maxTimeDifferenceMinutes = 30), true));
+        // syslog(LOG_EMERG, print_r($cellLinkParams['query'], true));
+        // syslog(LOG_EMERG, print_r($matcha, true));
+       // syslog(LOG_EMERG, print_r($cartItems, true));
+
+
 
         if ($cellFree && $match == false) {
             //syslog(LOG_EMERG, print_r('Free cell', true));
@@ -223,11 +235,11 @@ class Cell extends AbstractHelper
         } else if ($match == true) {
             //syslog(LOG_EMERG, print_r('Cart cell', true));
 
-            // if (empty($cartItems[0]['dateStart'])) {
-            //     syslog(LOG_EMERG, print_r('empty array', true));
-            // } else {
-                    return $view->CalendarCellRenderCart($user, $cellLinkParams);
-            // }
+            if (empty($cartItems[0]['dateStart'])) {
+                syslog(LOG_EMERG, print_r('empty array', true));
+            } else {
+                    return $view->CalendarCellRenderCart($user, $cellLinkParams, $square);
+            }
         }
 
     }
