@@ -1,4 +1,5 @@
 <?php
+use \Square\Factory\Cart;
 
 $square = $this->square;
 $squareType = $this->option('subject.square.type');
@@ -15,6 +16,15 @@ $this->setup(array(
 
     <?php
 
+    // $cartService = Cart::getInstance();
+    // $cartItems = $cartService->getItems();
+
+    // syslog(LOG_EMERG, print_r($cartItems, true));
+    // syslog(LOG_EMERG, print_r($square->need('sid'), true));
+    // syslog(LOG_EMERG, print_r($this->dateStart , true));
+
+    //Need to do a match between cartItems elements and dateStart, sid, dateEnd
+
     if ($square->getMeta('info.pre')) {
         echo $square->getMeta('info.pre');
         echo '<div class="separator separator-line"></div>';
@@ -30,10 +40,12 @@ $this->setup(array(
         <?= $this->partial('square/square/index.own.phtml', $this->vars()) ?>
     <?php elseif ($this->bookable): ?>
         <?= $this->partial('square/square/index.free.phtml', $this->vars()) ?>
+    <?php /*elseif ($this->bookable): ?>
+        <?= $this->partial('user/account/cart.phtml', $cartItems) */?> 
     <?php else: ?>
         <?= $this->partial('square/square/index.occupied.phtml', $this->vars()) ?>
     <?php endif; ?>
-
+ 
     <?php
 
     if ($square->getMeta('info.post')) {

@@ -148,7 +148,7 @@ class AccountController extends AbstractActionController
                 $registrationData = $registrationForm->getData();
 
                 $meta = array();
-                $meta['gender'] = $registrationData['rf-gender'];
+                #$meta['gender'] = $registrationData['rf-gender'];
 
                 /* initialize user budget with 0 */
                 $meta['budget'] = 0;
@@ -161,16 +161,16 @@ class AccountController extends AbstractActionController
                 } else {
                     $meta['name'] = $registrationData['rf-firstname'];
 
-                    if ($meta['gender'] == 'male' || $meta['gender'] == 'female' || $meta['gender'] == 'family') {
-                        $meta['name'] = ucfirst($meta['name']);
-                    }
+                    // if ($meta['gender'] == 'male' || $meta['gender'] == 'female' || $meta['gender'] == 'family') {
+                    //     $meta['name'] = ucfirst($meta['name']);
+                    // }
 
                     $alias = $meta['name'];
                 }
 
-                $meta['street'] = $registrationData['rf-street'] . ' ' . $registrationData['rf-number'];
-                $meta['zip'] = $registrationData['rf-zip'];
-                $meta['city'] = $registrationData['rf-city'];
+                // $meta['street'] = $registrationData['rf-street'] . ' ' . $registrationData['rf-number'];
+                // $meta['zip'] = $registrationData['rf-zip'];
+                // $meta['city'] = $registrationData['rf-city'];
                 $meta['phone'] = $registrationData['rf-phone'];
 
                 if (! (isset($registrationData['rf-birthdate']) && preg_match('/^([ \,\-\.0-9\x{00c0}-\x{01ff}a-zA-Z]){4,}$/u', $registrationData['rf-birthdate']))) {
@@ -457,27 +457,27 @@ class AccountController extends AbstractActionController
 
         /* Iban form */
 
-        $editIbanForm = $formElementManager->get('User\Form\EditIbanForm');
+        // $editIbanForm = $formElementManager->get('User\Form\EditIbanForm');
 
-        if ($this->getRequest()->isPost() && $editParam == 'iban') {
-            $editIbanForm->setData($this->params()->fromPost());
+        // if ($this->getRequest()->isPost() && $editParam == 'iban') {
+        //     $editIbanForm->setData($this->params()->fromPost());
 
-            if ($editIbanForm->isValid()) {
-                $data = $editIbanForm->getData();
+        //     if ($editIbanForm->isValid()) {
+        //         $data = $editIbanForm->getData();
 
-                $iban = $data['eif-iban'];
+        //         $iban = $data['eif-iban'];
 
-                $user->setMeta('iban', $iban);
-                $userManager->save($user);
+        //         $user->setMeta('iban', $iban);
+        //         $userManager->save($user);
 
-                $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %sIBAN%s has been updated'),
-                    '<b>', '</b>'));
+        //         $this->flashMessenger()->addSuccessMessage(sprintf($this->t('Your %sIBAN%s has been updated'),
+        //             '<b>', '</b>'));
 
-                return $this->redirect()->toRoute('user/settings');
-            }
-        } else {
-            $editIbanForm->get('eif-iban')->setValue($user->getMeta('iban'));
-        }
+        //         return $this->redirect()->toRoute('user/settings');
+        //     }
+        // } else {
+        //     $editIbanForm->get('eif-iban')->setValue($user->getMeta('iban'));
+        // }
 
         /* Email form */
 
@@ -625,7 +625,7 @@ class AccountController extends AbstractActionController
             'user' => $user,
             'configManager' => $configManager,
             'editPhoneForm' => $editPhoneForm,
-            'editIbanForm' => $editIbanForm,
+            // 'editIbanForm' => $editIbanForm,
             'editEmailForm' => $editEmailForm,
             'editNotificationsForm' => $editNotificationsForm,
             'editPasswordForm' => $editPasswordForm,
