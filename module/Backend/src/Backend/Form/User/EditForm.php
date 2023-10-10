@@ -229,7 +229,7 @@ class EditForm extends Form
                 'value' => '0',
             ),
             'options' => array(
-                'label' => 'Budget',
+                'label' => 'Credit',
                 'notes' => 'These are only editable for administration',
                 'postfix' => $this->configManager->get('i18n.currency'),
             ),
