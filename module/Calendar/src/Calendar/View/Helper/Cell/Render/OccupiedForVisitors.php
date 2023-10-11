@@ -48,7 +48,7 @@ class OccupiedForVisitors extends AbstractHelper
                     return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), $style . $cellGroup);
                 case 'subscription':
                     if (! $cellLabel) {
-                        $cellLabel = $this->view->t('Subscription');
+                        $cellLabel = $this->view->t('Occupied');
                     }
 
                     return $view->calendarCellLink($cellLabel, $view->url('square', [], $cellLinkParams), 'cc-multiple' . $cellGroup);
