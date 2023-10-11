@@ -11,6 +11,7 @@
 {% set parts = model.description|split('-') %}
 {% set bids = parts|last|split('_') %}
 {% set description = model.description|replace({'_': '&'}) %}
+{% set booking_fee = 100 %} {# 100 cents (equivalent to $1.00) #}
 
 <main id="main" class="checkout">
     <header class="header">
@@ -108,7 +109,7 @@
  
         </section>
 
-  <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Pay' : '' }} A${{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'zahlen' : '' }}</button>
+  <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Pay' : '' }} A${{ model.amount/100 + booking_fee/100 }} {{ model.metadata.locale == 'de-DE' ? 'zahlen' : '' }}</button>
 
 </form> 
 
@@ -130,11 +131,17 @@
         <p class="price">A${{ model.amount/100 }}</p>
         </div>
     </div>
+    <div class="line-item">
+        <div class="label">
+            <p class="product">Booking Fee</p>
+        </div>
+        <p class="price">A${{ booking_fee / 100 }}</p> <!-- Display the booking fee using the variable -->
+    </div>
     <div id="order-total">
       <div class="line-item total">
         <p class="label">Total</p>
-        <p class="price" data-total>A${{ model.amount/100 }}</p>
-      </div>
+        <p class="price" data-total>A${{ model.amount/100 + booking_fee/100 }}</p>
+    </div>
 
     </div>
   </aside>
@@ -304,7 +311,7 @@
     // Update the main button to reflect the payment method being selected.
     const updateButtonLabel = (paymentMethod, bankName) => {
       let name = paymentMethods[paymentMethod].name;
-      let amount = 'A${{ model.amount/100 }}';
+      let amount = 'A${{ model.amount/100 + booking_fee/100 }}';
       let l_pay1 = '{{ model.metadata.locale != 'de-DE' ? 'Pay ' : '' }}';
       let l_pay2 = '{{ model.metadata.locale == 'de-DE' ? ' zahlen' : '' }}';
       let l_with = '{{ model.metadata.locale != 'de-DE' ? ' with ' : ' mit ' }}';
@@ -376,11 +383,11 @@
     if ('{{ model.metadata.stripePaymentRequest }}' == 'true') {
     // Create the payment request.
     var paymentRequest = stripe.paymentRequest({
-          country: 'DE',
-          currency: 'eur',
+          country: 'AU',
+          currency: 'aud',
           total: {
             label: '{{ model.description|default("Tennis Booking") }}',
-            amount: {{ model.amount }}
+            amount: {{ model.amount + booking_fee }}
           },
           requestShipping: false,
           requestPayerEmail: true
