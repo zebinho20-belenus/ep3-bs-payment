@@ -109,7 +109,7 @@
  
         </section>
 
-  <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Pay' : '' }} A${{ model.amount/100 + booking_fee/100 }} {{ model.metadata.locale == 'de-DE' ? 'zahlen' : '' }}</button>
+  <button type="submit">{{ model.metadata.locale != 'de-DE' ? 'Pay' : '' }} A${{ model.amount/100 }} {{ model.metadata.locale == 'de-DE' ? 'zahlen' : '' }}</button>
 
 </form> 
 
@@ -128,7 +128,7 @@
           <p class="sku"></p>
         </div>
         <p class="count">{{ model.quantity|default(1) }}</p>
-        <p class="price">A${{ model.amount/100 }}</p>
+        <p class="price">A${{ model.amount/100 - booking_fee/100 }}</p>
         </div>
     </div>
     <div class="line-item">
@@ -140,7 +140,7 @@
     <div id="order-total">
       <div class="line-item total">
         <p class="label">Total</p>
-        <p class="price" data-total>A${{ model.amount/100 + booking_fee/100 }}</p>
+        <p class="price" data-total>A${{ model.amount/100 }}</p>
     </div>
 
     </div>
@@ -311,7 +311,7 @@
     // Update the main button to reflect the payment method being selected.
     const updateButtonLabel = (paymentMethod, bankName) => {
       let name = paymentMethods[paymentMethod].name;
-      let amount = 'A${{ model.amount/100 + booking_fee/100 }}';
+      let amount = 'A${{ model.amount/100 }}';
       let l_pay1 = '{{ model.metadata.locale != 'de-DE' ? 'Pay ' : '' }}';
       let l_pay2 = '{{ model.metadata.locale == 'de-DE' ? ' zahlen' : '' }}';
       let l_with = '{{ model.metadata.locale != 'de-DE' ? ' with ' : ' mit ' }}';
@@ -387,7 +387,7 @@
           currency: 'aud',
           total: {
             label: '{{ model.description|default("Tennis Booking") }}',
-            amount: {{ model.amount + booking_fee }}
+            amount: {{ model.amount }}
           },
           requestShipping: false,
           requestPayerEmail: true
