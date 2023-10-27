@@ -441,7 +441,7 @@ class BookingController extends AbstractActionController
                     /* send cancellation confirmation email */
                     $bookingService = $serviceManager->get('Booking\Service\BookingService');
                     $bookingService->cancelSingle($booking);
-                    return $this->redirectBack()->toOrigin();
+                    // return $this->redirectBack()->toOrigin();
 
                     if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
                         $squareControlService->deactivateDoorCode($bid);
