@@ -185,15 +185,17 @@
             var timeEnd = element[8];
             var price = element[9];
             var booking_fee = element[10];
-            var rate = element[11];
-            var gross = element[12];
-            var timeBlock = element[13];
-            var perQuantity = element[14];
-            var member = element[15];
+            var rate = element[10];
+            var gross = element[11];
+            var timeBlock = element[12];
+            var perQuantity = element[13];
+            var member = element[14];
 
             if (! sid) {
                 sid = "null";
             }
+
+            console.log(element);
 
             var thisStartEndDate = "" + dateStart + dateEnd;
             var thisStartEndDay = "" + dayStart + dayEnd;

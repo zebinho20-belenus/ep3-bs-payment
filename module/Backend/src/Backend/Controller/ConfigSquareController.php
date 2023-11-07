@@ -265,7 +265,7 @@ class ConfigSquareController extends AbstractActionController
 
 
                         // Transform time block from minutes to seconds
-                        $rule[11] *= 60;
+                        $rule[12] *= 60;
 
                         $rules[] = $rule;
                     }
