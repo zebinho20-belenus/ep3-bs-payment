@@ -210,8 +210,13 @@ class BookingController extends AbstractActionController
 
     public function checkoutAction()
     {
-        $booking_fees = 100;
+
+        // Get booking here
         $serviceManager = $this->getServiceLocator();
+
+        $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');
+
+        $booking_fees = $squarePricingManager->getAll()[0]['booking_fee'];
 
         // Check user info
         $userSessionManager = $serviceManager->get('User\Manager\UserSessionManager');
@@ -260,7 +265,6 @@ class BookingController extends AbstractActionController
 
         // Check if each square still available
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
-        $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');
         foreach ($cartItems as &$cartItem) {
 
             $is_bookable = false;

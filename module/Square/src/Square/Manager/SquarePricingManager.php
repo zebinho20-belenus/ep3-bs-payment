@@ -69,6 +69,8 @@ class SquarePricingManager extends AbstractManager
                     throw new InvalidArgumentException('Pricing rules are not well formed internally');
                 }
 
+                $statement->execute($rule);
+
             }
 
             $connection->commit();
