@@ -110,7 +110,9 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
                                                                             <td class="pricing-price">
                                                                                 <?php
 
-                                                                                echo '<input type="text" value="0,00" maxlength="6" class="pricing-price-number pricepicker"><span class="pricing-grammar">' . $this->config('i18n.currency') . '</span>';
+                                                                                echo '<input type="text" value="0,00" maxlength="6" class="pricing-price-number pricepicker"><span class="pricing-grammar">' . $this->config('i18n.currency') . ' Per court price'. '</span>';
+                                                                                echo '<input type="text" value="0,00" maxlength="6" class="pricing-booking-fees-number booking_fee_picker"><span class="pricing-grammar">' . $this->config('i18n.currency') . ' Flat Booking Fees' . '</span>';
+
 
                                                                                 echo '<select class="pricing-rate-gross" style="width: 60px;">';
                                                                                 echo '<option value="0">' . $this->t('plus') . '</option>';
@@ -119,6 +121,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
 
                                                                                 echo '<input type="text" value="19" maxlength="3" class="pricing-rate" style="width: 20px;">';
                                                                                 echo '<span class="pricing-grammar">% ' . $this->t('VAT') . '</span>';
+                                                                                
 
                                                                                 echo '<span class="pricing-grammar">' . $this->t('for') . '</span>';
 
@@ -217,6 +220,7 @@ $this->headScript()->appendFile($this->basePath('js/controller/backend/config-sq
                     </tr>
                 </table>
             </div>
+
 
             <div class="separator separator-line"></div>
 

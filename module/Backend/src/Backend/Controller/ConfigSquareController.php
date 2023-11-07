@@ -260,6 +260,10 @@ class ConfigSquareController extends AbstractActionController
                         // Transform price to cents by removing the comma
                         $rule[8] = str_replace(',', '', $rule[8]);
 
+                        // Transform booking_fee to cents by removing the comma
+                        $rule[9] = str_replace(',', '', $rule[9]);
+
+
                         // Transform time block from minutes to seconds
                         $rule[11] *= 60;
 
@@ -370,6 +374,7 @@ class ConfigSquareController extends AbstractActionController
                 $squareProduct->set('date_start', $dateStart);
                 $squareProduct->set('date_end', $dateEnd);
                 $squareProduct->set('price', $price);
+                $squareProduct->set('booking_fee', $editData['cf-booking_fee']);
                 $squareProduct->set('gross', $editData['cf-gross']);
                 $squareProduct->set('rate', $editData['cf-rate']);
                 $squareProduct->set('locale', $locale);
@@ -391,6 +396,7 @@ class ConfigSquareController extends AbstractActionController
                     'cf-date-start' => $this->dateFormat($squareProduct->get('date_start')),
                     'cf-date-end' => $this->dateFormat($squareProduct->get('date_end')),
                     'cf-price' => $this->numberFormat($squareProduct->get('price') / 100),
+                    'cf-booking_fee' => $this->numberFormat($squareProduct->get('booking_fee') / 100),
                     'cf-gross' => $squareProduct->get('gross'),
                     'cf-rate' => $squareProduct->get('rate'),
                 ));
