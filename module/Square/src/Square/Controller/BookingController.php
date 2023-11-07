@@ -496,6 +496,7 @@ class BookingController extends AbstractActionController
                    if ($payservice == 'stripe') {
                        $model["payment_method_types"] = $this->config('stripePaymentMethods');
                        $model["amount"] = $total + $booking_fees;
+                       $model["booking_fee"] = $booking_fees;
                        $model["currency"] = 'AUD';
                        $model["description"] = $description;
                        $model["receipt_email"] = $user->get('email');
