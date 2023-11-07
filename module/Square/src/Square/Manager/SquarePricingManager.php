@@ -68,13 +68,6 @@ class SquarePricingManager extends AbstractManager
                 if (count($rule) != 14) {
                     throw new InvalidArgumentException('Pricing rules are not well formed internally');
                 }
-                syslog(LOG_EMERG, print_r('executie', true));
-
-                # this is where the error is
-                syslog(LOG_EMERG, print_r($rule, true));
-
-                $statement->execute($rule);
-                syslog(LOG_EMERG, print_r('executie d', true));
 
             }
 
