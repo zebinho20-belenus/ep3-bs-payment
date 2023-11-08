@@ -153,11 +153,13 @@ class BookingController extends AbstractActionController
                         $d['bf-sid'], $d['bf-status-billing'], $d['bf-quantity'], $d['bf-notes'], $params['editMode']);
 
                     $bid = $savedBooking->get('bid');
-                    $square = $squareManager->get($booking->get('sid'));
 
-                    if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
-                            $squareControlService->updateDoorCode($bid);
-                    }
+                    //$square = $squareManager->get($booking->get('sid'));
+                    // AJ: Don't need door code so Commenting this
+
+                    // if ($this->config('genDoorCode') != null && $this->config('genDoorCode') == true && $square->getMeta('square_control') == true) {
+                    //         $squareControlService->updateDoorCode($bid);
+                    // }
 
                 } else {
 
