@@ -11,7 +11,7 @@
 {% set parts = model.description|split('-') %}
 {% set bids = parts|last|split('_') %}
 {% set description = model.description|replace({'_': '&'}) %}
-{% set booking_fee = model.booking_fee %}
+{% set booking_fee = model.metadata.booking_fee %}
 
 {# {% set booking_fee = 100 %} 100 cents (equivalent to $1.00) #}
 
