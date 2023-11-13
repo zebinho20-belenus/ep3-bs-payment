@@ -457,11 +457,11 @@ a.cc-multiple:link,
 a.cc-multiple:visited {
     opacity: 1.0;
     color: #FFF;
-    background-color: #547b97
+    background-color: #808d96
 }
 
 a.cc-multiple:hover {
-    background-color: #334f6a
+    background-color: #808d96
 }
 
 a.cc-conflict:link,

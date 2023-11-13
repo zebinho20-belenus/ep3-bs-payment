@@ -21,8 +21,8 @@ a.cc-single:visited { background-color: #808D96; }
 a.cc-single:hover { background-color: #55a0e0; }
 
 a.cc-multiple:link,
-a.cc-multiple:visited { background-color: #547B97; }
-a.cc-multiple:hover { background-color: #334F6A; }
+a.cc-multiple:visited { background-color: #808d96; }
+a.cc-multiple:hover { background-color: #808d96; }
 
 a.cc-conflict:link,
 a.cc-conflict:visited { background-color: #334F6A; }

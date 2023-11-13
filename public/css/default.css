@@ -301,8 +301,8 @@ a.cc-single:visited { opacity: 1.0; color: #FFF; background-color: #808D96; }
 a.cc-single:hover { background-color: #4C5359; }
 
 a.cc-multiple:link,
-a.cc-multiple:visited { opacity: 1.0; color: #FFF; background-color: #547B97; }
-a.cc-multiple:hover { background-color: #334F6A; }
+a.cc-multiple:visited { opacity: 1.0; color: #FFF; background-color: #808d96; }
+a.cc-multiple:hover { background-color: #808d96; }
 
 a.cc-conflict:link,
 a.cc-conflict:visited { opacity: 1.0; color: #FFF; background-color: #334F6A; }
