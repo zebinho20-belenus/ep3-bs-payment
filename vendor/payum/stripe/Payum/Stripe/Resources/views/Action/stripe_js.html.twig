@@ -11,6 +11,9 @@
 {% set parts = model.description|split('-') %}
 {% set bids = parts|last|split('_') %}
 {% set description = model.description|replace({'_': '&'}) %}
+{% set booking_fee = model.metadata.booking_fee %}
+
+{# {% set booking_fee = 100 %} 100 cents (equivalent to $1.00) #}
 
 <main id="main" class="checkout">
     <header class="header">
@@ -20,6 +23,9 @@
     <div id="checkout">
       <div>
           <b>{{ description|default("") }}</b>
+      </div>
+            <div>
+          <b style="color:darkred">Your booking will be held for 5 minutes.</b>
       </div>
       <div id="payment-request">
         <div id="payment-request-button">Pay Button</div>
@@ -127,14 +133,20 @@
           <p class="sku"></p>
         </div>
         <p class="count">{{ model.quantity|default(1) }}</p>
-        <p class="price">A${{ model.amount/100 }}</p>
+        <p class="price">A${{ model.amount/100 - booking_fee/100 }}</p>
         </div>
+    </div>
+    <div class="line-item">
+        <div class="label">
+            <p class="product">Booking Fee</p>
+        </div>
+        <p class="price">A${{ booking_fee / 100 }}</p> <!-- Display the booking fee using the variable -->
     </div>
     <div id="order-total">
       <div class="line-item total">
         <p class="label">Total</p>
         <p class="price" data-total>A${{ model.amount/100 }}</p>
-      </div>
+    </div>
 
     </div>
   </aside>
@@ -376,8 +388,8 @@
     if ('{{ model.metadata.stripePaymentRequest }}' == 'true') {
     // Create the payment request.
     var paymentRequest = stripe.paymentRequest({
-          country: 'DE',
-          currency: 'eur',
+          country: 'AU',
+          currency: 'aud',
           total: {
             label: '{{ model.description|default("Tennis Booking") }}',
             amount: {{ model.amount }}

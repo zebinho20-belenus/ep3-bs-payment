@@ -62,14 +62,21 @@ class SquarePricingManager extends AbstractManager
             $adapter = $this->squarePricingTable->getAdapter();
             $adapter->query('TRUNCATE TABLE ' . SquarePricingTable::NAME, Adapter::QUERY_MODE_EXECUTE);
 
-            $statement = $adapter->query('INSERT INTO ' . SquarePricingTable::NAME . ' (sid, priority, date_start, date_end, day_start, day_end, time_start, time_end, price, rate, gross, per_time_block, member) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', Adapter::QUERY_MODE_PREPARE);
+            $statement = $adapter->query('INSERT INTO ' . SquarePricingTable::NAME . ' (sid, priority, date_start, date_end, day_start, day_end, time_start, time_end, price, booking_fee, rate, gross, per_time_block, member) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', Adapter::QUERY_MODE_PREPARE);
 
             foreach ($rules as $rule) {
-                if (count($rule) != 13) {
+                if (count($rule) != 14) {
                     throw new InvalidArgumentException('Pricing rules are not well formed internally');
                 }
 
+                syslog(LOG_EMERG, print_r('executie', true));
+
+                # this is where the error is
+                syslog(LOG_EMERG, print_r($rule, true));
+
                 $statement->execute($rule);
+                syslog(LOG_EMERG, print_r('executie d', true));
+
             }
 
             $connection->commit();
@@ -360,6 +367,10 @@ class SquarePricingManager extends AbstractManager
             if ($rule) {
                 if (! isset($pricing['price'])) {
                     $pricing['price'] = 0;
+                }
+
+                if (! isset($pricing['booking_fee'])) {
+                    $pricing['booking_fee'] = 0;
                 }
 
                 if (! isset($pricing['rate'])) {

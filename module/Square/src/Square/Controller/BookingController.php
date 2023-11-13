@@ -210,7 +210,13 @@ class BookingController extends AbstractActionController
 
     public function checkoutAction()
     {
+
+        // Get booking here
         $serviceManager = $this->getServiceLocator();
+
+        $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');
+
+        $booking_fees = $squarePricingManager->getAll()[0]['booking_fee'];
 
         // Check user info
         $userSessionManager = $serviceManager->get('User\Manager\UserSessionManager');
@@ -259,7 +265,6 @@ class BookingController extends AbstractActionController
 
         // Check if each square still available
         $squareValidator = $serviceManager->get('Square\Service\SquareValidator');
-        $squarePricingManager = $serviceManager->get('Square\Manager\SquarePricingManager');
         foreach ($cartItems as &$cartItem) {
 
             $is_bookable = false;
@@ -490,11 +495,12 @@ class BookingController extends AbstractActionController
                    #stripe checkout
                    if ($payservice == 'stripe') {
                        $model["payment_method_types"] = $this->config('stripePaymentMethods');
-                       $model["amount"] = $total;
+                       $model["amount"] = $total + $booking_fees;
+                    //    $model["booking_fee"] = $booking_fees;
                        $model["currency"] = 'AUD';
                        $model["description"] = $description;
                        $model["receipt_email"] = $user->get('email');
-                       $model["metadata"] = array('bid' => $booking->get('bid'), 'productName' => $booking_str, 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName, 'stripeDefaultPaymentMethod' => $this->config('stripeDefaultPaymentMethod'), 'stripeAutoConfirm' => var_export($this->config('stripeAutoConfirm'), true), 'stripePaymentRequest' => var_export($this->config('stripePaymentRequest'), true));
+                       $model["metadata"] = array('bid' => $booking->get('bid'), 'booking_fee' => $booking_fees ,'productName' => $booking_str, 'locale' => $locale, 'instance' => $basepath, 'projectShort' => $projectShort, 'userName' => $userName, 'companyName' => $companyName, 'stripeDefaultPaymentMethod' => $this->config('stripeDefaultPaymentMethod'), 'stripeAutoConfirm' => var_export($this->config('stripeAutoConfirm'), true), 'stripePaymentRequest' => var_export($this->config('stripePaymentRequest'), true));
                        $storage->update($model);
                        $captureToken = $this->getServiceLocator()->get('payum.security.token_factory')->createCaptureToken(
                            'stripe', $model, $proxyurl.$basepath.'/square/booking/payment/confirm');

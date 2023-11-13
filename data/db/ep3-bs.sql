@@ -2541,6 +2541,7 @@ CREATE TABLE `bs_squares_pricing` (
   `time_start` time DEFAULT NULL,
   `time_end` time DEFAULT NULL,
   `price` int(10) UNSIGNED DEFAULT NULL,
+  `booking_fee` int(10) UNSIGNED DEFAULT NULL,
   `rate` int(10) UNSIGNED DEFAULT NULL,
   `gross` tinyint(1) DEFAULT NULL,
   `per_time_block` int(10) UNSIGNED DEFAULT NULL,
@@ -2552,8 +2553,8 @@ CREATE TABLE `bs_squares_pricing` (
 -- Dumping data for table `bs_squares_pricing`
 --
 
-INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
-(1, NULL, 0, '2023-05-20', '2023-12-30', 0, 6, '06:00:00', '24:00:00', 1000, 19, 1, 1800, NULL, '0');
+INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`,`rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
+(1, NULL, 0, '2023-05-20', '2023-12-30', 0, 6, '06:00:00', '24:00:00', 1000, 100, 19, 1, 1800, NULL, '0');
 
 -- --------------------------------------------------------
 

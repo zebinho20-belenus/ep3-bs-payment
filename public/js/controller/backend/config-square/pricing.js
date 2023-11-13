@@ -80,6 +80,7 @@
                 var timeStart = timeRange.find("input.timepicker:first").val();
                 var timeEnd = timeRange.find("input.timepicker:last").val();
                 var price = pricing.find("input.pricepicker").val();
+                var booking_fee = pricing.find("input.booking_fee_picker").val();
                 var gross = pricing.find("select.pricing-rate-gross").val();
                 var rate = pricing.find("input.pricing-rate").val();
                 var member = pricing.find("select.pricing-member").val();
@@ -138,6 +139,17 @@
                     return;
                 }
 
+                if (booking_fee.match(/^[0-9]+$/)) {
+                    booking_fee += ",00";
+                }
+
+                if (! booking_fee.match(/^[0-9]+,[0-9][0-9]$/)) {
+                    window.alert("Hinweis: Der Preis \"" + booking_fee + "\" ist ungültig - Format: 19,95");
+
+                    event.preventDefault();
+                    return;
+                }
+
                 if (! timeBlock.match(/^[1-9][0-9]*$/)) {
                     window.alert("Hinweis: Die Minutenangabe \"" + timeBlock + "\" ist ungültig");
 
@@ -145,7 +157,7 @@
                     return;
                 }
 
-                var data = JSON.stringify( [sid, priority, dateStart, dateEnd, dayStart, dayEnd, timeStart, timeEnd, price, rate, gross, timeBlock, member] );
+                var data = JSON.stringify( [sid, priority, dateStart, dateEnd, dayStart, dayEnd, timeStart, timeEnd, price, booking_fee, rate, gross, timeBlock, member] );
 
                 $("#pricing-form-rules").append('<input type="hidden" name="pricing-rule-' + index + '" value="' + encodeURI(data) + '">');
 
@@ -172,6 +184,7 @@
             var timeStart = element[7];
             var timeEnd = element[8];
             var price = element[9];
+            var booking_fee = element[10];
             var rate = element[10];
             var gross = element[11];
             var timeBlock = element[12];
@@ -181,6 +194,8 @@
             if (! sid) {
                 sid = "null";
             }
+
+            console.log(element);
 
             var thisStartEndDate = "" + dateStart + dateEnd;
             var thisStartEndDay = "" + dayStart + dayEnd;
@@ -212,6 +227,14 @@
                 price = "0,0" + price;
             }
 
+            if (booking_fee >= 100) {
+                booking_fee = booking_fee.substring(0, booking_fee.length - 2) + "," + booking_fee.substring(booking_fee.length - 2);
+            } else if (booking_fee >= 10) {
+                booking_fee = "0," + booking_fee;
+            } else {
+                booking_fee = "0,0" + booking_fee;
+            }
+
             $("#pricing-table .pricing-dateStart:last").val(dateStart);
             $("#pricing-table .pricing-dateEnd:last").val(dateEnd);
             $("#pricing-table .pricing-dayStart:last").val(dayStart);
@@ -219,6 +242,7 @@
             $("#pricing-table .pricing-timeStart:last").val(timeStart.substring(0, 5));
             $("#pricing-table .pricing-timeEnd:last").val(timeEnd.substring(0, 5));
             $("#pricing-table .pricing-price-number:last").val(price);
+            $("#pricing-table .pricing-booking-fees-number:last").val(bookingFee);
             $("#pricing-table .pricing-rate-gross:last").val(gross);
             $("#pricing-table .pricing-rate:last").val(rate);
             $("#pricing-table .pricing-sid:last").val(sid);
