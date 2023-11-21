@@ -11,8 +11,8 @@ $project_config = require 'config/autoload/project.php';
 
 return array_merge($project_config, array(
     'db' => array(
-        'database' => 'u216054559_ep3bs',
-        'username' => 'u216054559_ep3bs',
+        'database' => 'u216054559_prod',
+        'username' => 'u216054559_prod',
         'password' => 'Profitbadminton123*',
 
         'hostname' => 'localhost',
