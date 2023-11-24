@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$database = "u216054559_ep3bs";
-$username = "u216054559_ep3bs";
+$database = "u216054559_prod";
+$username = "u216054559_prod";
 $password = "Profitbadminton123*";
 
 // Create connection
