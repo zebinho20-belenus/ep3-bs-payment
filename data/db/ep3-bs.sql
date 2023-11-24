@@ -108,40 +108,40 @@ CREATE TABLE `bs_options` (
 -- Dumping data for table `bs_options`
 --
 
-INSERT INTO `bs_options` (`oid`, `key`, `value`, `locale`) VALUES
-(1, 'client.name.full', 'PFB', NULL),
-(2, 'client.name.short', 'PFB', NULL),
-(3, 'client.contact.email', 'pfb-clayton@hotmail.com', NULL),
-(4, 'client.contact.email.user-notifications', '1', NULL),
-(5, 'client.contact.phone', '(03) 9558 9835', NULL),
-(6, 'client.website', 'website', NULL),
-(7, 'client.website.contact', 'contact page', NULL),
-(8, 'client.website.imprint', 'imprint page', NULL),
-(9, 'client.website.privacy', 'privacy policy page', NULL),
-(10, 'service.name.full', 'Bookingsystem', NULL),
-(11, 'service.name.short', 'BS', NULL),
-(12, 'service.meta.description', 'description of services', NULL),
-(13, 'subject.square.type', 'Court', NULL),
-(14, 'subject.square.type.plural', 'Courts', NULL),
-(15, 'subject.square.unit', 'Player', NULL),
-(16, 'subject.square.unit.plural', 'Players', NULL),
-(17, 'subject.type', 'our Facility', NULL),
-(18, 'service.user.registration', 'true', NULL),
-(19, 'service.user.activation', 'email', NULL),
-(20, 'service.calendar.days', '1', NULL),
-(21, 'service.website', 'https://pfbadminton.com.au/', NULL),
-(22, 'service.branding', 'true', NULL),
-(23, 'service.branding.name', 'Initium Technology', NULL),
-(24, 'service.branding.website', 'https://initiumtech.com.au/', NULL),
-(25, 'service.pricing.visibility', 'public', NULL),
-(26, 'service.status-values.billing', 'Pending (pending)\r\nPaid (paid)\r\nCancelled (cancelled)\r\nUncollectable (uncollectable), 'en-US'),
-(27, 'client.contact.email.user-notifications', '1', 'en-US'),
-(28, 'service.maintenance', 'false', NULL),
-(29, 'service.calendar.display-club-exceptions', '0', NULL),
-(30, 'client.name.full', 'Pro Fit Badminton', 'en-US'),
-(31, 'client.contact.phone', '(03) 9558 9835', 'en-US'),
-(32, 'service.name.full', 'Booking system', 'en-US'),
-(33, 'company.name.full', 'Initium Technology', 'en-US');
+-- INSERT INTO `bs_options` (`oid`, `key`, `value`, `locale`) VALUES
+-- (1, 'client.name.full', 'PFB', NULL),
+-- (2, 'client.name.short', 'PFB', NULL),
+-- (3, 'client.contact.email', 'pfb-clayton@hotmail.com', NULL),
+-- (4, 'client.contact.email.user-notifications', '1', NULL),
+-- (5, 'client.contact.phone', '(03) 9558 9835', NULL),
+-- (6, 'client.website', 'website', NULL),
+-- (7, 'client.website.contact', 'contact page', NULL),
+-- (8, 'client.website.imprint', 'imprint page', NULL),
+-- (9, 'client.website.privacy', 'privacy policy page', NULL),
+-- (10, 'service.name.full', 'Bookingsystem', NULL),
+-- (11, 'service.name.short', 'BS', NULL),
+-- (12, 'service.meta.description', 'description of services', NULL),
+-- (13, 'subject.square.type', 'Court', NULL),
+-- (14, 'subject.square.type.plural', 'Courts', NULL),
+-- (15, 'subject.square.unit', 'Player', NULL),
+-- (16, 'subject.square.unit.plural', 'Players', NULL),
+-- (17, 'subject.type', 'our Facility', NULL),
+-- (18, 'service.user.registration', 'true', NULL),
+-- (19, 'service.user.activation', 'email', NULL),
+-- (20, 'service.calendar.days', '1', NULL),
+-- (21, 'service.website', 'https://pfbadminton.com.au/', NULL),
+-- (22, 'service.branding', 'true', NULL),
+-- (23, 'service.branding.name', 'Initium Technology', NULL),
+-- (24, 'service.branding.website', 'https://initiumtech.com.au/', NULL),
+-- (25, 'service.pricing.visibility', 'public', NULL),
+-- (26, 'service.status-values.billing', 'Pending (pending)\r\nPaid (paid)\r\nCancelled (cancelled)\r\nUncollectable (uncollectable), 'en-US'),
+-- (27, 'client.contact.email.user-notifications', '1', 'en-US'),
+-- (28, 'service.maintenance', 'false', NULL),
+-- (29, 'service.calendar.display-club-exceptions', '0', NULL),
+-- (30, 'client.name.full', 'Pro Fit Badminton', 'en-US'),
+-- (31, 'client.contact.phone', '(03) 9558 9835', 'en-US'),
+-- (32, 'service.name.full', 'Booking system', 'en-US'),
+-- (33, 'company.name.full', 'Initium Technology', 'en-US');
 
 -- --------------------------------------------------------
 
@@ -193,24 +193,24 @@ CREATE TABLE `bs_squares` (
   `range_cancel` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
-INSERT INTO `bs_squares` (`sid`, `name`, `status`, `priority`, `capacity`, `capacity_heterogenic`, `allow_notes`, `time_start`, `time_end`, `time_block`, `time_block_bookable`, `time_block_bookable_max`, `min_range_book`, `range_book`, `max_active_bookings`, `range_cancel`) VALUES
-(11, '1', 'enabled', 1, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(12, '2', 'enabled', 2, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(13, '3', 'enabled', 3, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(14, '4', 'enabled', 4, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(15, '5', 'enabled', 5, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(16, '6', 'enabled', 6, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(17, '7', 'enabled', 7, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(18, '8', 'enabled', 8, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(19, '9', 'enabled', 9, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(20, 'TT 21', 'enabled', 21, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(21, 'TT 22', 'enabled', 22, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(22, 'TT 23', 'enabled', 23, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(23, 'TT 24', 'enabled', 24, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(24, 'TT 22a', 'enabled', 22, 1, 0, 0, '10:00:00', '23:00:00', 3600, 1800, 46800, 0, 4838400, 0, 86400),
-(25, 'TT 24a', 'enabled', 24, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(26, 'TT 25', 'enabled', 25, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
-(27, 'TT 26', 'enabled', 26, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400);
+-- INSERT INTO `bs_squares` (`sid`, `name`, `status`, `priority`, `capacity`, `capacity_heterogenic`, `allow_notes`, `time_start`, `time_end`, `time_block`, `time_block_bookable`, `time_block_bookable_max`, `min_range_book`, `range_book`, `max_active_bookings`, `range_cancel`) VALUES
+-- (11, '1', 'enabled', 1, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (12, '2', 'enabled', 2, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (13, '3', 'enabled', 3, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (14, '4', 'enabled', 4, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (15, '5', 'enabled', 5, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (16, '6', 'enabled', 6, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (17, '7', 'enabled', 7, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (18, '8', 'enabled', 8, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (19, '9', 'enabled', 9, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (20, 'TT 21', 'enabled', 21, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (21, 'TT 22', 'enabled', 22, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (22, 'TT 23', 'enabled', 23, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (23, 'TT 24', 'enabled', 24, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (24, 'TT 22a', 'enabled', 22, 1, 0, 0, '10:00:00', '23:00:00', 3600, 1800, 46800, 0, 4838400, 0, 86400),
+-- (25, 'TT 24a', 'enabled', 24, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (26, 'TT 25', 'enabled', 25, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
+-- (27, 'TT 26', 'enabled', 26, 1, 0, 0, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400);
 
 --
 -- Table structure for table `bs_squares_coupons`
@@ -266,11 +266,11 @@ CREATE TABLE IF NOT EXISTS `bs_squares_pricing` (
   KEY `sid` (`sid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
-(1, NULL, 0, '2023-11-22', '2030-11-22', 0, 4, '10:00:00', '18:00:00', 1800, 100, 0, 1, 3600, NULL, '0'),
-(2, NULL, 1, '2023-11-22', '2030-11-22', 0, 4, '18:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
-(3, NULL, 2, '2023-11-22', '2030-11-22', 5, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
-(4, NULL, 3, '2023-11-22', '2030-11-22', 0, 6, '10:00:00', '23:00:00', 1200, 100, 19, 1, 3600, NULL, '0');
+-- INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
+-- (1, NULL, 0, '2023-11-22', '2030-11-22', 0, 4, '10:00:00', '18:00:00', 1800, 100, 0, 1, 3600, NULL, '0'),
+-- (2, NULL, 1, '2023-11-22', '2030-11-22', 0, 4, '18:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
+-- (3, NULL, 2, '2023-11-22', '2030-11-22', 5, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
+-- (4, NULL, 3, '2023-11-22', '2030-11-22', 0, 6, '10:00:00', '23:00:00', 1200, 100, 19, 1, 3600, NULL, '0');
 
 -- --------------------------------------------------------
 
