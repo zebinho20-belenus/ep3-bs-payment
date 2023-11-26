@@ -245,39 +245,28 @@ CREATE TABLE `bs_squares_meta` (
 -- Table structure for table `bs_squares_pricing`
 
 
+
+
+
 CREATE TABLE IF NOT EXISTS `bs_squares_pricing` (
-  `spid` int(10) UNSIGNED NOT NULL,
-  `sid` int(10) UNSIGNED DEFAULT NULL COMMENT ‘NULL for all’,
-  `priority` int(10) UNSIGNED NOT NULL,
-  `date_start` date NOT NULL,
-  `date_end` date NOT NULL,
-  `day_start` tinyint(3) UNSIGNED DEFAULT NULL COMMENT ‘Day of the week’,
-  `day_end` tinyint(3) UNSIGNED DEFAULT NULL,
-  `time_end time DEFAULT NULL,
-  `price` int(10) UNSIGNED DEFAULT NULL,
-  `time_start` time DEFAULT NULL,
-  `booking_fee` int(10) UNSIGNED DEFAULT NULL,
-  `rate` int(10) UNSIGNED DEFAULT NULL,
-  `gross` tinyint(1) DEFAULT NULL,
-  `per_time_block` int(10) UNSIGNED DEFAULT NULL,
-  `per_quantity` tinyint(1) DEFAULT NULL,
-  `member` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`spid`),
-  KEY `sid` (`sid`)
+  spid int(10) UNSIGNED NOT NULL,
+  sid int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
+  priority int(10) UNSIGNED NOT NULL,
+  date_start date NOT NULL,
+  date_end date NOT NULL,
+  day_start tinyint(3) UNSIGNED DEFAULT NULL COMMENT 'Day of the week',
+  day_end tinyint(3) UNSIGNED DEFAULT NULL,
+  time_start time DEFAULT NULL,
+  time_end time DEFAULT NULL,
+  price int(10) UNSIGNED DEFAULT NULL,
+  booking_fee int(10) UNSIGNED DEFAULT NULL,
+  rate int(10) UNSIGNED DEFAULT NULL,
+  gross tinyint(1) DEFAULT NULL,
+  per_time_block int(10) UNSIGNED DEFAULT NULL,
+  per_quantity tinyint(1) DEFAULT NULL,
+  member varchar(255) DEFAULT NULL,
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-
--- INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
--- (1, NULL, 0, '2023-11-22', '2030-11-22', 0, 4, '10:00:00', '18:00:00', 1800, 100, 0, 1, 3600, NULL, '0'),
--- (2, NULL, 1, '2023-11-22', '2030-11-22', 0, 4, '18:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
--- (3, NULL, 2, '2023-11-22', '2030-11-22', 5, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
--- (4, NULL, 3, '2023-11-22', '2030-11-22', 0, 6, '10:00:00', '23:00:00', 1200, 100, 19, 1, 3600, NULL, '0');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bs_squares_products`
---
 
 CREATE TABLE `bs_squares_products` (
   `spid` int(10) UNSIGNED NOT NULL,
@@ -293,6 +282,18 @@ CREATE TABLE `bs_squares_products` (
   `gross` tinyint(1) NOT NULL,
   `locale` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+
+
+
+-- INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
+-- (1, NULL, 0, '2023-11-22', '2030-11-22', 0, 4, '10:00:00', '18:00:00', 1800, 100, 0, 1, 3600, NULL, '0'),
+-- (2, NULL, 1, '2023-11-22', '2030-11-22', 0, 4, '18:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
+-- (3, NULL, 2, '2023-11-22', '2030-11-22', 5, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
+-- (4, NULL, 3, '2023-11-22', '2030-11-22', 0, 6, '10:00:00', '23:00:00', 1200, 100, 19, 1, 3600, NULL, '0');
+
+-- --------------------------------------------------------
+
 
 -- --------------------------------------------------------
 
