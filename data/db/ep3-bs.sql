@@ -245,9 +245,6 @@ CREATE TABLE `bs_squares_meta` (
 -- Table structure for table `bs_squares_pricing`
 
 
-
-
-
 CREATE TABLE IF NOT EXISTS `bs_squares_pricing` (
   spid int(10) UNSIGNED NOT NULL,
   sid int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
@@ -264,7 +261,7 @@ CREATE TABLE IF NOT EXISTS `bs_squares_pricing` (
   gross tinyint(1) DEFAULT NULL,
   per_time_block int(10) UNSIGNED DEFAULT NULL,
   per_quantity tinyint(1) DEFAULT NULL,
-  member varchar(255) DEFAULT NULL,
+  member varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
