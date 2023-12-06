@@ -29,7 +29,7 @@ class OccupiedForPrivileged extends AbstractHelper
             $bookingStatusColor = $this->bookingStatusService->getStatusColor($booking->getBillingStatus());
 
             if ($bookingStatusColor) {
-                $cellStyle = 'outline: solid 3px ' . $bookingStatusColor;
+                $cellStyle = 'background-color: ' . $bookingStatusColor . ';';
             } else {
                 $cellStyle = null;
             }
