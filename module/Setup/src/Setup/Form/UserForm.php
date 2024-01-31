@@ -93,7 +93,7 @@ class UserForm extends Form
                     array(
                         'name' => 'StringLength',
                         'options' => array(
-                            'min' => 3,
+                            'min' => 1,
                             'message' => 'Firstname should be at least %min% characters long',
                         ),
                     ),
@@ -111,7 +111,7 @@ class UserForm extends Form
                     array(
                         'name' => 'StringLength',
                         'options' => array(
-                            'min' => 3,
+                            'min' => 0,
                             'message' => 'Lastname should be at least %min% characters long',
                         ),
                     ),
