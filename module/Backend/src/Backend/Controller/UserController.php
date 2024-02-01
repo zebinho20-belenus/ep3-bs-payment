@@ -54,6 +54,7 @@ class UserController extends AbstractActionController
     {
         $sessionUser = $this->authorize('admin.user');
 
+
         $serviceManager = @$this->getServiceLocator();
         $userManager = $serviceManager->get('User\Manager\UserManager');
         $formElementManager = $serviceManager->get('FormElementManager');
@@ -69,11 +70,25 @@ class UserController extends AbstractActionController
 
         $editUserForm = $formElementManager->get('Backend\Form\User\EditForm');
 
+        syslog(LOG_EMERG, json_encode($userManager));
+
+
         if ($this->getRequest()->isPost()) {
+
+            //syslog(LOG_EMERG, 'function called 1');
+
             $editUserForm->setData($this->params()->fromPost());
 
+            //syslog(LOG_EMERG, json_encode($editUserForm));
+
+
             if ($editUserForm->isValid()) {
+
+                //syslog(LOG_EMERG, 'function called 1');
+
                 $eud = $editUserForm->getData();
+
+                //syslog(LOG_EMERG, json_encode($editUserForm->getData()));
 
                 if (! $user) {
                     $user = new User();
@@ -164,8 +179,16 @@ class UserController extends AbstractActionController
                 } else {
                     return $this->redirect()->toRoute('frontend');
                 }
+            } else {
+                syslog(LOG_EMERG, 'function called 3');
+
             }
+
+
+
         } else {
+
+
             if ($user) {
                 $privileges = array();
 
@@ -173,6 +196,10 @@ class UserController extends AbstractActionController
                     if ($user->getMeta('allow.' . $privilege) == 'true') {
                         $privileges[] = $privilege;
                     }
+                }
+
+                if ($user->getMeta('budget') == null) {
+                    $artificial_budget = 0;
                 }
 
                 $editUserForm->setData(array(
@@ -190,7 +217,7 @@ class UserController extends AbstractActionController
                     'euf-phone' => $user->getMeta('phone'),
                     // 'euf-birthdate' => $user->getMeta('birthdate'),
                     'euf-member' => $user->getMeta('member'),
-                    'euf-budget' => $user->getMeta('budget'),
+                    'euf-budget' => $artificial_budget,
                     'euf-notes' => $user->getMeta('notes'),
                 ));
             }
