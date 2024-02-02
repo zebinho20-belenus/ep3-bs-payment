@@ -296,7 +296,7 @@ class EditForm extends Form
                     array(
                         'name' => 'StringLength',
                         'options' => array(
-                            'min' => 3,
+                            'min' => 1,
                             'message' => 'The name should be at least %min% characters long',
                         ),
                     ),
