@@ -70,7 +70,7 @@ class UserController extends AbstractActionController
 
         $editUserForm = $formElementManager->get('Backend\Form\User\EditForm');
 
-        syslog(LOG_EMERG, json_encode($userManager));
+        //syslog(LOG_EMERG, json_encode($userManager));
 
 
         if ($this->getRequest()->isPost()) {
@@ -179,12 +179,7 @@ class UserController extends AbstractActionController
                 } else {
                     return $this->redirect()->toRoute('frontend');
                 }
-            } else {
-                syslog(LOG_EMERG, 'function called 3');
-
             }
-
-
 
         } else {
 
@@ -200,6 +195,9 @@ class UserController extends AbstractActionController
 
                 if ($user->getMeta('budget') == null) {
                     $artificial_budget = 0;
+                }
+                else {
+                    $artificial_budget = $user->getMeta('budget');
                 }
 
                 $editUserForm->setData(array(
