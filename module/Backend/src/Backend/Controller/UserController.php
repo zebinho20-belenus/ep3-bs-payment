@@ -70,26 +70,14 @@ class UserController extends AbstractActionController
 
         $editUserForm = $formElementManager->get('Backend\Form\User\EditForm');
 
-        //syslog(LOG_EMERG, json_encode($userManager));
-
-
         if ($this->getRequest()->isPost()) {
 
-            //syslog(LOG_EMERG, 'function called 1');
 
             $editUserForm->setData($this->params()->fromPost());
 
-            //syslog(LOG_EMERG, json_encode($editUserForm));
-
-
             if ($editUserForm->isValid()) {
 
-                //syslog(LOG_EMERG, 'function called 1');
-
                 $eud = $editUserForm->getData();
-
-                //syslog(LOG_EMERG, json_encode($editUserForm->getData()));
-
                 if (! $user) {
                     $user = new User();
                 }

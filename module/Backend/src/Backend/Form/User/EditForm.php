@@ -109,17 +109,17 @@ class EditForm extends Form
 
         /* Personal data */
 
-        $this->add(array(
-            'name' => 'euf-gender',
-            'type' => 'Select',
-            'attributes' => array(
-                'id' => 'euf-gender',
-            ),
-            'options' => array(
-                'label' => 'Salutation',
-                'value_options' => array_merge( ['-' => '-'], User::$genderOptions ),
-            ),
-        ));
+        // $this->add(array(
+        //     'name' => 'euf-gender',
+        //     'type' => 'Select',
+        //     'attributes' => array(
+        //         'id' => 'euf-gender',
+        //     ),
+        //     'options' => array(
+        //         'label' => 'Salutation',
+        //         'value_options' => array_merge( ['-' => '-'], User::$genderOptions ),
+        //     ),
+        // ));
 
         $this->add(array(
             'name' => 'euf-firstname',
