@@ -61,8 +61,8 @@ return array_merge($project_config, array(
                 'sandbox' => false
             )),
             'stripe' => (new \Payum\Stripe\StripeCheckoutGatewayFactory())->create(array(
-                'publishable_key' => 'pk_test_51N3B1LFxrkun3mFr4l4jqlCMCVaQQBOEaSs389IHa6nNzoUa4S8xekbvdnrM95bxPf9305v2HSGXf4jSUItSTdSj004fHTTvr9',
-                'secret_key' => 'sk_test_51N3B1LFxrkun3mFrYa9JoEAMFrlYBLNULmlJzJBNRtY6l76csZP4yhmO2IoXmJYeCgRDUuUUcOUcTrUl9tzzFmwK00t9W7IY8x',
+                'publishable_key' => 'pk_live_51NyX5zKqJ6Dp5KQyn3M9CifMkxICL9TvGVGjlevtEOs46v71XSxjclr0S1wZxMOIlzWYjlQvWuTan8nr5eA8epVX00cXkBfnGo',
+                'secret_key' => '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',
                 'sca_flow' => true,
                 'payum.template.obtain_token' => '@PayumStripe/Action/stripe_js.html.twig',
                 'payum.template.require_confirmation' => '@PayumStripe/Action/stripe_confirm.html.twig'
