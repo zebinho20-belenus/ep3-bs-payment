@@ -67,7 +67,7 @@
     },
     "exclude": {
         "unallowed_files": [
-            ".htaccess",
+            ".htaccess.bak",
             "web.config"
         ],
         "unallowed_dirs": [
