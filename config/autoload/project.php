@@ -12,9 +12,9 @@ return array(
     // if you don't point to your public dir directly as described in the install doc of the original project you have to point here to $instance."/public" 
     'basepath' => $instance,
     // origin url of your server - http://yourip - if  you don't have a proxy, baseurl and proxyurl should be the same like https://tennis-rudolstadt.de
-    'baseurl' => 'http://initiumtech.com.au',
+    'baseurl' => 'http://localhost',
     // the proxy url - i.e. https://tennis-rudolstadt.de
-    'proxyurl' => 'http://initiumtech.com.au',
+    'proxyurl' => 'http://localhost',
     'cookie_config' => array(
         'cookie_name_prefix' => $instance,
     ),
@@ -41,7 +41,7 @@ return array(
     // 'tmpBookingAt' => '?',
     // enable/disable specific payment providers 
     'paypal' => false,
-    'stripe' => true,
+    'stripe' => false,
     // enable/disable stripe payment methods (possible values: card, sepa_debit, ideal, giropay, sofort)
     'stripePaymentMethods' => array(
         'card',
@@ -58,11 +58,11 @@ return array(
     // stripe webhook secret for update of pending PaymentIntents
     'stripeWebhookSecret' => '',
     // cancel automatic the booking if payment_intent from stripe fails
-    'stripeWebhookCancel' => true, 
+    'stripeWebhookCancel' => true,
     // not yet fully implemented
     'klarna' => false,
     // classic behaviour of ep3-bs with booking on bill 
     'billing' => false,
     // select which payment provider should be activated as default 
-    'payment_default' => 'stripe',
+    'payment_default' => '',
 );

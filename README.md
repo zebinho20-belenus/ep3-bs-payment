@@ -81,7 +81,7 @@ The dockerization is based on the https://gitlab.kh-berlin.de/hheiss/ep3-bs-dock
 - In app/module/Setup/src/Setup/Controller/Plugin/ValidateSetup.php:
   - Comment out exception to raise 'System has already been setup' error
 
-- Copy data/database_charlotte/payment.sql to data/db/ep3-bs.sql
+- Copy data/database_charlotte/payment.sql to data/db/ep3-bs-without-payment.sql.bak
 
 
 

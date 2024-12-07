@@ -7,30 +7,35 @@
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 7.2.34
 
-SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS = 0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
 -- Table structure for table `bs_bookings`
 --
 
-CREATE TABLE `bs_bookings` (
-  `bid` int(10) UNSIGNED NOT NULL,
-  `uid` int(10) UNSIGNED NOT NULL,
-  `sid` int(10) UNSIGNED NOT NULL,
-  `status` varchar(64) NOT NULL COMMENT 'single|subscription|cancelled',
-  `status_billing` varchar(64) NOT NULL COMMENT 'pending|paid|cancelled|uncollectable|regular',
-  `visibility` varchar(64) NOT NULL COMMENT 'public|private',
-  `quantity` int(10) UNSIGNED NOT NULL,
-  `created` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_bookings`
+(
+    `bid`            int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `uid`            int(10) UNSIGNED NOT NULL,
+    `sid`            int(10) UNSIGNED NOT NULL,
+    `status`         varchar(64)      NOT NULL COMMENT 'single|subscription|cancelled',
+    `status_billing` varchar(64)      NOT NULL COMMENT 'pending|paid|cancelled|uncollectable|regular',
+    `visibility`     varchar(64)      NOT NULL COMMENT 'public|private',
+    `quantity`       int(10) UNSIGNED NOT NULL,
+    `created`        datetime         NOT NULL,
+    PRIMARY KEY (`bid`),
+    KEY `sid` (`sid`),
+    KEY `uid` (`uid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -38,16 +43,20 @@ CREATE TABLE `bs_bookings` (
 -- Table structure for table `bs_bookings_bills`
 --
 
-CREATE TABLE `bs_bookings_bills` (
-  `bbid` int(10) UNSIGNED NOT NULL,
-  `bid` int(10) UNSIGNED NOT NULL,
-  `description` varchar(512) NOT NULL,
-  `quantity` int(10) UNSIGNED DEFAULT NULL,
-  `time` int(10) UNSIGNED DEFAULT NULL,
-  `price` int(10) NOT NULL,
-  `rate` int(10) UNSIGNED NOT NULL,
-  `gross` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_bookings_bills`
+(
+    `bbid`        int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `bid`         int(10) UNSIGNED NOT NULL,
+    `description` varchar(512)     NOT NULL,
+    `quantity`    int(10) UNSIGNED DEFAULT NULL,
+    `time`        int(10) UNSIGNED DEFAULT NULL,
+    `price`       int(10)          NOT NULL,
+    `rate`        int(10) UNSIGNED NOT NULL,
+    `gross`       tinyint(1)       NOT NULL,
+    PRIMARY KEY (`bbid`),
+    KEY `bid` (`bid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -55,12 +64,17 @@ CREATE TABLE `bs_bookings_bills` (
 -- Table structure for table `bs_bookings_meta`
 --
 
-CREATE TABLE `bs_bookings_meta` (
-  `bmid` int(10) UNSIGNED NOT NULL,
-  `bid` int(10) UNSIGNED NOT NULL,
-  `key` varchar(64) NOT NULL,
-  `value` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_bookings_meta`
+(
+    `bmid`  int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `bid`   int(10) UNSIGNED NOT NULL,
+    `key`   varchar(64)      NOT NULL,
+    `value` text             NOT NULL,
+    PRIMARY KEY (`bmid`),
+    KEY `bid` (`bid`),
+    KEY `key` (`key`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -68,14 +82,20 @@ CREATE TABLE `bs_bookings_meta` (
 -- Table structure for table `bs_events`
 --
 
-CREATE TABLE `bs_events` (
-  `eid` int(10) UNSIGNED NOT NULL,
-  `sid` int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
-  `status` varchar(64) NOT NULL DEFAULT 'enabled' COMMENT 'enabled',
-  `datetime_start` datetime NOT NULL,
-  `datetime_end` datetime NOT NULL,
-  `capacity` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_events`
+(
+    `eid`            int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `sid`            int(10) UNSIGNED          DEFAULT NULL COMMENT 'NULL for all',
+    `status`         varchar(64)      NOT NULL DEFAULT 'enabled' COMMENT 'enabled',
+    `datetime_start` datetime         NOT NULL,
+    `datetime_end`   datetime         NOT NULL,
+    `capacity`       int(10) unsigned          DEFAULT NULL,
+    PRIMARY KEY (`eid`),
+    KEY `sid` (`sid`),
+    KEY `datetime_start` (`datetime_start`),
+    KEY `datetime_end` (`datetime_end`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -83,13 +103,18 @@ CREATE TABLE `bs_events` (
 -- Table structure for table `bs_events_meta`
 --
 
-CREATE TABLE `bs_events_meta` (
-  `emid` int(10) UNSIGNED NOT NULL,
-  `eid` int(10) UNSIGNED NOT NULL,
-  `key` varchar(64) NOT NULL,
-  `value` text NOT NULL,
-  `locale` varchar(8) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_events_meta`
+(
+    `emid`   int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `eid`    int(10) UNSIGNED NOT NULL,
+    `key`    varchar(64)      NOT NULL,
+    `value`  text             NOT NULL,
+    `locale` varchar(8) DEFAULT NULL,
+    PRIMARY KEY (`emid`),
+    KEY `eid` (`eid`),
+    KEY `key` (`key`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -97,12 +122,16 @@ CREATE TABLE `bs_events_meta` (
 -- Table structure for table `bs_options`
 --
 
-CREATE TABLE `bs_options` (
-  `oid` int(10) UNSIGNED NOT NULL,
-  `key` varchar(64) NOT NULL,
-  `value` text NOT NULL,
-  `locale` varchar(8) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_options`
+(
+    `oid`    int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `key`    varchar(64)      NOT NULL,
+    `value`  text             NOT NULL,
+    `locale` varchar(8) DEFAULT NULL,
+    PRIMARY KEY (`oid`),
+    KEY `key` (`key`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 --
 -- Dumping data for table `bs_options`
@@ -149,24 +178,34 @@ CREATE TABLE `bs_options` (
 -- Table structure for table `bs_reservations`
 --
 
-CREATE TABLE `bs_reservations` (
-  `rid` int(10) UNSIGNED NOT NULL,
-  `bid` int(10) UNSIGNED NOT NULL,
-  `date` date NOT NULL,
-  `time_start` time NOT NULL,
-  `time_end` time NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_reservations`
+(
+    `rid`        int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `bid`        int(10) UNSIGNED NOT NULL,
+    `date`       date             NOT NULL,
+    `time_start` time             NOT NULL,
+    `time_end`   time             NOT NULL,
+    PRIMARY KEY (`rid`),
+    KEY `bid` (`bid`),
+    KEY `date` (`date`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 
 -- Table structure for table `bs_reservations_meta`
 --
 
-CREATE TABLE `bs_reservations_meta` (
-  `rmid` int(10) UNSIGNED NOT NULL,
-  `rid` int(10) UNSIGNED NOT NULL,
-  `key` varchar(64) NOT NULL,
-  `value` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_reservations_meta`
+(
+    `rmid`  int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `rid`   int(10) unsigned NOT NULL,
+    `key`   varchar(64)      NOT NULL,
+    `value` text             NOT NULL,
+    PRIMARY KEY (`rmid`),
+    KEY `rid` (`rid`),
+    KEY `key` (`key`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -174,24 +213,27 @@ CREATE TABLE `bs_reservations_meta` (
 -- Table structure for table `bs_squares`
 --
 
-CREATE TABLE `bs_squares` (
-  `sid` int(10) UNSIGNED NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `status` varchar(64) NOT NULL DEFAULT 'enabled' COMMENT 'disabled|readonly|enabled',
-  `priority` float NOT NULL DEFAULT 1,
-  `capacity` int(10) UNSIGNED NOT NULL,
-  `capacity_heterogenic` tinyint(1) NOT NULL,
-  `allow_notes` tinyint(1) NOT NULL DEFAULT 0,
-  `time_start` time NOT NULL,
-  `time_end` time NOT NULL,
-  `time_block` int(10) UNSIGNED NOT NULL,
-  `time_block_bookable` int(10) UNSIGNED NOT NULL,
-  `time_block_bookable_max` int(10) UNSIGNED DEFAULT NULL,
-  `min_range_book` int(10) UNSIGNED DEFAULT 0,
-  `range_book` int(10) UNSIGNED DEFAULT NULL,
-  `max_active_bookings` int(10) UNSIGNED DEFAULT 0,
-  `range_cancel` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_squares`
+(
+    `sid`                     int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `name`                    varchar(64)      NOT NULL,
+    `status`                  varchar(64)      NOT NULL DEFAULT 'enabled' COMMENT 'disabled|readonly|enabled',
+    `priority`                float            NOT NULL DEFAULT 1,
+    `capacity`                int(10) UNSIGNED NOT NULL,
+    `capacity_heterogenic`    tinyint(1)       NOT NULL,
+    `allow_notes`             tinyint(1)       NOT NULL DEFAULT 0,
+    `time_start`              time             NOT NULL,
+    `time_end`                time             NOT NULL,
+    `time_block`              int(10) UNSIGNED NOT NULL,
+    `time_block_bookable`     int(10) UNSIGNED NOT NULL,
+    `time_block_bookable_max` int(10) UNSIGNED          DEFAULT NULL,
+    `min_range_book`          int(10) UNSIGNED          DEFAULT 0,
+    `range_book`              int(10) UNSIGNED          DEFAULT NULL,
+    `max_active_bookings`     int(10) UNSIGNED          DEFAULT 0,
+    `range_cancel`            int(10) unsigned          DEFAULT NULL,
+    PRIMARY KEY (`sid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- INSERT INTO `bs_squares` (`sid`, `name`, `status`, `priority`, `capacity`, `capacity_heterogenic`, `allow_notes`, `time_start`, `time_end`, `time_block`, `time_block_bookable`, `time_block_bookable_max`, `min_range_book`, `range_book`, `max_active_bookings`, `range_cancel`) VALUES
 -- (11, '1', 'enabled', 1, 1, 0, 1, '10:00:00', '23:00:00', 1800, 1800, 46800, 0, 4838400, 0, 86400),
@@ -216,16 +258,21 @@ CREATE TABLE `bs_squares` (
 -- Table structure for table `bs_squares_coupons`
 --
 
-CREATE TABLE `bs_squares_coupons` (
-  `scid` int(10) UNSIGNED NOT NULL,
-  `sid` int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
-  `code` varchar(64) NOT NULL,
-  `date_start` datetime DEFAULT NULL,
-  `date_end` datetime DEFAULT NULL,
-  `discount_for_booking` int(10) UNSIGNED NOT NULL,
-  `discount_for_products` int(10) UNSIGNED NOT NULL,
-  `discount_in_percent` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_squares_coupons`
+(
+    `scid`                  int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `sid`                   int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
+    `code`                  varchar(64)      NOT NULL,
+    `date_start`            datetime         DEFAULT NULL,
+    `date_end`              datetime         DEFAULT NULL,
+    `discount_for_booking`  int(10) UNSIGNED NOT NULL,
+    `discount_for_products` int(10) UNSIGNED NOT NULL,
+    `discount_in_percent`   tinyint(1)       NOT NULL,
+    PRIMARY KEY (`scid`),
+    KEY `sid` (`sid`),
+    KEY `code` (`code`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -233,57 +280,69 @@ CREATE TABLE `bs_squares_coupons` (
 -- Table structure for table `bs_squares_meta`
 --
 
-CREATE TABLE `bs_squares_meta` (
-  `smid` int(10) UNSIGNED NOT NULL,
-  `sid` int(10) UNSIGNED NOT NULL,
-  `key` varchar(64) NOT NULL,
-  `value` text NOT NULL,
-  `locale` varchar(8) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_squares_meta`
+(
+    `smid`   int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `sid`    int(10) UNSIGNED NOT NULL,
+    `key`    varchar(64)      NOT NULL,
+    `value`  text             NOT NULL,
+    `locale` varchar(8) DEFAULT NULL,
+    PRIMARY KEY (`smid`),
+    KEY `sid` (`sid`),
+    KEY `key` (`key`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 
 -- Table structure for table `bs_squares_pricing`
 
 
-CREATE TABLE IF NOT EXISTS `bs_squares_pricing` (
-  spid int(10) UNSIGNED NOT NULL,
-  sid int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
-  priority int(10) UNSIGNED NOT NULL,
-  date_start date NOT NULL,
-  date_end date NOT NULL,
-  day_start tinyint(3) UNSIGNED DEFAULT NULL COMMENT 'Day of the week',
-  day_end tinyint(3) UNSIGNED DEFAULT NULL,
-  time_start time DEFAULT NULL,
-  time_end time DEFAULT NULL,
-  price int(10) UNSIGNED DEFAULT NULL,
-  booking_fee int(10) UNSIGNED DEFAULT NULL,
-  rate int(10) UNSIGNED DEFAULT NULL,
-  gross tinyint(1) DEFAULT NULL,
-  per_time_block int(10) UNSIGNED DEFAULT NULL,
-  per_quantity tinyint(1) DEFAULT NULL,
-  member varchar(255) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `bs_squares_pricing`
+(
+    `spid`           int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `sid`            int(10) unsigned    DEFAULT NULL COMMENT 'NULL for all',
+    `priority`       int(10) unsigned NOT NULL,
+    `date_start`     date             NOT NULL,
+    `date_end`       date             NOT NULL,
+    `day_start`      tinyint(3) unsigned DEFAULT NULL COMMENT 'Day of the week',
+    `day_end`        tinyint(3) unsigned DEFAULT NULL,
+    `time_start`     time                DEFAULT NULL,
+    `time_end`       time                DEFAULT NULL,
+    `price`          int(10) unsigned    DEFAULT NULL,
+    `booking_fee`    int(10) UNSIGNED    DEFAULT NULL,
+    `rate`           int(10) unsigned    DEFAULT NULL,
+    `gross`          tinyint(1)          DEFAULT NULL,
+    `per_time_block` int(10) unsigned    DEFAULT NULL,
+    `per_quantity`   tinyint(1)          DEFAULT NULL,
+    `member`         varchar(255)        DEFAULT NULL,
+    PRIMARY KEY (`spid`),
+    KEY `sid` (`sid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 
-CREATE TABLE `bs_squares_products` (
-  `spid` int(10) UNSIGNED NOT NULL,
-  `sid` int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
-  `priority` int(10) UNSIGNED NOT NULL,
-  `date_start` date DEFAULT NULL,
-  `date_end` date DEFAULT NULL,
-  `name` varchar(128) NOT NULL,
-  `description` text DEFAULT NULL,
-  `options` varchar(512) NOT NULL,
-  `price` int(10) UNSIGNED NOT NULL,
-  `rate` int(10) UNSIGNED NOT NULL,
-  `gross` tinyint(1) NOT NULL,
-  `locale` varchar(8) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_squares_products`
+(
+    `spid`        int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `sid`         int(10) UNSIGNED DEFAULT NULL COMMENT 'NULL for all',
+    `priority`    int(10) UNSIGNED NOT NULL,
+    `date_start`  date             DEFAULT NULL,
+    `date_end`    date             DEFAULT NULL,
+    `name`        varchar(128)     NOT NULL,
+    `description` text             DEFAULT NULL,
+    `options`     varchar(512)     NOT NULL,
+    `price`       int(10) UNSIGNED NOT NULL,
+    `rate`        int(10) UNSIGNED NOT NULL,
+    `gross`       tinyint(1)       NOT NULL,
+    `locale`      varchar(8)       DEFAULT NULL,
+    PRIMARY KEY (`spid`),
+    KEY `sid` (`sid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 
 
-
-INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
+/*INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date_end`, `day_start`, `day_end`, `time_start`, `time_end`, `price`, `booking_fee`, `rate`, `gross`, `per_time_block`, `per_quantity`, `member`) VALUES
 (1, 11, 2, '2023-11-22', '2030-11-22', 0, 4, '10:00:00', '18:00:00', 1800, 100, 0, 1, 3600, NULL, '0'),
 (2, 11, 3, '2023-11-22', '2030-11-22', 0, 4, '18:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
 (3, 11, 4, '2023-11-22', '2030-11-22', 5, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
@@ -337,7 +396,7 @@ INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date
 (51, 17, 1, '2024-01-29', '2024-01-29', 0, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
 (52, 18, 1, '2024-01-29', '2024-01-29', 0, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0'),
 (53, 19, 1, '2024-01-29', '2024-01-29', 0, 6, '10:00:00', '23:00:00', 2600, 100, 0, 1, 3600, NULL, '0')
-
+*/
 -- --------------------------------------------------------
 
 
@@ -347,324 +406,121 @@ INSERT INTO `bs_squares_pricing` (`spid`, `sid`, `priority`, `date_start`, `date
 -- Table structure for table `bs_users`
 --
 
-CREATE TABLE `bs_users` (
-  `uid` int(10) UNSIGNED NOT NULL,
-  `alias` varchar(128) NOT NULL,
-  `status` varchar(64) NOT NULL DEFAULT 'placeholder' COMMENT 'placeholder|deleted|blocked|disabled|enabled|assist|admin',
-  `email` varchar(128) DEFAULT NULL,
-  `pw` varchar(256) DEFAULT NULL,
-  `login_attempts` tinyint(3) UNSIGNED DEFAULT NULL,
-  `login_detent` datetime DEFAULT NULL,
-  `last_activity` datetime DEFAULT NULL,
-  `last_ip` varchar(64) DEFAULT NULL,
-  `created` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_users`
+(
+    `uid`            int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `alias`          varchar(128)     NOT NULL,
+    `status`         varchar(64)      NOT NULL DEFAULT 'placeholder' COMMENT 'placeholder|deleted|blocked|disabled|enabled|assist|admin',
+    `email`          varchar(128)              DEFAULT NULL,
+    `pw`             varchar(256)              DEFAULT NULL,
+    `login_attempts` tinyint(3) UNSIGNED       DEFAULT NULL,
+    `login_detent`   datetime                  DEFAULT NULL,
+    `last_activity`  datetime                  DEFAULT NULL,
+    `last_ip`        varchar(64)               DEFAULT NULL,
+    `created`        datetime                  DEFAULT NULL,
+    PRIMARY KEY (`uid`),
+    KEY `alias` (`alias`),
+    KEY `email` (`email`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 --
 
 -- Table structure for table `bs_users_meta`
 --
 
-CREATE TABLE `bs_users_meta` (
-  `umid` int(10) UNSIGNED NOT NULL,
-  `uid` int(10) UNSIGNED NOT NULL,
-  `key` varchar(64) NOT NULL,
-  `value` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `bs_users_meta`
+(
+    `umid`  int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `uid`   int(10) UNSIGNED NOT NULL,
+    `key`   varchar(64)      NOT NULL,
+    `value` text             NOT NULL,
+    PRIMARY KEY (`umid`),
+    KEY `key` (`key`),
+    KEY `uid` (`uid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 --
 -- Dumping data for table `bs_users_meta`
 --
-
-
---
--- Indexes for table `bs_bookings`
---
-ALTER TABLE `bs_bookings`
-  ADD PRIMARY KEY (`bid`),
-  ADD KEY `sid` (`sid`),
-  ADD KEY `uid` (`uid`);
-
---
--- Indexes for table `bs_bookings_bills`
---
-ALTER TABLE `bs_bookings_bills`
-  ADD PRIMARY KEY (`bbid`),
-  ADD KEY `bid` (`bid`);
-
---
--- Indexes for table `bs_bookings_meta`
---
-ALTER TABLE `bs_bookings_meta`
-  ADD PRIMARY KEY (`bmid`),
-  ADD KEY `bid` (`bid`),
-  ADD KEY `key` (`key`);
-
---
--- Indexes for table `bs_events`
---
-ALTER TABLE `bs_events`
-  ADD PRIMARY KEY (`eid`),
-  ADD KEY `sid` (`sid`),
-  ADD KEY `datetime_start` (`datetime_start`),
-  ADD KEY `datetime_end` (`datetime_end`);
-
---
--- Indexes for table `bs_events_meta`
---
-ALTER TABLE `bs_events_meta`
-  ADD PRIMARY KEY (`emid`),
-  ADD KEY `eid` (`eid`),
-  ADD KEY `key` (`key`);
-
---
--- Indexes for table `bs_options`
---
-ALTER TABLE `bs_options`
-  ADD PRIMARY KEY (`oid`),
-  ADD KEY `key` (`key`);
-
---
--- Indexes for table `bs_reservations`
---
-ALTER TABLE `bs_reservations`
-  ADD PRIMARY KEY (`rid`),
-  ADD KEY `bid` (`bid`),
-  ADD KEY `date` (`date`);
-
---
--- Indexes for table `bs_reservations_meta`
---
-ALTER TABLE `bs_reservations_meta`
-  ADD PRIMARY KEY (`rmid`),
-  ADD KEY `rid` (`rid`),
-  ADD KEY `key` (`key`);
-
---
--- Indexes for table `bs_squares`
---
-ALTER TABLE `bs_squares`
-  ADD PRIMARY KEY (`sid`);
-
---
--- Indexes for table `bs_squares_coupons`
---
-ALTER TABLE `bs_squares_coupons`
-  ADD PRIMARY KEY (`scid`),
-  ADD KEY `sid` (`sid`),
-  ADD KEY `code` (`code`);
-
---
--- Indexes for table `bs_squares_meta`
---
-ALTER TABLE `bs_squares_meta`
-  ADD PRIMARY KEY (`smid`),
-  ADD KEY `sid` (`sid`),
-  ADD KEY `key` (`key`);
-
---
--- Indexes for table `bs_squares_pricing`
---
-ALTER TABLE `bs_squares_pricing`
-  ADD PRIMARY KEY (`spid`),
-  ADD KEY `sid` (`sid`);
-
---
--- Indexes for table `bs_squares_products`
---
-ALTER TABLE `bs_squares_products`
-  ADD PRIMARY KEY (`spid`),
-  ADD KEY `sid` (`sid`);
-
---
--- Indexes for table `bs_users`
---
-ALTER TABLE `bs_users`
-  ADD PRIMARY KEY (`uid`),
-  ADD KEY `alias` (`alias`),
-  ADD KEY `email` (`email`);
-
---
--- Indexes for table `bs_users_meta`
---
-ALTER TABLE `bs_users_meta`
-  ADD PRIMARY KEY (`umid`),
-  ADD KEY `key` (`key`),
-  ADD KEY `uid` (`uid`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `bs_bookings`
---
-ALTER TABLE `bs_bookings`
-  MODIFY `bid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
-
---
--- AUTO_INCREMENT for table `bs_bookings_bills`
---
-ALTER TABLE `bs_bookings_bills`
-  MODIFY `bbid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `bs_bookings_meta`
---
-ALTER TABLE `bs_bookings_meta`
-  MODIFY `bmid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=300;
-
---
--- AUTO_INCREMENT for table `bs_events`
---
-ALTER TABLE `bs_events`
-  MODIFY `eid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `bs_events_meta`
---
-ALTER TABLE `bs_events_meta`
-  MODIFY `emid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `bs_options`
---
-ALTER TABLE `bs_options`
-  MODIFY `oid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
-
---
--- AUTO_INCREMENT for table `bs_reservations`
---
-ALTER TABLE `bs_reservations`
-  MODIFY `rid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1987;
-
---
--- AUTO_INCREMENT for table `bs_reservations_meta`
---
-ALTER TABLE `bs_reservations_meta`
-  MODIFY `rmid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `bs_squares`
---
-ALTER TABLE `bs_squares`
-  MODIFY `sid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT for table `bs_squares_coupons`
---
-ALTER TABLE `bs_squares_coupons`
-  MODIFY `scid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `bs_squares_meta`
---
-ALTER TABLE `bs_squares_meta`
-  MODIFY `smid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
-
---
--- AUTO_INCREMENT for table `bs_squares_pricing`
---
-ALTER TABLE `bs_squares_pricing`
-  MODIFY `spid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `bs_squares_products`
---
-ALTER TABLE `bs_squares_products`
-  MODIFY `spid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `bs_users`
---
-ALTER TABLE `bs_users`
-  MODIFY `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
-
---
--- AUTO_INCREMENT for table `bs_users_meta`
---
-ALTER TABLE `bs_users_meta`
-  MODIFY `umid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
-
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `bs_bookings`
+-- Constraints der Tabelle `bs_bookings`
 --
 ALTER TABLE `bs_bookings`
-  ADD CONSTRAINT `bs_bookings_ibfk_3` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`),
-  ADD CONSTRAINT `bs_bookings_ibfk_4` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`);
+    ADD CONSTRAINT `bs_bookings_ibfk_3` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`),
+    ADD CONSTRAINT `bs_bookings_ibfk_4` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`);
 
 --
--- Constraints for table `bs_bookings_bills`
+-- Constraints der Tabelle `bs_bookings_bills`
 --
 ALTER TABLE `bs_bookings_bills`
-  ADD CONSTRAINT `bs_bookings_bills_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `bs_bookings` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_bookings_bills_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `bs_bookings` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_bookings_meta`
+-- Constraints der Tabelle `bs_bookings_meta`
 --
 ALTER TABLE `bs_bookings_meta`
-  ADD CONSTRAINT `bs_bookings_meta_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `bs_bookings` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_bookings_meta_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `bs_bookings` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_events`
+-- Constraints der Tabelle `bs_events`
 --
 ALTER TABLE `bs_events`
-  ADD CONSTRAINT `bs_events_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`);
+    ADD CONSTRAINT `bs_events_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`);
 
 --
--- Constraints for table `bs_events_meta`
+-- Constraints der Tabelle `bs_events_meta`
 --
 ALTER TABLE `bs_events_meta`
-  ADD CONSTRAINT `bs_events_meta_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `bs_events` (`eid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_events_meta_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `bs_events` (`eid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_reservations`
+-- Constraints der Tabelle `bs_reservations`
 --
 ALTER TABLE `bs_reservations`
-  ADD CONSTRAINT `bs_reservations_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `bs_bookings` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_reservations_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `bs_bookings` (`bid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_reservations_meta`
+-- Constraints der Tabelle `bs_reservations_meta`
 --
 ALTER TABLE `bs_reservations_meta`
-  ADD CONSTRAINT `bs_reservations_meta_ibfk_1` FOREIGN KEY (`rid`) REFERENCES `bs_reservations` (`rid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_reservations_meta_ibfk_1` FOREIGN KEY (`rid`) REFERENCES `bs_reservations` (`rid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_squares_coupons`
+-- Constraints der Tabelle `bs_squares_coupons`
 --
 ALTER TABLE `bs_squares_coupons`
-  ADD CONSTRAINT `bs_squares_coupons_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_squares_coupons_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_squares_meta`
+-- Constraints der Tabelle `bs_squares_meta`
 --
 ALTER TABLE `bs_squares_meta`
-  ADD CONSTRAINT `bs_squares_meta_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_squares_meta_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `bs_squares_pricing`
 --
 ALTER TABLE `bs_squares_pricing`
-  ADD CONSTRAINT `bs_squares_pricing_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_squares_pricing_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_squares_products`
+-- Constraints der Tabelle `bs_squares_products`
 --
 ALTER TABLE `bs_squares_products`
-  ADD CONSTRAINT `bs_squares_products_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `bs_squares_products_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `bs_squares` (`sid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `bs_users_meta`
+-- Constraints der Tabelle `bs_users_meta`
 --
 ALTER TABLE `bs_users_meta`
-  ADD CONSTRAINT `bs_users_meta_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
-SET FOREIGN_KEY_CHECKS=1;
-COMMIT;
+    ADD CONSTRAINT `bs_users_meta_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `bs_users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;

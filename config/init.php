@@ -18,7 +18,7 @@ define('EP3_BS_DEV_TAG', true);
  * An overview of available timezones can be found here:
  * http://php.net/manual/en/timezones.php
  */
-ini_set('date.timezone', 'Australia/Melbourne');
+ini_set('date.timezone', 'Europe/Berlin');
 
 
 
