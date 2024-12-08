@@ -47,7 +47,7 @@ echo $this->ajaxAwareScript('js/controller/square/booking/customization.min.js')
 
     <?php
 
-    $url = $this->url('square/booking/confirmation', [], ['query' => [
+    $url = $this->url('square/booking/checkout', [], ['query' => [
         'ds' => $this->dateStart->format('Y-m-d'),
         'de' => $this->dateEnd->format('Y-m-d'),
         'ts' => $this->dateStart->format('H:i'),
